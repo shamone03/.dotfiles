@@ -15,6 +15,17 @@ $env.CONAN_USE_ALWAYS_SHORT_PATHS = "True"
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 # $env.PATH ++= [ $"($env.ProgramFiles)/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/x64/bin/" ]
 
+def open-repo [--pull-request (-p)] {
+    mut link = git config --get remote.origin.url | str trim
+    let branch = git branch --show-current | str trim
+    let attach = $"/pullrequestcreate?sourceRef=($branch)"
+	if $pull_request {
+		$link = [ $link, $attach ] | str join
+    }
+
+	start $link
+}
+
 alias l = lazygit
 alias y = yazi
 alias o = nvim
@@ -65,13 +76,3 @@ def --env y [...args] {
 	rm -fp $tmp
 }
 
-def open-repo [--pull-request (-p)] {
-    mut link = git config --get remote.origin.url | str trim
-    let branch = git branch --show-current | str trim
-    let attach = $"/pullrequestcreate?sourceRef=($branch)"
-	if $pull_request {
-		$link = [ $link, $attach ] | str join
-    }
-
-	start $link
-}

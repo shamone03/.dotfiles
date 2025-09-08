@@ -7,7 +7,7 @@ vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a T
 vim.o.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
 vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
 vim.o.fixendofline = false
-vim.cmd("set guicursor=")
+vim.cmd("set guicursor=a:hor20,i:ver20")
 vim.cmd("set number")
 
 vim.g.lazyvim_rust_diagnostics = "rust-analyzer"
