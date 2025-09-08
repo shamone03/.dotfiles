@@ -34,6 +34,10 @@
         "defaults": {
             "font": {
                 "face": "Hurmit Nerd Font Mono"
+            },
+            "startingDirectory": "%USERPROFILE%/Projects",
+            "environment": {
+                "XDG_CONFIG_HOME": "%USERPROFILE%/Projects/.dotfiles"
             }
         },
         "list": [
@@ -97,11 +101,7 @@
                 "hidden": false,
                 "historySize": 50000,
                 "name": "Nushell",
-                "source": "nu",
-                "startingDirectory": "%USERPROFILE%/Projects",
-                "environment": {
-                    "XDG_CONFIG_HOME": "%USERPROFILE%/Projects/.dotfiles"
-                }
+                "source": "nu"
             }
         ]
     },

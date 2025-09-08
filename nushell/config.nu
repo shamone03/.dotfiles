@@ -1,14 +1,8 @@
-# this file is both a valid
-# - overlay which can be loaded with `overlay use starship.nu`
-# - module which can be used with `use starship.nu`
-# - script which can be used with `source starship.nu`
-#
-
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 
-$env.nvimconfig = $"($env.LOCALAPPDATA)/nvim/init.lua";
 $env.YAZI_FILE_ONE = $"($env.LOCALAPPDATA)/Programs/Git/usr/bin/file.exe"
+$env.nvimconfig = $"($env.LOCALAPPDATA)/nvim/init.lua"
 $env.projects = $"($env.USERPROFILE)/Projects/"
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/" 
 $env.CONAN_USE_ALWAYS_SHORT_PATHS = "True"
@@ -34,7 +28,7 @@ alias or = open-repo
 export-env { $env.STARSHIP_SHELL = "nu"; load-env {
     STARSHIP_SESSION_KEY: (random chars -l 16)
     PROMPT_MULTILINE_INDICATOR: (
-        ^'C:\Users\aryah.kannan\.cargo\bin\starship.exe' prompt --continuation
+        ^'starship.exe' prompt --continuation
     )
 
     # Does not play well with default character module.
@@ -44,7 +38,7 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
     PROMPT_COMMAND: {||
         # jobs are not supported
         (
-            ^'C:\Users\aryah.kannan\.cargo\bin\starship.exe' prompt
+            ^'starship.exe' prompt
                 --cmd-duration $env.CMD_DURATION_MS
                 $"--status=($env.LAST_EXIT_CODE)"
                 --terminal-width (term size).columns
@@ -57,7 +51,7 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
 
     PROMPT_COMMAND_RIGHT: {||
         (
-            ^'C:\Users\aryah.kannan\.cargo\bin\starship.exe' prompt
+            ^'starship.exe' prompt
                 --right
                 --cmd-duration $env.CMD_DURATION_MS
                 $"--status=($env.LAST_EXIT_CODE)"
