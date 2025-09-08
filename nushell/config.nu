@@ -1,0 +1,76 @@
+# this file is both a valid
+# - overlay which can be loaded with `overlay use starship.nu`
+# - module which can be used with `use starship.nu`
+# - script which can be used with `source starship.nu`
+#
+
+$env.config.buffer_editor = "nvim"
+$env.config.show_banner = false
+
+$env.nvimconfig = $"($env.LOCALAPPDATA)/nvim/init.lua";
+$env.YAZI_FILE_ONE = $"($env.LOCALAPPDATA)/Programs/Git/usr/bin/file.exe"
+$env.projects = $"($env.USERPROFILE)/Projects/"
+$env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/" 
+$env.CONAN_USE_ALWAYS_SHORT_PATHS = "True"
+$env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship.toml"
+
+alias l = lazygit
+alias y = yazi
+alias o = nvim
+alias or = open-repo
+
+export-env { $env.STARSHIP_SHELL = "nu"; load-env {
+    STARSHIP_SESSION_KEY: (random chars -l 16)
+    PROMPT_MULTILINE_INDICATOR: (
+        ^'C:\Users\aryah.kannan\.cargo\bin\starship.exe' prompt --continuation
+    )
+
+    # Does not play well with default character module.
+    # TODO: Also Use starship vi mode indicators?
+    PROMPT_INDICATOR: ""
+
+    PROMPT_COMMAND: {||
+        # jobs are not supported
+        (
+            ^'C:\Users\aryah.kannan\.cargo\bin\starship.exe' prompt
+                --cmd-duration $env.CMD_DURATION_MS
+                $"--status=($env.LAST_EXIT_CODE)"
+                --terminal-width (term size).columns
+        )
+    }
+
+    config: ($env.config? | default {} | merge {
+        render_right_prompt_on_last_line: true
+    })
+
+    PROMPT_COMMAND_RIGHT: {||
+        (
+            ^'C:\Users\aryah.kannan\.cargo\bin\starship.exe' prompt
+                --right
+                --cmd-duration $env.CMD_DURATION_MS
+                $"--status=($env.LAST_EXIT_CODE)"
+                --terminal-width (term size).columns
+        )
+    }
+}}
+
+def --env y [...args] {
+	let tmp = (mktemp -t "yazi-cwd.XXXXXX")
+	yazi ...$args --cwd-file $tmp
+	let cwd = (open $tmp)
+	if $cwd != "" and $cwd != $env.PWD {
+		cd $cwd
+	}
+	rm -fp $tmp
+}
+
+def open-repo [--pull-request (-p)] {
+    mut link = git config --get remote.origin.url | str trim
+    let branch = git branch --show-current | str trim
+    let attach = $"/pullrequestcreate?sourceRef=($branch)"
+	if $pull_request {
+		$link = [ $link, $attach ] | str join
+    }
+
+	start $link
+}

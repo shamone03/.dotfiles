@@ -1,0 +1,9 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:mime-ext"
+rev = "55bf699"
+hash = "ce81a1cfd1cf4904e8dac2bbf131b2d9"
+
+[[flavor.deps]]
+use = "gosxrgxx/flexoki-dark"
+rev = "3e8cfba"
+hash = "aaf483c62652dc2b58af643095c84011"
