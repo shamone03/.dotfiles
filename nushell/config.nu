@@ -28,7 +28,7 @@ def open-repo [--pull-request (-p)] {
 
 alias l = lazygit
 alias y = yazi
-alias o = nvim
+alias o = nvim .
 alias or = open-repo
 
 export-env { $env.STARSHIP_SHELL = "nu"; load-env {
