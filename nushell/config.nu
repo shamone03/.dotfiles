@@ -12,7 +12,7 @@ $env.YAZI_FILE_ONE = $"($env.LOCALAPPDATA)/Programs/Git/usr/bin/file.exe"
 $env.projects = $"($env.USERPROFILE)/Projects/"
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/" 
 $env.CONAN_USE_ALWAYS_SHORT_PATHS = "True"
-$env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship.toml"
+$env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 # $env.PATH ++= [ $"($env.ProgramFiles)/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/x64/bin/" ]
 
 alias l = lazygit
