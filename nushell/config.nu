@@ -24,6 +24,8 @@ alias l = lazygit
 alias y = yazi
 alias o = nvim .
 alias or = open-repo
+alias gh = cd $env.projects
+alias gp = cd (git rev-parse --show-toplevel)
 
 export-env { $env.STARSHIP_SHELL = "nu"; load-env {
     STARSHIP_SESSION_KEY: (random chars -l 16)
