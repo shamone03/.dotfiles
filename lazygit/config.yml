@@ -1,2 +1,7 @@
 gui:
-  useHunkModeInStagingView: true
+  useHunkModeInStagingView: false
+
+os:
+  edit: nvim {{filename}}
+
+notARepository: quit
