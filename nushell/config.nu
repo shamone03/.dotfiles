@@ -72,3 +72,12 @@ def --env y [...args] {
 	rm -fp $tmp
 }
 
+def get_file_list [path: string] {
+    ls **/*
+    | where type == file
+    | format pattern 'f"{name}",'
+    | str join
+    | str replace '\' '/'  --all
+    | str replace '.dll' '{plugin_ext}.dll' --all
+    | '[' ++ $in ++ ']'
+}
