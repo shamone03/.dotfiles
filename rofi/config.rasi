@@ -1,0 +1,6 @@
+
+@import "~/.cache/wal/colors-rofi-dark.rasi"
+
+#inputbar {
+    children:   [ prompt,textbox-prompt-colon,entry,case-indicator,mode-switcher ];
+}
