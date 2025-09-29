@@ -1,6 +1,8 @@
 
 @import "~/.cache/wal/colors-rofi-dark.rasi"
-
+* {
+    font: "Hurmit Nerd Font Mono 16";
+}
 #inputbar {
     children:   [ prompt,textbox-prompt-colon,entry,case-indicator,mode-switcher ];
 }

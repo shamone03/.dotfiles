@@ -1,8 +1,8 @@
 @import url('../../.cache/wal/colors-waybar.css');
 
 * {
-    font-size:15px;
-    font-family: "CodeNewRoman Nerd Font Propo";
+    font-size: 15px;
+    font-family: "Hurmit Nerd Font Mono";
 }
 window#waybar{
     all:unset;
@@ -39,6 +39,27 @@ tooltip {
     color:@color7;
 
 }
+
+#pulseaudio-slider slider {
+    min-height: 0px;
+    min-width: 0px;
+    opacity: 0;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+#pulseaudio-slider trough {
+    min-width: 80px;
+    min-height: 10px;
+    border-radius: 5px;
+    background-color: black;
+}
+#pulseaudio-slider highlight {
+    min-width: 10px;
+    border-radius: 5px;
+    background-color: @color9;
+}
+
 #workspaces {
     padding: 0px 5px;
 }

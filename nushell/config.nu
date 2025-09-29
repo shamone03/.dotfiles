@@ -20,6 +20,10 @@ def open-repo [--pull-request (-p)] {
 	start $link
 }
 
+def update-wallpaper [--wallpaper-path (-p): string] {
+    hyprctl hyprpaper reload $",($wallpaper_path)"; wal -i (hyprctl hyprpaper listloaded) -se -a fff
+}
+
 alias l = lazygit
 alias y = yazi
 alias o = nvim .
@@ -30,7 +34,7 @@ alias gp = cd (git rev-parse --show-toplevel)
 export-env { $env.STARSHIP_SHELL = "nu"; load-env {
     STARSHIP_SESSION_KEY: (random chars -l 16)
     PROMPT_MULTILINE_INDICATOR: (
-        ^'starship.exe' prompt --continuation
+        ^'starship' prompt --continuation
     )
 
     # Does not play well with default character module.
@@ -40,7 +44,7 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
     PROMPT_COMMAND: {||
         # jobs are not supported
         (
-            ^'starship.exe' prompt
+            ^'starship' prompt
                 --cmd-duration $env.CMD_DURATION_MS
                 $"--status=($env.LAST_EXIT_CODE)"
                 --terminal-width (term size).columns
@@ -53,7 +57,7 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
 
     PROMPT_COMMAND_RIGHT: {||
         (
-            ^'starship.exe' prompt
+            ^'starship' prompt
                 --right
                 --cmd-duration $env.CMD_DURATION_MS
                 $"--status=($env.LAST_EXIT_CODE)"
