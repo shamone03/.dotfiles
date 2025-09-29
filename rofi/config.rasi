@@ -6,3 +6,7 @@
 #inputbar {
     children:   [ prompt,textbox-prompt-colon,entry,case-indicator,mode-switcher ];
 }
+
+configuration {
+    show-icons: true;
+}
