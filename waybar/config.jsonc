@@ -93,7 +93,7 @@
             ]
         },
         "scroll-step": 1,
-        "on-click": "pavucontrol"
+        "on-click": "nu -c 'try { killall pavucontrol } catch { pavucontrol }'"
     },
     "network": {
         "format": "",

@@ -21,10 +21,6 @@ def open-repo [--pull-request (-p)] {
 	start $link
 }
 
-def update-wallpaper [--wallpaper-path (-p): string] {
-    hyprctl hyprpaper reload $",($wallpaper_path)"; wal -i (hyprctl hyprpaper listloaded) -se -a fff
-}
-
 alias l = lazygit
 alias y = yazi
 alias o = nvim .
