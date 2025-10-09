@@ -1,15 +1,13 @@
 use starship.nu;
 
-use linux.nu *;
+# use linux.nu *;
 use windows.nu *;
 
+$env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 
-$env.projects = $"~/Projects/"
-
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
-$env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 
 def open-repo [--pull-request (-p)] {
     mut link = git config --get remote.origin.url | str trim
