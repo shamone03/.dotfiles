@@ -81,4 +81,7 @@ def get_file_list [path: string] {
     | str replace '\' '/'  --all
     | str replace '.dll' '{plugin_ext}.dll' --all
     | '[' ++ $in ++ ']'
+def search [...query: string] {
+    start ($query | str join " " | url encode | $"https://www.google.com/search?q=($in)")
 }
+
