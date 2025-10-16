@@ -3,6 +3,8 @@ use starship.nu;
 # use linux.nu *;
 use windows.nu *;
 
+use search.nu;
+
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
@@ -48,8 +50,3 @@ def get_file_list [path: string] {
     | '[' ++ $in ++ ']'
 }
 
-def search [...query: string] {
-    start ($query | str join " " | url encode | $"https://www.google.com/search?q=($in)")
-}
-
-cd $env.projects
