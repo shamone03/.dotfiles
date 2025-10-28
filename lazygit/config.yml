@@ -1,5 +1,28 @@
 gui:
   useHunkModeInStagingView: false
+  # Added from C:\Users\aryah.kannan\AppData\Local\Temp\nvim\lazygit-theme.yml
+  theme:
+    unstagedChangesColor:
+      - "#eb6f92"
+    selectedLineBgColor:
+      - "#332d41"
+    searchingActiveBorderColor:
+      - "#31748f"
+      - "bold"
+    optionsTextColor:
+      - "#ebbcba"
+    inactiveBorderColor:
+      - "#6e6a86"
+    defaultFgColor:
+      - "#e0def4"
+    cherryPickedCommitFgColor:
+      - "#ebbcba"
+    cherryPickedCommitBgColor:
+      - "#e0def4"
+    activeBorderColor:
+      - "#31748f"
+      - "bold"
+  nerdFontsVersion: "3"
 
 os:
   edit: nvim {{filename}}

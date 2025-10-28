@@ -40,6 +40,10 @@ def --env y [...args] {
 	rm -fp $tmp
 }
 
+def git-root [path?: string] {
+    return (git rev-parse --show-toplevel)
+}
+
 def get_file_list [path: string] {
     ls **/*
     | where type == file
@@ -50,3 +54,4 @@ def get_file_list [path: string] {
     | '[' ++ $in ++ ']'
 }
 
+source nu_scripts\themes\nu-themes\rose-pine.nu
