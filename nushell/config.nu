@@ -1,7 +1,7 @@
 use starship.nu;
 
-# use linux.nu *;
-use windows.nu *;
+use linux.nu *;
+# use windows.nu *;
 
 use search.nu;
 
@@ -54,7 +54,14 @@ def get_file_list [path: string] {
     | '[' ++ $in ++ ']'
 }
 
-source nu_scripts\themes\nu-themes\rose-pine.nu
+source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
+
+let osc9_9 = if $nu.os-info == "linux" {
+	true
+} else {
+	false
+}
+
 # Starship
 $env.config.shell_integration = {
   # osc2 abbreviates the path if in the home_dir, sets the tab/window title, shows the running command in the tab/window title
@@ -64,7 +71,7 @@ $env.config.shell_integration = {
   # osc8 is also implemented as the deprecated setting ls.show_clickable_links, it shows clickable links in ls output if your terminal supports it
   osc8: true
   # osc9_9 is from ConEmu and is starting to get wider support. It's similar to osc7 in that it communicates the path to the terminal
-  osc9_9: true
+  osc9_9: $osc9_9,
   # osc133 is several escapes invented by Final Term which include the supported ones below.
   # 133;A - Mark prompt start
   # 133;B - Mark prompt end

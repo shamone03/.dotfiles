@@ -8,12 +8,16 @@ local config = wezterm.config_builder()
 
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 config.default_prog = { "nu" }
-config.set_environment_variables = {
-	XDG_CONFIG_HOME = "C:/Users/aryah.kannan/Projects/.dotfiles",
-}
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+	config.set_environment_variables = {
+		XDG_CONFIG_HOME = "C:/Users/aryah.kannan/Projects/.dotfiles",
+	}
+	config.default_cwd = "C:/Users/aryah.kannan/Projects/"
+else
+	config.default_cwd = "/home/shamone/Projects/"
+end
 
 config.font = wezterm.font({ family = "Hurmit Nerd Font Mono", weight = "Bold" })
-config.default_cwd = "C:/Users/aryah.kannan/Projects/"
 config.initial_rows = 25
 config.initial_cols = 110
 local act = wezterm.action
