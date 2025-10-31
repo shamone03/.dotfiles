@@ -1,6 +1,7 @@
 use starship.nu;
 
 use linux.nu *;
+use hyprutils.nu *;
 # use windows.nu *;
 
 use search.nu;
@@ -10,6 +11,18 @@ $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
+
+def "config lazygit" [] {
+	nvim ...(glob $"($env.projects)/.dotfiles/lazygit/*.yml" --no-dir)
+}
+
+def "config nvim" [] {
+	nvim ...(glob $"($env.projects)/.dotfiles/nvim/**" --no-dir)
+}
+
+def "config starship" [] {
+	nvim ...(glob $"($env.projects)/.dotfiles/starship/*.toml" --no-dir)
+}
 
 def open-repo [--pull-request (-p)] {
     mut link = git config --get remote.origin.url | str trim

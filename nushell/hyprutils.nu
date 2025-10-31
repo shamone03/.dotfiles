@@ -12,3 +12,7 @@ export def random-wallpaper [wallpaper_dir?: string] {
     update-wallpaper $random
 }
 
+export def "config hypr" [] {
+	nvim ...(glob $"($env.projects)/.dotfiles/hypr/*.conf" --no-dir)
+}
+

@@ -4,3 +4,4 @@ export-env {
 		$env.PATH ++= [ $"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
     }
 }
+
