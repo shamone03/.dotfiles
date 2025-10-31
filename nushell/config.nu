@@ -24,6 +24,10 @@ def "config starship" [] {
 	nvim ...(glob $"($env.projects)/.dotfiles/starship/*.toml" --no-dir)
 }
 
+def "config wezterm" [] {
+    nvim $env.WEZTERM_CONFIG_FILE
+}
+
 def open-repo [--pull-request (-p)] {
     mut link = git config --get remote.origin.url | str trim
     let branch = git branch --show-current | str trim

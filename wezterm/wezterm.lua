@@ -7,6 +7,7 @@ local config = wezterm.config_builder()
 -- This is where you actually apply your config choices.
 
 config.default_prog = { "nu" }
+config.window_background_opacity = 0.9
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
 	config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 	config.set_environment_variables = {
