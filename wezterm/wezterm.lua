@@ -6,15 +6,16 @@ local config = wezterm.config_builder()
 
 -- This is where you actually apply your config choices.
 
-config.default_prog = { "nu" }
 config.window_background_opacity = 0.9
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+	config.default_prog = { "C:\\Users\\aryah.kannan\\Projects\\.dotfiles\\wezterm\\nu-vs-dev-cmd.bat" }
 	config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 	config.set_environment_variables = {
 		XDG_CONFIG_HOME = "C:/Users/aryah.kannan/Projects/.dotfiles",
 	}
 	config.default_cwd = "C:/Users/aryah.kannan/Projects/"
 else
+	config.default_prog = { "nu" }
 	config.window_decorations = "NONE"
 	config.default_cwd = "/home/shamone/Projects/"
 end
