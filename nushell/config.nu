@@ -1,14 +1,16 @@
 use starship.nu;
 
-use linux.nu *;
-use hyprutils.nu *;
-# use windows.nu *;
+# use linux.nu *;
+# use hyprutils.nu *;
+use windows.nu *;
 
 use search.nu;
 
+$env.PATH ++= [ $"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
+$env.config.rm.always_trash = true
 
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
 
@@ -17,7 +19,7 @@ def "config lazygit" [] {
 }
 
 def "config nvim" [] {
-	nvim ...(glob $"($env.projects)/.dotfiles/nvim/**" --no-dir)
+	nvim $"($env.projects)/.dotfiles/nvim"
 }
 
 def "config starship" [] {

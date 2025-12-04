@@ -3,3 +3,8 @@
 on = "<Esc>"
 run = "close"
 desc = "Cancel input"
+
+[[mgr.prepend_keymap]]
+on = ["g", "h"]
+run = "cd ~/Projects"
+desc = "Go to projects"
