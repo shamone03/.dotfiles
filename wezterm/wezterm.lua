@@ -66,6 +66,16 @@ config.keys = {
 		mods = "CTRL|SHIFT",
 		action = act.CloseCurrentPane({ confirm = true }),
 	},
+	{
+		key = "k",
+		mods = "CTRL",
+		action = act.ScrollByLine(-5),
+	},
+	{
+		key = "j",
+		mods = "CTRL",
+		action = act.ScrollByLine(5),
+	},
 }
 
 for i = 1, 8 do
