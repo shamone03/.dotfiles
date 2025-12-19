@@ -5,6 +5,7 @@ set shell := ["nu", "-c"]
 build_type := "debug"
 build_profile := if build_type == "debug" { "ninja-multi" } else { "ninja-multi-" + build_type }
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
+conan_dir := justfile_directory()
 
 default: install configure build
 rebuild *FLAGS: clean (install FLAGS) configure build
@@ -19,10 +20,10 @@ configure:
 	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 reconfigure:
-	cmake -S {{sources_dir}}  --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
+	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
 
 install *FLAGS:
-	conan install . -pr:a {{build_profile}} -b missing {{FLAGS}}
+	conan install {{conan_dir}} -pr:a {{build_profile}} -b missing {{FLAGS}}
 
 clean:
 	git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
@@ -31,9 +32,9 @@ devenv:
 	nu ([~/Projects .dotfiles cpp setup-cmake.nu] | path join)
 
 create *FLAGS:
-	conan create . --user cn --channel staging -pr:a {{build_profile}} -b missing {{FLAGS}}
+	conan create {{conan_dir}} --user cn --channel staging -pr:a {{build_profile}} -b missing {{FLAGS}}
 
 recreate *FLAGS: cleancache (create FLAGS)
 
 cleancache:
-    conan remove {{file_name(justfile_directory())}} -c
+    conan remove {{file_name(conan_dir)}} -c
