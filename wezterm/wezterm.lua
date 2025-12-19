@@ -24,6 +24,7 @@ config.hide_tab_bar_if_only_one_tab = true
 config.font = wezterm.font({ family = "Hurmit Nerd Font Mono", weight = "Bold" })
 config.initial_rows = 25
 config.initial_cols = 110
+config.cursor_blink_rate = 800
 local act = wezterm.action
 
 config.keys = {

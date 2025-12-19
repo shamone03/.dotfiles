@@ -1,0 +1,39 @@
+# https://just.systems
+
+set shell := ["nu", "-c"]
+
+build_type := "debug"
+build_profile := if build_type == "debug" { "ninja-multi" } else { "ninja-multi-" + build_type }
+sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
+
+default: install configure build
+rebuild *FLAGS: clean (install FLAGS) configure build
+
+test TEST='.*': build
+	ctest --preset conan-{{build_type}} --output-on-failure -R {{TEST}}
+
+build TARGET='all': devenv
+	cmake --build --preset conan-{{build_type}} -t {{TARGET}}
+
+configure:
+	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+reconfigure:
+	cmake -S {{sources_dir}}  --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
+
+install *FLAGS:
+	conan install . -pr:a {{build_profile}} -b missing {{FLAGS}}
+
+clean:
+	git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
+
+devenv:
+	nu ([~/Projects .dotfiles cpp setup-cmake.nu] | path join)
+
+create *FLAGS:
+	conan create . --user cn --channel staging -pr:a {{build_profile}} -b missing {{FLAGS}}
+
+recreate *FLAGS: cleancache (create FLAGS)
+
+cleancache:
+    conan remove {{file_name(justfile_directory())}} -c
