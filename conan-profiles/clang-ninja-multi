@@ -9,6 +9,9 @@ compiler.runtime_version=v144
 compiler.version=20
 os=Windows
 
+[options]
+boost/*:without_cobalt=True
+
 [buildenv]
 CXX=clang-cl.exe
 CC=clang-cl.exe
