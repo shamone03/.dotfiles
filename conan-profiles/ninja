@@ -1,0 +1,5 @@
+include(default)
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+#tools.build:compiler_executables = {"c": "clang-cl", "cpp": "clang-cl"}
+tools.cmake.cmaketoolchain:user_toolchain+={{profile_dir}}/ninjavars.cmake
