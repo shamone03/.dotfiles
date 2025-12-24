@@ -2,8 +2,12 @@
 
 set shell := ["nu", "-c"]
 
+compiler := "clang"
+generator := "ninja-multi"
 build_type := "debug"
-build_profile := if build_type == "debug" { "ninja-multi" } else { "ninja-multi-" + build_type }
+
+build_profile := compiler + "-" + generator + "-" + build_type
+
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
 

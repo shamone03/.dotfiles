@@ -1,3 +1,0 @@
-include(ninja-multi)
-[settings]
-build_type=Release
