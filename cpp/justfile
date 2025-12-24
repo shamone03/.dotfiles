@@ -11,13 +11,15 @@ build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
 
+all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
+
 default: install configure build
 rebuild *FLAGS: clean (install FLAGS) configure build
 
 test TEST='.*': build
 	ctest --preset conan-{{build_type}} --output-on-failure -R {{TEST}}
 
-build TARGET='all': devenv
+build TARGET=all_build: devenv
 	cmake --build --preset conan-{{build_type}} -t {{TARGET}}
 
 configure:
