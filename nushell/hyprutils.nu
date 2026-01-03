@@ -1,5 +1,25 @@
+
+export def "to log" [path: string]: string -> nothing {
+    let log_file = $"($env.projects | path expand)/.dotfiles/logs/($path)";
+    if (not ($log_file | path exists )) {
+        mkdir ($log_file | path dirname)
+        touch $log_file
+    }
+    $"[(date now)] ($in)\n" | save $log_file --append --force
+}
+
+export def update-theme [--use-wallpaper] {
+    if ($use_wallpaper) {
+        wal -i (hyprctl hyprpaper listloaded) -se -a fff
+    } else {
+        wal --theme random
+    }
+    pywalfox update o+e>| to text | to log theme-switch.log
+}
+
 export def update-wallpaper [wallpaper_path: string] {
-    hyprctl hyprpaper reload $",($wallpaper_path)"; wal -i (hyprctl hyprpaper listloaded) -se -a fff
+    hyprctl hyprpaper reload $",($wallpaper_path)";
+    update-theme --use-wallpaper
 }
 
 export def random-wallpaper [wallpaper_dir?: string] {
