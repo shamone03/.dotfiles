@@ -1,0 +1,16 @@
+[submodule "nu_plugin_clipboard"]
+    path = nushell/nu_plugin_clipboard
+    url = https://github.com/FMotalleb/nu_plugin_clipboard.git
+
+[submodule "nu_scripts"]
+    path = nushell/nu_scripts
+    url = https://github.com/nushell/nu_scripts.git
+
+[submodule "nupm"]
+    path = nushell/nupm
+    url = https://github.com/nushell/nupm.git
+
+[submodule "rose-pine"]
+    path = yazi/flavors/rose-pine.yazi
+    url = https://github.com/Mintass/rose-pine.yazi
+
