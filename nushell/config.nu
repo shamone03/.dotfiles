@@ -12,7 +12,7 @@ $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 $env.config.rm.always_trash = true
 
-$env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
+$env.YAZI_CONFIG_HOME = $"C:($env.projects)/.dotfiles/yazi/"
 
 def "config lazygit" [] {
 	nvim ...(glob $"($env.projects)/.dotfiles/lazygit/*.yml" --no-dir)

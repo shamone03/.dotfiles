@@ -2,7 +2,8 @@
 
 set shell := ["nu", "-c"]
 
-compiler := "clang"
+# compiler := "clang"
+compiler := "msvc"
 generator := "ninja-multi"
 build_type := "debug"
 
