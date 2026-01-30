@@ -44,9 +44,12 @@ def open-repo [--pull-request (-p)] {
 alias l = lazygit
 alias y = yazi
 alias o = nvim .
+alias j = just
 alias or = open-repo
 alias gh = cd $env.projects
 alias gp = cd (git rev-parse --show-toplevel)
+alias cbc = clipboard copy
+alias cbp = clipboard paste
 
 # change dir after exiting yazi
 def --env y [...args] {
@@ -109,4 +112,14 @@ $env.config.shell_integration = {
   osc633: true
   # reset_application_mode is escape \x1b[?1l and was added to help ssh work better
   reset_application_mode: true
+}
+
+$env.config.table.mode = 'reinforced'
+$env.config.table.index_mode = 'auto'
+
+$env.config.history = {
+  file_format: sqlite
+  max_size: 1_000_000_000
+  sync_on_enter: false
+  isolation: true
 }

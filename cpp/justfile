@@ -15,10 +15,15 @@ conan_dir := justfile_directory()
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 
 default: install configure build
-rebuild *FLAGS: clean (install FLAGS) configure build
+
+mprocs:
+    mprocs --just
 
 test TEST='.*': build
 	ctest --preset conan-{{build_type}} --output-on-failure -R {{TEST}}
+
+install *FLAGS:
+	conan install {{conan_dir}} -pr:a {{build_profile}} -b missing {{FLAGS}}
 
 build TARGET=all_build: devenv
 	cmake --build --preset conan-{{build_type}} -t {{TARGET}}
@@ -26,11 +31,21 @@ build TARGET=all_build: devenv
 configure:
 	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
+create *FLAGS:
+	conan create {{conan_dir}} --user cn --channel staging -pr:a {{build_profile}} -b missing {{FLAGS}}
+
+format: devenv
+	cmake --build --preset conan-{{build_type}} -t clangformatfix
+
+rebuild *FLAGS: clean (install FLAGS) configure build
+
+rerebuild: clean update configure build
+
 reconfigure:
 	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
 
-install *FLAGS:
-	conan install {{conan_dir}} -pr:a {{build_profile}} -b missing {{FLAGS}}
+update:
+	conan install {{conan_dir}} -pr:a {{build_profile}} -b missing -u
 
 clean:
 	git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
@@ -38,10 +53,24 @@ clean:
 devenv:
 	nu ([~/Projects .dotfiles cpp setup-cmake.nu] | path join)
 
-create *FLAGS:
-	conan create {{conan_dir}} --user cn --channel staging -pr:a {{build_profile}} -b missing {{FLAGS}}
-
 recreate *FLAGS: cleancache (create FLAGS)
 
 cleancache:
     conan remove {{file_name(conan_dir)}} -c
+
+install1 *FLAGS:
+    conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{FLAGS}}
+
+configure1:
+    cmake -S sources -B build/msvc17
+
+build1:
+    cmake --build build/msvc17
+
+conan1 *FLAGS: (install1 FLAGS) configure1 build1
+
+create1 *FLAGS:
+    conan create . cn/staging -b missing {{FLAGS}}
+
+recreate1 *FLAGS:
+    conan remove {{file_name(conan_dir)}} -f; conan create . cn/staging -b missing {{FLAGS}}

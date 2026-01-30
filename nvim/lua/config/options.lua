@@ -12,6 +12,8 @@ vim.cmd("set number")
 
 vim.g.lazyvim_rust_diagnostics = "rust-analyzer"
 vim.o.shell = "nu"
+vim.keymap.set({ "n", "v" }, "d", '"_d')
+vim.keymap.set({ "n", "v" }, "x", '"_x')
 
 -- -- Check if 'pwsh' is executable and set the shell accordingly
 -- if vim.fn.executable("pwsh") == 1 then
