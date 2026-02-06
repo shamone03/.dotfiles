@@ -30,6 +30,18 @@ def "config wezterm" [] {
     nvim $env.WEZTERM_CONFIG_FILE
 }
 
+def "import mprocs" [--out (-o): string = '.'] {
+    cp ([$env.projects tools mprocs.yaml] | path join) $out
+}
+
+def "import justfile" [] {
+    mklink justfile ([$env.projects .dotfiles cpp justfile] | path join | str replace '/' '\' --all)
+}
+
+def "import vscode" [] {
+    cp ([$env.projects vscode-settings .vscode2] | path join) .vscode/ --recursive
+}
+
 def open-repo [--pull-request (-p)] {
     mut link = git config --get remote.origin.url | str trim
     let branch = git branch --show-current | str trim
