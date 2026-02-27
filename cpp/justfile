@@ -3,15 +3,13 @@
 set shell := ["nu", "-c"]
 
 # compiler := "clang"
+
 compiler := "msvc"
 generator := "ninja-multi"
 build_type := "debug"
-
 build_profile := compiler + "-" + generator + "-" + build_type
-
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
-
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 
 default: install configure build
@@ -20,49 +18,50 @@ mprocs:
     mprocs --just
 
 test TEST='.*': build
-	ctest --preset conan-{{build_type}} --output-on-failure -R {{TEST}}
+    ctest --preset conan-{{ build_type }} --output-on-failure -R {{ TEST }}
 
-install *FLAGS:
-	conan install {{conan_dir}} -pr:a {{build_profile}} -b missing {{FLAGS}}
+install:
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing
+
+update:
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing -u
 
 build TARGET=all_build: devenv
-	cmake --build --preset conan-{{build_type}} -t {{TARGET}}
+    cmake --build --preset conan-{{ build_type }} -t {{ TARGET }}
 
 configure:
-	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    cmake -S {{ sources_dir }} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 create *FLAGS:
-	conan create {{conan_dir}} --user cn --channel staging -pr:a {{build_profile}} -b missing {{FLAGS}}
+    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ FLAGS }}
 
 format: devenv
-	cmake --build --preset conan-{{build_type}} -t clangformatfix
+    cmake --build --preset conan-{{ build_type }} -t clangformatfix
 
-rebuild *FLAGS: clean (install FLAGS) configure build
+rebuild: clean install configure build
 
 rerebuild: clean update configure build
 
 reconfigure:
-	cmake -S {{sources_dir}} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
-
-update:
-	conan install {{conan_dir}} -pr:a {{build_profile}} -b missing -u
+    cmake -S {{ sources_dir }} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
 
 clean:
-	git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
+    git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
 
 devenv:
-	nu ([~/Projects .dotfiles cpp setup-cmake.nu] | path join)
+    nu ([~/Projects .dotfiles cpp setup-cmake.nu] | path join)
 
 recreate *FLAGS: cleancache (create FLAGS)
 
 cleancache:
-    conan remove {{file_name(conan_dir)}} -c
+    conan remove {{ file_name(conan_dir) }} -c
 
 install1 *FLAGS:
-    conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{FLAGS}}
+    conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
 
 configure1:
-    cmake -S sources -B build/msvc17
+    { "version": 4, "vendor": { "conan": {} }, "include": [ "../build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
+    cd sources; cmake --preset default; cd ..;
 
 build1:
     cmake --build build/msvc17
@@ -70,7 +69,7 @@ build1:
 conan1 *FLAGS: (install1 FLAGS) configure1 build1
 
 create1 *FLAGS:
-    conan create . cn/staging -b missing {{FLAGS}}
+    conan create . cn/staging -b missing {{ FLAGS }}
 
 recreate1 *FLAGS:
-    conan remove {{file_name(conan_dir)}} -f; conan create . cn/staging -b missing {{FLAGS}}
+    conan remove {{ file_name(conan_dir) }} -f; conan create . cn/staging -b missing {{ FLAGS }}

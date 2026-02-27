@@ -1,21 +1,47 @@
-export def --env switch [name] {
-    let venv_home = $"C:($env.projects)"
-    let venv_dir = [$venv_home virtual_environments $name] | path join
-
-    $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan: ($name)(ansi reset)";
-
+export def --env switch [name, --aims-version: string] {
     let conan_version = conan --version
         | parse '{conan} {_} {major}.{minor}.{patch}'
         | get major
         | get 0
 
     if $conan_version == "1" {
-        error make { msg: "no conan 1 support" }
+        let venv_home = $"($env.HOMEDRIVE)/v"
+        let venv_dir = [$venv_home ( $"($name)_conan-($conan_version)" )] | path join
+
+        $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
+        conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/ConanConfig.zip
+        if ($aims_version != null) {
+            let remote = $"http://cn-appaf-p01.ad.onepal.com:8081/artifactory/api/conan/conan-release-v($aims_version)"
+            let remote_name = ($"cn-conan-($aims_version)")
+            conan remote rename cn-conan $remote_name
+            conan remote update $remote_name $remote
+        }
     } else if $conan_version == "2" {
-        $env.CONAN_USER_HOME = ($venv_dir | path join ".conan2" | str replace '\' '/' --all)
+        let venv_home = $"($env.HOMEDRIVE)/v"
+        let venv_dir = [$venv_home $name] | path join
+
+        if ($aims_version != null) {
+            error make "Cannot specify aims version for conan 2 yet"
+        }
+        $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
         $env.CONAN_HOME = $env.CONAN_USER_HOME
         conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/Conan2Config.zip
-        cp ~/Projects/.dotfiles/conan-profiles/* ([$env.CONAN_HOME profiles/] | path join) --verbose --force
+
+        glob $"($env.projects)/.dotfiles/conan-profiles/*" | each {
+            let fileName = [ $env.CONAN_HOME profiles ( $in | path basename ) ] | path join | str replace '/' '\\' --all;
+            let filePath = $in | str replace '/' '\\' --all;
+            if (not ( $fileName | path exists )) {
+                mklink $fileName $filePath | print
+            }
+        }
+    }
+    if $conan_version == "1" {
+        $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)";
+        if $aims_version != null {
+            $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan 1: ($name) v($aims_version)(ansi reset)";
+        }
+    } else if $conan_version == "2" {
+        $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan: ($name)(ansi reset)";
     }
 
     use ../starship.nu;
@@ -23,4 +49,20 @@ export def --env switch [name] {
     $env.PROMPT_COMMAND = {|| $"($env.SHMN_CONAN_VENV)(do $old_prompt)"}
 
     print $"(ansi green)CONAN_USER_HOME=($env.CONAN_USER_HOME)(ansi reset)"
+}
+
+export def --env remove [name] {
+    let venv_home = $"($env.HOMEDRIVE)/v"
+    let venv_dir = [$venv_home $name] | path join
+
+    rm $venv_dir --recursive --verbose
+    try {
+        hide-env SHMN_CONAN_VENV CONAN_USER_HOME CONAN_HOME
+    }
+    use ../starship.nu
+}
+
+export def list [] {
+    let venv_home = $"($env.HOMEDRIVE)/v"
+    ls $venv_home | select name
 }
