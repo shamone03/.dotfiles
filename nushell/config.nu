@@ -13,6 +13,8 @@ $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 $env.config.rm.always_trash = true
+$env.JUST_COMMAND_COLOR = "purple"
+$env.JUST_HIGHLIGHT = true
 
 $env.YAZI_CONFIG_HOME = $"C:($env.projects)/.dotfiles/yazi/"
 
@@ -41,7 +43,7 @@ def "import justfile" [] {
 }
 
 def "import vscode" [] {
-    cp ([$env.projects vscode-settings .vscode2] | path join) .vscode/ --recursive
+	cp $"($env.projects)/.dotfiles/vscode/.vscode/" . --recursive --verbose
 }
 
 def open-repo [--pull-request (-p)] {

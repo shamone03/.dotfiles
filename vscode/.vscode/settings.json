@@ -1,0 +1,18 @@
+{
+    "cmake.configureOnOpen": true,
+    "cmake.pinnedCommands": [
+        "cmake.configure",
+        "cmake.buildWithTarget",
+        "cmake.cleanRebuild"
+    ],
+    "cmake.configureEnvironment": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "ENABLE_CODE_COVERAGE": "ON"
+    },
+    "testing.coverageToolbarEnabled": true,
+    "cmake.buildBeforeRun": true,
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_style": "file",
+    "cmake.ctest.testSuiteDelimiter": "\\.|::",
+    "explorer.excludeGitIgnore": true
+}

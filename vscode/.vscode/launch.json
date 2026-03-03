@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug AIMS",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "CMake: build",
+            "program": "${workspaceRoot}/../track-sdk/build/msvc194/Debug/AIMS.exe",
+            "cwd": "${workspaceRoot}/../track-sdk/build/msvc194/Debug/"
+        },
+        {
+            "name": "Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            "program": "${command:cmake.launchTargetPath}",
+            "cwd": "${command:cmake.getLaunchTargetDirectory}"
+        }
+    ]
+}

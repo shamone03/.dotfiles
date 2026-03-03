@@ -34,6 +34,7 @@ export def --env switch [name, --aims-version: string] {
                 mklink $fileName $filePath | print
             }
         }
+        "tools.microsoft.msbuild:vs_version=18" | save ([$venv_dir "global.conf"] | path join) --force --progress
     }
     if $conan_version == "1" {
         $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)";
