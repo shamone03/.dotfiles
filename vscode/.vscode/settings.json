@@ -9,6 +9,11 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "ENABLE_CODE_COVERAGE": "ON"
     },
+    "terminal.integrated.profiles.windows": {
+        "nushell": {
+            "path": "C:\\Program Files\\nu\\bin\\nu.exe"
+        }
+    },
     "testing.coverageToolbarEnabled": true,
     "cmake.buildBeforeRun": true,
     "C_Cpp.formatting": "clangFormat",

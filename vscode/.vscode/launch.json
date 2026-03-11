@@ -15,6 +15,16 @@
         {
             "name": "Launch",
             "type": "cppvsdbg",
+            "preLaunchTask": "Build",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            "program": "${command:cmake.launchTargetPath}",
+            "cwd": "${command:cmake.getLaunchTargetDirectory}"
+        },
+        {
+            "name": "Launch With Deps",
+            "type": "cppvsdbg",
+            "preLaunchTask": "Debug With Deps",
             "request": "launch",
             // Resolved by CMake Tools:
             "program": "${command:cmake.launchTargetPath}",

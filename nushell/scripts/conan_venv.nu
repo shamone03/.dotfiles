@@ -16,6 +16,7 @@ export def --env switch [name, --aims-version: string] {
             conan remote rename cn-conan $remote_name
             conan remote update $remote_name $remote
         }
+        "tools.microsoft.msbuild:vs_version=18" | save ([$venv_dir ".conan" "global.conf"] | path join) --force --progress
     } else if $conan_version == "2" {
         let venv_home = $"($env.HOMEDRIVE)/v"
         let venv_dir = [$venv_home $name] | path join
@@ -53,8 +54,16 @@ export def --env switch [name, --aims-version: string] {
 }
 
 export def --env remove [name] {
+    let conan_version = conan --version
+        | parse '{conan} {_} {major}.{minor}.{patch}'
+        | get major
+        | get 0
     let venv_home = $"($env.HOMEDRIVE)/v"
-    let venv_dir = [$venv_home $name] | path join
+    let venv_dir = if $conan_version == "2" {
+        [$venv_home $name] | path join
+    } else if $conan_version == "1" {
+        [$venv_home ( $"($name)_conan-($conan_version)" )] | path join
+    }
 
     rm $venv_dir --recursive --verbose
     try {
