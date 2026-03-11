@@ -1,0 +1,56 @@
+{
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "package_folder",
+            "description": "The shared library package to build, build output should already be linked",
+            "type": "promptString",
+            "default": "atlas.pre-develop"
+        }
+    ],
+    "tasks": [
+        {
+            "label": "Install",
+            "command": "just",
+            "args": ["install"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Update",
+            "command": "just",
+            "args": ["update"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Build",
+            "command": "just",
+            "args": ["build"],
+            "problemMatcher": ["$msCompile"]
+        },
+        {
+            "label": "Build Dependency",
+            "options": {
+                "cwd": "${env:HOMEDRIVE}${env:projects}/${input:package_folder}"
+            },
+            "command": "just",
+            "args": ["build"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Debug With Deps",
+            "dependsOn": ["Build Dependency", "CMake: build"]
+        },
+        {
+            "label": "Rebuild",
+            "command": "just",
+            "args": ["rebuild"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Update and Rebuild",
+            "command": "just",
+            "args": ["rerebuild"],
+            "problemMatcher": []
+        }
+    ]
+}

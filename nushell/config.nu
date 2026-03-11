@@ -130,7 +130,7 @@ $env.config.shell_integration = {
 
 $env.config.table.mode = 'reinforced'
 $env.config.table.index_mode = 'auto'
-
+$env.config.edit_mode = "emacs"
 $env.config.history = {
   file_format: sqlite
   max_size: 1_000_000_000

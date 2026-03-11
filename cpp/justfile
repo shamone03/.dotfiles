@@ -11,6 +11,7 @@ build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
+verbose := "false"
 
 default: install configure build
 
@@ -27,7 +28,7 @@ update:
     conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing -u
 
 build TARGET=all_build: devenv
-    cmake --build --preset conan-{{ build_type }} -t {{ TARGET }}
+    cmake --build {{ if verbose == "true" { "--verbose " } else { "" } }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 configure:
     cmake -S {{ sources_dir }} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -53,8 +54,11 @@ devenv:
 
 recreate *FLAGS: cleancache (create FLAGS)
 
+[doc('Remove package from conan cache')]
 cleancache:
     conan remove {{ file_name(conan_dir) }} -c
+
+cleanbuild: (build "clean")
 
 install1 *FLAGS:
     conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
