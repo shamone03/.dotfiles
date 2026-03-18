@@ -16,7 +16,8 @@ export def --env switch [name, --aims-version: string] {
             conan remote rename cn-conan $remote_name
             conan remote update $remote_name $remote
         }
-        "tools.microsoft.msbuild:vs_version=18" | save ([$venv_dir ".conan" "global.conf"] | path join) --force --progress
+        r#'tools.microsoft.msbuild:vs_version=18
+tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir ".conan" "global.conf"] | path join) --force --progress
     } else if $conan_version == "2" {
         let venv_home = $"($env.HOMEDRIVE)/v"
         let venv_dir = [$venv_home $name] | path join
