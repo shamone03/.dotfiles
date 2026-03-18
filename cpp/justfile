@@ -10,11 +10,13 @@ build_type := "debug"
 build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
-all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 verbose := "false"
 
 [private]
 conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace' } else { "" }
+
+[private]
+all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 
 default: install configure build
 
@@ -84,20 +86,20 @@ cleancache:
 
 cleanbuild: (build "clean")
 
-install1 *FLAGS:
-    conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
-
-configure1:
-    { "version": 4, "vendor": { "conan": {} }, "include": [ "../build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
-    cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
-
-build1:
-    cmake --build build/msvc17
-
-conan1 *FLAGS: (install1 FLAGS) configure1 build1
-
-create1 *FLAGS:
-    conan create . cn/staging -b missing {{ FLAGS }}
-
-recreate1 *FLAGS:
-    conan remove {{ file_name(conan_dir) }} -f; conan create . cn/staging -b missing {{ FLAGS }}
+# install1 *FLAGS:
+#     conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
+#
+# configure1:
+#     { "version": 4, "vendor": { "conan": {} }, "include": [ "../build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
+#     cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
+#
+# build1:
+#     cmake --build build/msvc17
+#
+# conan1 *FLAGS: (install1 FLAGS) configure1 build1
+#
+# create1 *FLAGS:
+#     conan create . cn/staging -b missing {{ FLAGS }}
+#
+# recreate1 *FLAGS:
+#     conan remove {{ file_name(conan_dir) }} -f; conan create . cn/staging -b missing {{ FLAGS }}

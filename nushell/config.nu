@@ -1,5 +1,4 @@
 use starship.nu;
-
 # use linux.nu *;
 # use hyprutils.nu *;
 use windows.nu *;
@@ -32,6 +31,10 @@ def "config starship" [] {
 
 def "config wezterm" [] {
     nvim $env.WEZTERM_CONFIG_FILE
+}
+
+def "config justfile" [] {
+    nvim $"($env.projects)/.dotfiles/cpp/justfile"
 }
 
 def "import mprocs" [--out (-o): string = '.'] {
@@ -138,6 +141,15 @@ $env.config.history = {
   max_size: 1_000_000_000
   sync_on_enter: false
   isolation: true
+}
+let justfile_completer = {
+    (just --dump --unstable --dump-format json | from json).recipes
+    | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
+}
+
+$env.config.completions.external = {
+    enable: true,
+    completer: $justfile_completer
 }
 
 def get-aims-latest [--conan2] {
