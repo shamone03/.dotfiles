@@ -13,6 +13,9 @@ conan_dir := justfile_directory()
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 verbose := "false"
 
+[private]
+conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace' } else { "" }
+
 default: install configure build
 
 [doc('Open commands in mprocs')]
@@ -25,7 +28,7 @@ test TEST='.*': build
 
 [doc('Conan install with the given flags')]
 installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing {{FLAGS}}
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{FLAGS}}
 
 [doc('Conan install with dependencies from cache')]
 install: installf
@@ -43,7 +46,7 @@ configure:
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
-    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ FLAGS }}
+    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{FLAGS}}
 
 [doc('Conan create with dependencies from cache')]
 create: createf
@@ -77,7 +80,7 @@ recreate *FLAGS: cleancache (createf FLAGS)
 
 [doc('Remove package from conan cache')]
 cleancache:
-    conan remove {{ file_name(conan_dir) }} -c
+    try { conan remove {{ file_name(conan_dir) }} -c }
 
 cleanbuild: (build "clean")
 
@@ -86,7 +89,7 @@ install1 *FLAGS:
 
 configure1:
     { "version": 4, "vendor": { "conan": {} }, "include": [ "../build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
-    cd sources; cmake --preset default; cd ..;
+    cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
 
 build1:
     cmake --build build/msvc17
