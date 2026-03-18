@@ -1,0 +1,54 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index c355a0f..a2776da 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -2,11 +2,7 @@
+ name = "nu_plugin_clipboard"
+ license = "MIT"
+ authors = ["Motalleb Fallahnezhad <fmotalleb@gmail.com>"]
+-keywords = [
+-    "nushell",
+-    "clipboard",
+-    "plugin",
+-]
++keywords = ["nushell", "clipboard", "plugin"]
+ homepage = "https://github.com/FMotalleb/nu_plugin_clipboard"
+ repository = "https://github.com/FMotalleb/nu_plugin_clipboard"
+ description = "A nushell plugin to copy text into clipboard or get text from it."
+@@ -15,10 +11,10 @@ edition = "2024"
+ readme = "README.md"
+ 
+ [dependencies.nu-plugin]
+-version = "0.110.0"
++version = "0.111.0"
+ 
+ [dependencies.nu-protocol]
+-version = "0.110.0"
++version = "0.111.0"
+ features = ["plugin"]
+ 
+ [dependencies.arboard]
+@@ -26,7 +22,7 @@ version = "3.6.0"
+ default-features = false
+ 
+ [dependencies.nu-json]
+-version = "0.110.0"
++version = "0.111.0"
+ 
+ [features]
+ default = []
+diff --git a/build.nu b/build.nu
+index 2c1be3f..da2e61c 100644
+--- a/build.nu
++++ b/build.nu
+@@ -13,8 +13,8 @@ def append-feature [active: bool,feature: string] {
+ }
+ 
+ def main [package_file: path = nupm.nuon] {
+-    let repo_root = (ls -f $package_file | first | get name | path dirname)
+-    let install_root = $env.NUPM_HOME | path join "plugins"
++    let repo_root = (ls -f $package_file | first | get name | path dirname) | str replace '\' '/' --all
++    let install_root = $env.NUPM_HOME | path join "plugins" | str replace '\' '/' --all
+ 
+     let name = open ($repo_root | path join "Cargo.toml") | get package.name
+     let debug = (([no,yes] | input list "Enable debug mode (do not enable unless u wanna debug)") == "yes")
