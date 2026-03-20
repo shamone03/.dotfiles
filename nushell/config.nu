@@ -38,7 +38,7 @@ def "config justfile" [] {
 }
 
 def "import mprocs" [--out (-o): string = '.'] {
-    cp ([$env.projects tools mprocs.yaml] | path join) $out
+    cp (["S:/aryah" tools aims.mprocs.yaml] | path join) $"($out)/mprocs.yaml"
 }
 
 def "import justfile" [] {
@@ -147,10 +147,10 @@ let justfile_completer = {
     | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
 }
 
-$env.config.completions.external = {
-    enable: true,
-    completer: $justfile_completer
-}
+# $env.config.completions.external = {
+#     enable: true,
+#     completer: $justfile_completer
+# }
 
 def get-aims-latest [--conan2] {
     let path = if $conan2 {
