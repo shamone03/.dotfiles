@@ -1,7 +1,6 @@
 # https://just.systems
 
 set shell := ["nu", "--no-config-file", "-c"]
-set unstable := true
 
 # compiler := "clang"
 
@@ -11,7 +10,9 @@ build_type := "debug"
 build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
-build_dir := join(conan_dir, "." + file_name(env('CONAN_HOME')))
+[private]
+env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
+build_dir := join(conan_dir, if env_name != "" { "build_" + env_name } else { "" })
 verbose := "false"
 [private]
 conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace ' } else { "" }
@@ -83,10 +84,6 @@ reconfigure:
 clean:
     git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
 
-[private]
-devenv:
-    nu ([~/Projects .dotfiles cpp setup-cmake.nu] | path join)
-
 [doc('Remove package from cache and conan create with the given flags')]
 recreate *FLAGS: cleancache (createf FLAGS)
 
@@ -95,6 +92,37 @@ cleancache PACKAGE='':
     try { conan remove {{ if PACKAGE == "" { "(" + package_info_cmd + " | get name)" } else { PACKAGE } }} -c }
 
 cleanbuild: (build "clean")
+
+[private]
+devenv:
+    #! nu
+    let root = {{ quote(replace(conan_dir, '\', '/')) }}
+    let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
+    let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-format"] ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-tidy"];
+    ls ...$links | each {
+        let fileName = $in.name | path basename;
+        let filePath = $in.name;
+        if (not ( $fileName | path exists )) {
+            mklink $fileName $filePath;
+        }
+    }
+    # needed for repos with sources/CMakeLists.txt
+    if (not ( $"($root)/CMakeUserPresets.json" | path exists )) {
+        let presets = glob $"($build_dir)/**/CMakePresets.json";
+        if ($presets | is-not-empty) {
+            ls ...$presets | first | $in.name | {
+                    version: 4,
+                    include: [ $in ]
+                }
+                | save CMakeUserPresets.json --force
+        }
+    }
+
+    if (not ( $"($root)/.clangd" | path exists )) {
+        let clangd = "CompileFlags:
+        Add: ['-std:c++20', '-std:c++latest']";
+        $clangd | save .clangd --force
+    }
 
 # install1 *FLAGS:
 #     conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
