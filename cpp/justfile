@@ -10,10 +10,11 @@ build_type := "debug"
 build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
-[private]
-env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
 build_dir := join(conan_dir, if env_name != "" { "build_" + env_name } else { "" })
 verbose := "false"
+
+[private]
+env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
 [private]
 conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace ' } else { "" }
 [private]
@@ -65,8 +66,13 @@ format: devenv
     cmake --build --preset conan-{{ build_type }} -t clangformatfix
 
 [doc('Print package version')]
-@version:
-    {{ package_info_cmd }} | print $in.version
+version:
+    #! nu
+    $env.config.table.show_empty = false;
+    let current = {{ package_info_cmd }} | { source: "current", version: $in.version };
+    let remote_and_cache = conan list ({{ package_info_cmd }} | get name) -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@cn/staging" | get version | first) } };
+    let all = [ $current ] ++ $remote_and_cache;
+    $all | each { print $"($in.source): ($in.version)" };
 
 [doc('Print package name')]
 @name:
@@ -85,7 +91,10 @@ clean:
     git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
 
 [doc('Remove package from cache and conan create with the given flags')]
-recreate *FLAGS: cleancache (createf FLAGS)
+recreatef *FLAGS: cleancache (createf FLAGS)
+
+[doc('Remove package from cache and conan create with the given flags')]
+recreate: recreatef
 
 [doc('Remove package from conan cache')]
 cleancache PACKAGE='':
