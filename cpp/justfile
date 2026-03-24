@@ -2,6 +2,10 @@
 
 set shell := ["nu", "--no-config-file", "-c"]
 
+alias b := build
+alias i := install
+alias t := test
+
 # compiler := "clang"
 
 compiler := "msvc"
@@ -21,6 +25,9 @@ conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
+
+# [private]
+# conan_version := `conan --version | split column ' ' _1 _2 version | get version | parse "{major}.{_}.{_}" | get major | print $in --raw`
 
 default: install configure build
 
@@ -65,12 +72,13 @@ create: createf
 format: devenv
     cmake --build --preset conan-{{ build_type }} -t clangformatfix
 
-[doc('Print package version')]
+[doc('Print package versions')]
 version:
     #! nu
     $env.config.table.show_empty = false;
-    let current = {{ package_info_cmd }} | { source: "current", version: $in.version };
-    let remote_and_cache = conan list ({{ package_info_cmd }} | get name) -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@cn/staging" | get version | first) } };
+    let info = {{ package_info_cmd }};
+    let current = { source: "current", version: $info.version };
+    let remote_and_cache = conan list $info.name -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@cn/staging" | get version | first) } };
     let all = [ $current ] ++ $remote_and_cache;
     $all | each { print $"($in.source): ($in.version)" };
 
@@ -134,19 +142,19 @@ devenv:
     }
 
 # install1 *FLAGS:
-#     conan install . -b missing -if build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
+#     conan install {{ conan_dir }} -b missing -if {{ build_dir }} -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
 #
 # configure1:
 #     { "version": 4, "vendor": { "conan": {} }, "include": [ "../build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
 #     cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
 #
 # build1:
-#     cmake --build build/msvc17
+#     cmake --build {{ build_dir }}
 #
-# conan1 *FLAGS: (install1 FLAGS) configure1 build1
+# create1:
+#     conan create {{ conan_dir }} cn/staging -b missing
 #
-# create1 *FLAGS:
-#     conan create . cn/staging -b missing {{ FLAGS }}
+# cleancache1:
+#     conan remove (pwd | path basename) -f
 #
-# recreate1 *FLAGS:
-#     conan remove {{ file_name(conan_dir) }} -f; conan create . cn/staging -b missing {{ FLAGS }}
+# recreate1: cleancache1 create1

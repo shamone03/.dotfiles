@@ -38,7 +38,7 @@
         },
         {
             "label": "Debug With Deps",
-            "dependsOn": ["Build Dependency", "CMake: build"]
+            "dependsOn": ["Build Dependency", "Build"]
         },
         {
             "label": "Rebuild",
