@@ -7,3 +7,9 @@ edit = [
     { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
     { run = 'nvim %*', block = true, desc = "code (block)", for = "windows" },
 ]
+
+[plugin]
+prepend_previewers = [
+    { url = "*.dll", run = "inspect-dll" },
+    { url = "*.exe", run = "inspect-dll" },
+]
