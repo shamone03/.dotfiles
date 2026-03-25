@@ -142,14 +142,14 @@ devenv:
     }
 
 # install1 *FLAGS:
-#     conan install {{ conan_dir }} -b missing -if {{ build_dir }} -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
+#     conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
 #
 # configure1:
-#     { "version": 4, "vendor": { "conan": {} }, "include": [ "../build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
+#     { "version": 4, "vendor": { "conan": {} }, "include": [ "{{ replace(build_dir, '\', '/') }}/build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
 #     cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
 #
 # build1:
-#     cmake --build {{ build_dir }}
+#     cmake --build --preset {{ build_type }}
 #
 # create1:
 #     conan create {{ conan_dir }} cn/staging -b missing
