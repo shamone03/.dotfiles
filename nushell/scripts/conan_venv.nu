@@ -9,6 +9,7 @@ export def --env switch [name, --aims-version: string] {
         let venv_dir = [$venv_home ( $"($name)_conan-($conan_version)" )] | path join
 
         $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
+        $env.CONAN_HOME = $env.CONAN_USER_HOME
         conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/ConanConfig.zip
         if ($aims_version != null) {
             let remote = $"http://cn-appaf-p01.ad.onepal.com:8081/artifactory/api/conan/conan-release-v($aims_version)"
