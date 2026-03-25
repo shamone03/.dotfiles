@@ -1,7 +1,3 @@
-[submodule "nu_plugin_clipboard"]
-    path = nushell/nu_plugin_clipboard
-    url = https://github.com/FMotalleb/nu_plugin_clipboard.git
-
 [submodule "nu_scripts"]
     path = nushell/nu_scripts
     url = https://github.com/nushell/nu_scripts.git

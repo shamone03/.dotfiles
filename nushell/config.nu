@@ -142,15 +142,15 @@ $env.config.history = {
   sync_on_enter: false
   isolation: true
 }
-let justfile_completer = {
-    (just --dump --unstable --dump-format json | from json).recipes
-    | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
+
+def "nu-complete just" [] {
+    (^just --dump --unstable --dump-format json | from json).recipes | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
 }
 
-# $env.config.completions.external = {
-#     enable: true,
-#     completer: $justfile_completer
-# }
+# Just: A Command Runner
+export extern "just" [
+    ...recipe: string@"nu-complete just", # Recipe(s) to run, may be with argument(s)
+]
 
 def get-aims-latest [--conan2] {
     let path = if $conan2 {
