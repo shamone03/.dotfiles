@@ -16,11 +16,16 @@ sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "source
 conan_dir := justfile_directory()
 build_dir := join(conan_dir, if env_name != "" { "build_" + env_name } else { "" })
 verbose := "false"
+quiet := "true"
 
 [private]
 env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
 [private]
-conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace ' } else { "" }
+cmake_verbosity := if verbose == "true" { "--log-level VERBOSE " } else if quiet == "true" { "--log-level WARNING " } else { "" }
+[private]
+conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace ' } else if quiet == "true" { '-c:a tools.cmake:configure_args+=' + quote(trim(cmake_verbosity)) + ' -v warning ' } else { "" }
+[private]
+build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 [private]
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 [private]
@@ -55,11 +60,11 @@ update: (installf "-u")
 
 [doc('Build the given target, builds all targets by default')]
 build TARGET=all_build: devenv
-    cmake --build {{ if verbose == "true" { "--verbose " } else { "" } }}--preset conan-{{ build_type }} -t {{ TARGET }}
+    cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Configure project using the conan generated cmake presets')]
 configure:
-    cmake -S {{ sources_dir }} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
