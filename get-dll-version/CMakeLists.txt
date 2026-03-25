@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 4.1)
+set(CMAKE_CXX_STANDARD 23)
+add_compile_definitions( UNICODE )
+project( get-dll-version )
+add_executable( get-dll-version get-dll-version.cpp )
+target_link_libraries( get-dll-version Version )

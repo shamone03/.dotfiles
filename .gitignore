@@ -2,3 +2,4 @@ nushell/history.*
 logs
 
 nushell/plugin.msgpackz
+/get-dll-version/build
