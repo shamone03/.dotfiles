@@ -1,34 +1,32 @@
 local function get_build_output()
-	local command = "just output"
-	local handle = io.popen(command)
-	if handle ~= nil then
-		local result = handle:read("*a")
-		local status_table = { handle:close() }
-		local status_code = status_table[3]
+	local out, err = Command("nu"):arg({ "-c", "just output" }):stdout(Command.PIPED):stderr(Command.PIPED):output()
 
-		if status_code == 0 then
-			local destination = result:gsub("[\n\r]", "") .. "/"
-			return destination
-		end
+	if out.status.success then
+		local destination = out.stdout:gsub("[\n\r]", "") .. "/"
+		return destination, nil
 	else
-		return nil
+		return nil, out.stderr
 	end
+end
+
+local function fail(s, ...)
+	ya.notify({ title = "Could not change directory", content = string.format(s, ...), timeout = 5, level = "error" })
 end
 
 return {
 	entry = function()
-		local destination = get_build_output()
+		local destination, err = get_build_output()
 		ya.dbg(destination)
-		if destination then
+		if destination ~= nil then
 			local target = Url(destination)
-			ya.emit("cd", { target })
+			local cha, file_err = fs.cha(target)
+			if cha and cha.is_dir then
+				ya.emit("cd", { target })
+			else
+				fail("%s", file_err or "")
+			end
 		else
-			ya.notify({
-				title = "Could not change directory",
-				content = "No justfile in directory?",
-				timeout = 3,
-				level = "error",
-			})
+			fail(err)
 		end
 	end,
 }
