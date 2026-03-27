@@ -14,10 +14,12 @@ build_type := "debug"
 build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
 conan_dir := justfile_directory()
-build_dir := join(conan_dir, if env_name != "" { "build_" + env_name } else { "" })
+build_dir := if env_name != "" { projects_dir / ".builds" / file_name(conan_dir) / ( "build_" + env_name ) } else { projects_dir / ".builds" / file_name(conan_dir) }
 verbose := "false"
-quiet := "true"
+quiet := "false"
 
+[private]
+projects_dir := env('projects', '.')
 [private]
 env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
 [private]
@@ -99,9 +101,14 @@ rerebuild: clean update configure build
 reconfigure:
     cmake -S {{ sources_dir }} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
 
-[doc('Git clean project directory')]
+[doc('Remove build artifacts')]
 clean:
-    git clean -xdf -e Cargo.lock -e .vscode -e sources -e justfile -e tools -e integration-tests
+    rm {{ build_dir }} -rf --verbose; \
+    rm source/CMakeUserPresets.json -f --verbose; \
+    rm compile_commands.json -f --verbose; \
+    rm CMakeUserPresets.json -f --verbose; \
+    rm .clang* -f --verbose; \
+    git clean -xdf -e sources -e tools -e integration-tests
 
 [doc('Remove package from cache and conan create with the given flags')]
 recreatef *FLAGS: cleancache (createf FLAGS)

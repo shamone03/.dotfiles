@@ -1,4 +1,3 @@
-
 [[input.prepend_keymap]]
 on = "<Esc>"
 run = "close"
@@ -8,3 +7,8 @@ desc = "Cancel input"
 on = ["g", "h"]
 run = "cd ~/Projects"
 desc = "Go to projects"
+
+[[mgr.prepend_keymap]]
+on = ["g", "b"]
+run = 'plugin cd-build-output'
+desc = "Go to build output"
