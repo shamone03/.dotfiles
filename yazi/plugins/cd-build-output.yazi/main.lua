@@ -3,7 +3,7 @@ local function get_build_output()
 
 	if out.status.success then
 		local destination = out.stdout:gsub("[\n\r]", "") .. "/"
-		return destination, nil
+		return string.format("%s/build/msvc194/Debug", destination), nil
 	else
 		return nil, out.stderr
 	end
