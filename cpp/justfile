@@ -19,6 +19,8 @@ verbose := "false"
 quiet := "false"
 
 [private]
+git_branch := `git branch --show-current`
+[private]
 projects_dir := env('projects', '.')
 [private]
 env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
@@ -65,8 +67,7 @@ build TARGET=all_build: devenv
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Configure project using the conan generated cmake presets')]
-configure:
-    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+configure: configuref
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
@@ -98,8 +99,7 @@ rebuild: clean install configure build
 rerebuild: clean update configure build
 
 [doc('Remove cmake cache and configure project using the conan generated cmake presets')]
-reconfigure:
-    cmake -S {{ sources_dir }} --preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --fresh
+reconfigure: (configuref "--fresh")
 
 [doc('Remove build artifacts')]
 clean:
@@ -108,7 +108,7 @@ clean:
     rm compile_commands.json -f --verbose; \
     rm CMakeUserPresets.json -f --verbose; \
     rm .clang* -f --verbose; \
-    git clean -xdf -e sources -e tools -e integration-tests
+    git clean -xdf -e sources -e tools -e integration-tests -e justfile
 
 [doc('Remove package from cache and conan create with the given flags')]
 recreatef *FLAGS: cleancache (createf FLAGS)
@@ -123,36 +123,43 @@ cleancache PACKAGE='':
 cleanbuild: (build "clean")
 
 [private]
-devenv:
+configuref *FLAGS: devenv
+    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON {{ FLAGS }}
+
+[private]
+user_preset:
     #! nu
-    let root = {{ quote(replace(conan_dir, '\', '/')) }}
     let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
-    let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-format"] ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-tidy"];
-    ls ...$links | each {
-        let fileName = $in.name | path basename;
-        let filePath = $in.name;
-        if (not ( $fileName | path exists )) {
-            mklink $fileName $filePath;
-        }
-    }
+    let sources_dir = {{ quote(replace(sources_dir, '\', '/')) }}
     # needed for repos with sources/CMakeLists.txt
-    if (not ( $"($root)/CMakeUserPresets.json" | path exists )) {
-        let presets = glob $"($build_dir)/**/CMakePresets.json";
-        if ($presets | is-not-empty) {
-            ls ...$presets | first | $in.name | {
-                    version: 4,
-                    include: [ $in ]
-                }
-                | save CMakeUserPresets.json --force
-        }
+    let presets = glob $"($build_dir)/**/CMakePresets.json";
+    if ($presets | is-not-empty) {
+        let user_preset = ls ...$presets | first | $in.name | {
+                version: 4,
+                include: [ $in ]
+            };
+        rm ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force --verbose
+        $user_preset | save ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force
     }
 
-    if (not ( $"($root)/.clangd" | path exists )) {
+[private]
+devenv: user_preset
+    #! nu
+    if ([compile_commands.json .clang-format .clang-tidy .clangd] | any { not ($in | path exists) }) {
+        let root = {{ quote(replace(conan_dir, '\', '/')) }}
+        let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
+        let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-format"] ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-tidy"];
+        ls ...$links | each {
+            let fileName = $in.name | path basename;
+            let filePath = $in.name;
+            if (not ( $fileName | path exists )) {
+                mklink $fileName $filePath
+            }
+        }
         let clangd = "CompileFlags:
         Add: ['-std:c++20', '-std:c++latest']";
         $clangd | save .clangd --force
     }
-
 # install1 *FLAGS:
 #     conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
 #
