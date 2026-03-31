@@ -5,7 +5,10 @@ end
 function M:peek(job)
 	local file_path = tostring(job.file.path)
 
-	local output, err = Command("nu"):arg({ "-c", string.format("just --justfile %s --list", file_path) }):output()
+	local output, err = Command("nu"):arg({
+		"-c",
+		string.format("just --justfile %s list", file_path),
+	}):output()
 
 	if err then
 		return fail(job, "" .. output.stderr)

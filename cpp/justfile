@@ -40,45 +40,44 @@ package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
 
 default: install configure build
 
-[doc('Open commands in mprocs')]
-mprocs:
-    mprocs --just
-
-[doc('Run the given test, runs all tests by default')]
-test TEST='.*': build
-    ctest --preset conan-{{ build_type }} --output-on-failure -R {{ TEST }}
-
-[doc('Conan install with the given flags')]
-installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }}{{ FLAGS }}
-
-[doc('Get build output')]
-@output:
-    print {{ build_dir }}
-
 [doc('Conan install with dependencies from cache')]
 install: installf
 
 [doc('Conan install with updated dependencies from remotes')]
 update: (installf "-u")
 
-[doc('Build the given target, builds all targets by default')]
-build TARGET=all_build: devenv
-    cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
+[doc('Conan create with dependencies from cache')]
+create: createf
 
 [doc('Configure project using the conan generated cmake presets')]
 configure: configuref
 
+[doc('Build the given target, builds all targets by default')]
+build TARGET=all_build: devenv
+    cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
+
+[doc('Run the given test, runs all tests by default')]
+test TEST='.*': build
+    ctest --preset conan-{{ build_type }} --output-on-failure -R {{ TEST }}
+
+[doc('Format all files')]
+format: (build "clangformatfix")
+
+rebuild: clean install configure build
+
+rerebuild: clean update configure build
+
+[doc('Get build output')]
+@output:
+    print {{ build_dir }}
+
+[doc('Conan install with the given flags')]
+installf *FLAGS:
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }}{{ FLAGS }}
+
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
     conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{ FLAGS }}
-
-[doc('Conan create with dependencies from cache')]
-create: createf
-
-[doc('Format all files')]
-format: devenv
-    cmake --build --preset conan-{{ build_type }} -t clangformatfix
 
 [doc('Print package versions')]
 version:
@@ -93,10 +92,6 @@ version:
 [doc('Print package name')]
 @name:
     {{ package_info_cmd }} | print $in.name
-
-rebuild: clean install configure build
-
-rerebuild: clean update configure build
 
 [doc('Remove cmake cache and configure project using the conan generated cmake presets')]
 reconfigure: (configuref "--fresh")
@@ -138,7 +133,7 @@ user_preset:
                 version: 4,
                 include: [ $in ]
             };
-        rm ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force --verbose
+        rm ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force;
         $user_preset | save ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force
     }
 
@@ -160,6 +155,11 @@ devenv: user_preset
         Add: ['-std:c++20', '-std:c++latest']";
         $clangd | save .clangd --force
     }
+
+[doc('List all recipes')]
+@list:
+    just --list-prefix "" --list-heading "" --unsorted --list
+
 # install1 *FLAGS:
 #     conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
 #
