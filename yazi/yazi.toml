@@ -2,14 +2,37 @@
 # If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
 "$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 
+[mgr]
+ratio = [0, 4, 3]
+
 [opener]
 edit = [
     { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
     { run = 'nvim %*', block = true, desc = "code (block)", for = "windows" },
 ]
 
+just = [
+    { run = 'just default', desc = "default", block = true },
+    { run = 'just build', desc = "build", block = true },
+    { run = 'just clean', desc = "clean", block = true },
+]
+
+[open]
+prepend_rules = [{ url = "*justfile", use = ["just", "edit"] }]
+
 [plugin]
 prepend_previewers = [
     { url = "*.dll", run = "inspect-dll" },
     { url = "*.exe", run = "inspect-dll" },
+    { url = "*justfile", run = "justfile" },
 ]
+
+[[plugin.prepend_fetchers]]
+id = "git"
+url = "*"
+run = "git"
+
+[[plugin.prepend_fetchers]]
+id = "git"
+url = "*/"
+run = "git"

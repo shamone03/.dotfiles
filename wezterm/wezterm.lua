@@ -28,6 +28,23 @@ config.cursor_blink_rate = 800
 config.front_end = "WebGpu"
 local act = wezterm.action
 
+-- config.window_frame = {
+-- 	inactive_titlebar_bg = "#6e6a86",
+-- 	active_titlebar_bg = "#191724",
+--
+-- 	inactive_titlebar_fg = "#e0def4",
+-- 	active_titlebar_fg = "#e0def4",
+-- 	--
+-- 	inactive_titlebar_border_bottom = "#6e6a86",
+-- 	active_titlebar_border_bottom = "#1f1d2e",
+-- 	--
+-- 	button_fg = "#191724",
+-- 	button_bg = "#191724",
+-- 	button_hover_fg = "#191724",
+-- 	button_hover_bg = "#191724",
+-- }
+-- config.color_scheme = 'rose-pine'
+
 config.keys = {
 	{
 		key = "+",

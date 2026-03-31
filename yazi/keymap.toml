@@ -12,3 +12,8 @@ desc = "Go to projects"
 on = ["g", "b"]
 run = 'plugin cd-build-output'
 desc = "Go to build output"
+
+[[mgr.prepend_keymap]]
+on = ["g", "j"]
+run = 'shell --block -- just --choose'
+desc = "Pick recipe"
