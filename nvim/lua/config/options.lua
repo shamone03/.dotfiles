@@ -9,6 +9,8 @@ vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
 vim.o.fixendofline = false
 vim.cmd("set guicursor=a:hor20,i:ver20")
 vim.cmd("set number")
+vim.o.backup = true
+vim.o.backupdir = "C:/.backup//"
 
 vim.g.lazyvim_rust_diagnostics = "rust-analyzer"
 vim.o.shell = "nu"
