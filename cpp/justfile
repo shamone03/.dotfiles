@@ -53,8 +53,8 @@ create: createf
 [doc('Configure project using the conan generated cmake presets')]
 configure: configuref
 
-[doc('Build the given target, builds all targets by default'), parallel]
-build TARGET=all_build: devenv ( user_preset conan_dir )
+[doc('Build the given target, builds all targets by default')]
+build TARGET=all_build: (user_preset conan_dir) devenv
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Run the given test, runs all tests by default')]
@@ -92,6 +92,7 @@ versions:
     let current = { source: "current", version: $info.version };
     let remote_and_cache = conan list $info.name -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@cn/staging" | get version | first) } };
     let all = [ $current ] ++ $remote_and_cache;
+    print $info.name
     $all | each { print $"($in.source): ($in.version)" };
 
 [doc('Print package name')]
@@ -123,8 +124,8 @@ cleancache PACKAGE='':
 [doc('Remove build artifacts')]
 cleanbuild: (build "clean")
 
-[private, parallel]
-configuref *FLAGS: devenv (user_preset sources_dir)
+[private]
+configuref *FLAGS: (user_preset sources_dir)
     cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON {{ FLAGS }}
 
 [private]
@@ -150,18 +151,18 @@ user_preset FOLDER:
 [private]
 devenv:
     #! nu
+    use std null-device
+    $env.config.table.show_empty = false;
     let root = {{ quote(replace(conan_dir, '\', '/')) }}
     let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
     let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ (glob $"($env.projects)/.dotfiles/cpp/.clang*");
     $links
         | each { { file_name: ($in | path basename), file_path: ($in | str replace '/' '\' --all) } }
         | where not ([ $root $it.file_name ] | path join | path exists)
-        | par-each { mklink $in.file_name $in.file_path }
-    if not ([$root .clangd] | path join | path exists) {
-        let clangd = "CompileFlags:
-        Add: ['-std:c++20', '-std:c++latest']";
-        $clangd | save .clangd --force
-    }
+        | each {
+            mklink $in.file_name $in.file_path;
+            attrib +h $in.file_name /l o> (null-device)
+        }
 
 [doc('List all recipes')]
 @list:
