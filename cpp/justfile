@@ -53,6 +53,9 @@ create: createf
 [doc('Configure project using the conan generated cmake presets')]
 configure: configuref
 
+[doc('Remove cmake cache and configure project using the conan generated cmake presets')]
+reconfigure: (configuref "--fresh")
+
 [doc('Build the given target, builds all targets by default')]
 build TARGET=all_build: (user_preset conan_dir) devenv
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
@@ -71,14 +74,6 @@ rerebuild: clean update configure build
 [doc('Get build output')]
 @output:
     print {{ build_dir }}
-
-[doc('Conan install with the given flags')]
-installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }}{{ FLAGS }}
-
-[doc('Conan create package with the given flags')]
-createf *FLAGS:
-    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{ FLAGS }}
 
 [doc('Print current package version')]
 @version:
@@ -99,9 +94,6 @@ versions:
 @name:
     {{ package_info_cmd }} | print $in.name
 
-[doc('Remove cmake cache and configure project using the conan generated cmake presets')]
-reconfigure: (configuref "--fresh")
-
 [doc('Remove install and build artifacts')]
 clean:
     rm {{ build_dir }} -rf --verbose --trash; \
@@ -112,9 +104,6 @@ clean:
     git clean -xdf test_package
 
 [doc('Remove package from cache and conan create with the given flags')]
-recreatef *FLAGS: cleancache (createf FLAGS)
-
-[doc('Remove package from cache and conan create with the given flags')]
 recreate: recreatef
 
 [doc('Remove package from conan cache')]
@@ -123,6 +112,17 @@ cleancache PACKAGE='':
 
 [doc('Remove build artifacts')]
 cleanbuild: (build "clean")
+
+[doc('Conan install with the given flags')]
+installf *FLAGS:
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }}{{ FLAGS }}
+
+[doc('Conan create package with the given flags')]
+createf *FLAGS:
+    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{ FLAGS }}
+
+[doc('Remove package from cache and conan create with the given flags')]
+recreatef *FLAGS: cleancache (createf FLAGS)
 
 [private]
 configuref *FLAGS: (user_preset sources_dir)
