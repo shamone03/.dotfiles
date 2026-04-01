@@ -1,0 +1,157 @@
+---
+# General Settings
+BasedOnStyle: Mozilla # Options: LLVM, Google, Chromium, Mozilla, WebKit, Microsoft, GNU
+Standard: Latest # Options: C++98, C++03, C++11, C++14, C++17, C++20, Latest
+LineEnding: CRLF # Options: LF, CRLF, CR
+ColumnLimit: 160
+SortIncludes: false
+
+# InsertTrailingCommas: None # Options: None, Wrapped
+# ReflowComments: false
+# SortUsingDeclarations: LexicographicNumeric # Options: None, Lexicographic, LexicographicNumeric
+# CompactNamespaces: true
+
+# # Indentation Settings
+UseTab: Always # Options: Never, ForIndentation, Always
+TabWidth: 4
+IndentWidth: 4
+ConstructorInitializerIndentWidth: 4
+NamespaceIndentation: All # Options: None, Inner, All
+ContinuationIndentWidth: 4
+BracedInitializerIndentWidth: 4
+IndentPPDirectives: BeforeHash # Options: None, BeforeHash, AfterHash
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+# IndentCaseBlocks: false
+# IndentCaseLabels: false
+# IndentExternBlock: AfterExternBlock # Options: NoIndent, Indent, AfterExternBlock
+# IndentGotoLabels: true
+# IndentRequiresClause: true
+# IndentWrappedFunctionNames: false
+# BinPackArguments: false
+# BinPackParameters: false
+# LambdaBodyIndentation: Signature # Options: None, Signature
+
+# # Alignment Settings
+AlignAfterOpenBracket: AlwaysBreak # Options: Align, DontAlign, AlwaysBreak
+PackConstructorInitializers: NextLineOnly # Options: Never, Always, BinPack, NextLineOnly
+AlignArrayOfStructures: None # Options: None, Left, Right
+# AlignConsecutiveAssignments: false
+# AlignConsecutiveDeclarations: false
+# AlignEscapedNewlines: Right # Options: DontAlign, Left, Right
+# AlignOperands: Align # Options: Align, DontAlign
+# AlignConsecutiveMacros: false
+# AlignConsecutiveBitFields: false
+# AlignTrailingComments: false
+# QualifierAlignment: Leave # Options: Leave, Right, Custom
+# ReferenceAlignment: Pointer # Options: Pointer, Left, Right, Middle
+# # Brace Wrapping Settings
+
+# # New line Settings
+BreakBeforeBraces: Allman # Options: Attach, Linux, Mozilla, Stroustrup, Allman, Whitesmiths, GNU, WebKit, Custom
+BreakInheritanceList: AfterColon # Options: BeforeColon, AfterColon, BeforeComma, AfterComma
+BreakConstructorInitializers: AfterColon # Options: BeforeColon, AfterColon, BeforeComma, AfterComma
+BreakAfterReturnType: Automatic # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions, Automatic
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortLambdasOnASingleLine: Inline # Options: None, Empty, Inline (short, simple ones), All
+BraceWrapping:
+  AfterFunction: true
+  AfterClass: true
+  AfterControlStatement: Always # Options: Never, MultiLine, Always
+  AfterEnum: true
+  AfterStruct: true
+  AfterNamespace: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeWhile: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+Cpp11BracedListStyle: true
+BreakArrays: true
+# BreakFunctionDefinitionParameters: true
+# BreakAdjacentStringLiterals: false
+# BreakStringLiterals: true
+# MaxEmptyLinesToKeep: 2
+# BreakAfterAttributes: Leave # Options: Always, Leave, Never
+# BreakAfterJaFieldAnnotations: false
+# BreakBeforeBinaryOperators: None # Options: None, NonAssignment, All
+# BreakBeforeConceptDeclarations: Always # Options: Always, Never
+# BreakBeforeInlineASMColon: OnlyMultiline # Options: Always, Never, OnlyMultiline
+# BreakBeforeTernaryOperators: true
+# BreakTemplateDeclarations: Yes # Options: Yes, No, MultiLine
+# AlwaysBreakAfterDefinitionReturnType: TopLevel # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions
+# AlwaysBreakBeforeMultilineStrings: false
+# AllowAllConstructorInitializersOnNextLine: true
+# AllowBreakBeforeNoexceptSpecifier: Never # Options: Always, Never
+# AllowShortCaseExpressionOnASingleLine: true
+# AllowShortCaseLabelsOnASingleLine: true
+# AllowShortCompoundRequirementOnASingleLine: true
+# AllowShortEnumsOnASingleLine: true
+# AllowShortFunctionsOnASingleLine: InlineOnly # Options: None, InlineOnly, Empty, Inline
+# KeepEmptyLines:
+#   AtEndOfFile: false
+#   AtStartOfBlock: true
+#   AtStartOfFile: true
+# AlwaysBreakAfterReturnType: Automatic # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions, Automatic
+# InsertNewlineAtEOF: false
+
+# # Spacing Settings
+SpaceBeforeInheritanceColon: false
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeParens: Never # Options: Never, ControlStatements, Always
+# SpaceAfterCStyleCast: false
+# SpaceAfterLogicalNot: false
+# SpaceAfterTemplateKeyword: false
+# SpaceAroundPointerQualifiers: Default # Options: Default, Before, After, Both
+# SpaceBeforeAssignmentOperators: true
+# SpaceBeforeCaseColon: false
+# SpaceBeforeCpp11BracedList: false
+# SpaceBeforeJsonColon: false
+# SpaceBeforeParensOptions:
+#   AfterControlStatements: false
+# AfterForeachMacros: true
+# AfterFunctionDeclarationName: false
+# AfterFunctionDefinitionName: false
+# AfterIfMacros: true
+# AfterOverloadedOperator: false
+# AfterPlacementOperator: true
+# AfterRequiresInClause: false
+# AfterRequiresInExpression: false
+# BeforeNonEmptyParentheses: false
+# SpaceBeforeRangeBasedForLoopColon: true
+# SpaceBeforeSquareBrackets: false
+# SpaceInEmptyBlock: false
+# SpacesBeforeTrailingComments: 1
+# SpacesInAngles: Never # Options: Never, Always
+# SpacesInContainerLiterals: true
+# SpacesInParens: Custom # Options: Never, Always, Custom
+# SpacesInParensOptions:
+#   ExceptDoubleParentheses: false
+#   InConditionalStatements: true
+#   InCStyleCasts: false
+#   InEmptyParentheses: false
+#   Other: true
+# SpacesInSquareBrackets: false
+# SpaceInEmptyParentheses: false
+# SpacesInCStyleCastParentheses: false
+# SpacesInConditionalStatement: true
+SpacesInParentheses: true
+
+# # Penalty Settings
+# PenaltyBreakAssignment: 500 # Penalty for breaking an assignment onto a new line
+# PenaltyBreakBeforeFirstCallParameter: 50 # Penalty for breaking before the first parameter in a function call
+# PenaltyBreakComment: 300 # Penalty for breaking a line before a comment
+# PenaltyBreakFirstLessLess: 120 # Penalty for breaking after the first '<<' in a stream
+# PenaltyBreakOpenParenthesis: 0 # Penalty for breaking after an open parenthesis
+# PenaltyBreakScopeResolution: 500 # Penalty for breaking a scope resolution operator (::)
+# PenaltyBreakString: 1000 # Penalty for breaking a string literal
+# PenaltyBreakTemplateDeclaration: 10 # Penalty for breaking a template declaration
+# PenaltyExcessCharacter: 1000000 # Penalty for exceeding the column limit
+# PenaltyIndentedWhitespace: 0 # Penalty for indented whitespace
+PenaltyReturnTypeOnItsOwnLine: 1000 # Penalty for placing the return type on its own line

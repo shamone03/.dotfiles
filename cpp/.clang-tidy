@@ -1,0 +1,5 @@
+---
+Checks:          'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,bugprone-*,performance-*,readability-*,-modernize-use-trailing-return-type,misc-const-correctness,misc-include-cleaner,misc-header-include-cycle,misc-unused-parameters'
+# WarningsAsErrors: 'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,bugprone-*,performance-*,readability-*,-modernize-use-trailing-return-type,-modernize-use-nodiscard,misc-const-correctness,misc-include-cleaner,misc-header-include-cycle,misc-unused-parameters'
+HeaderFilterRegex: '.*'
+...

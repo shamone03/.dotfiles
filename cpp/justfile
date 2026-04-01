@@ -5,6 +5,7 @@ set shell := ["nu", "--no-config-file", "-c"]
 alias b := build
 alias i := install
 alias t := test
+alias c := configure
 
 # compiler := "clang"
 
@@ -18,8 +19,8 @@ build_dir := if env_name != "" { projects_dir / ".builds" / file_name(conan_dir)
 verbose := "false"
 quiet := "false"
 
-[private]
-git_branch := `git branch --show-current`
+# [private]
+# git_branch := `git branch --show-current`
 [private]
 projects_dir := env('projects', '.')
 [private]
@@ -52,8 +53,8 @@ create: createf
 [doc('Configure project using the conan generated cmake presets')]
 configure: configuref
 
-[doc('Build the given target, builds all targets by default')]
-build TARGET=all_build: devenv
+[doc('Build the given target, builds all targets by default'), parallel]
+build TARGET=all_build: devenv ( user_preset conan_dir )
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Run the given test, runs all tests by default')]
@@ -79,8 +80,12 @@ installf *FLAGS:
 createf *FLAGS:
     conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{ FLAGS }}
 
-[doc('Print package versions')]
-version:
+[doc('Print current package version')]
+@version:
+    print ({{ package_info_cmd }} | get version)
+
+[doc('Print package current, remote and cache versions')]
+versions:
     #! nu
     $env.config.table.show_empty = false;
     let info = {{ package_info_cmd }};
@@ -96,14 +101,14 @@ version:
 [doc('Remove cmake cache and configure project using the conan generated cmake presets')]
 reconfigure: (configuref "--fresh")
 
-[doc('Remove build artifacts')]
+[doc('Remove install and build artifacts')]
 clean:
-    rm {{ build_dir }} -rf --verbose; \
-    rm source/CMakeUserPresets.json -f --verbose; \
+    rm {{ build_dir }} -rf --verbose --trash; \
+    rm {{ conan_dir }}/CMakeUserPresets.json -f --verbose; \
+    rm {{ sources_dir }}/CMakeUserPresets.json -f --verbose; \
     rm compile_commands.json -f --verbose; \
-    rm CMakeUserPresets.json -f --verbose; \
     rm .clang* -f --verbose; \
-    git clean -xdf -e sources -e tools -e integration-tests -e justfile
+    git clean -xdf test_package
 
 [doc('Remove package from cache and conan create with the given flags')]
 recreatef *FLAGS: cleancache (createf FLAGS)
@@ -115,17 +120,19 @@ recreate: recreatef
 cleancache PACKAGE='':
     try { conan remove {{ if PACKAGE == "" { "(" + package_info_cmd + " | get name)" } else { PACKAGE } }} -c }
 
+[doc('Remove build artifacts')]
 cleanbuild: (build "clean")
 
-[private]
-configuref *FLAGS: devenv
+[private, parallel]
+configuref *FLAGS: devenv (user_preset sources_dir)
     cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON {{ FLAGS }}
 
 [private]
-user_preset:
+user_preset FOLDER:
     #! nu
     let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
     let sources_dir = {{ quote(replace(sources_dir, '\', '/')) }}
+    let root = {{ quote(replace(FOLDER, '\', '/')) }}
     # needed for repos with sources/CMakeLists.txt
     let presets = glob $"($build_dir)/**/CMakePresets.json";
     if ($presets | is-not-empty) {
@@ -134,23 +141,23 @@ user_preset:
                 include: [ $in ]
             };
         rm ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force;
-        $user_preset | save ( [ $sources_dir CMakeUserPresets.json ] | path join ) --force
+        $user_preset | save ( [ $root CMakeUserPresets.json ] | path join ) --force
+    } else {
+        print $"(ansi red)[SHMN] No presets found, did you install?(ansi reset)"
+        exit 1
     }
 
 [private]
-devenv: user_preset
+devenv:
     #! nu
-    if ([compile_commands.json .clang-format .clang-tidy .clangd] | any { not ($in | path exists) }) {
-        let root = {{ quote(replace(conan_dir, '\', '/')) }}
-        let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
-        let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-format"] ++ [$"($env.projects)/cmake-build-smith/additional-files/.clang-tidy"];
-        ls ...$links | each {
-            let fileName = $in.name | path basename;
-            let filePath = $in.name;
-            if (not ( $fileName | path exists )) {
-                mklink $fileName $filePath
-            }
-        }
+    let root = {{ quote(replace(conan_dir, '\', '/')) }}
+    let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
+    let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ (glob $"($env.projects)/.dotfiles/cpp/.clang*");
+    $links
+        | each { { file_name: ($in | path basename), file_path: ($in | str replace '/' '\' --all) } }
+        | where not ([ $root $it.file_name ] | path join | path exists)
+        | par-each { mklink $in.file_name $in.file_path }
+    if not ([$root .clangd] | path join | path exists) {
         let clangd = "CompileFlags:
         Add: ['-std:c++20', '-std:c++latest']";
         $clangd | save .clangd --force
@@ -158,7 +165,7 @@ devenv: user_preset
 
 [doc('List all recipes')]
 @list:
-    just --list-prefix "" --list-heading "" --unsorted --list
+    just --list-prefix "" --list-heading $"(just --evaluate)\n" --unsorted --list
 
 # install1 *FLAGS:
 #     conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}

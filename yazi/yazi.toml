@@ -8,23 +8,39 @@ ratio = [0, 4, 3]
 [opener]
 edit = [
     { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
-    { run = 'nvim %*', block = true, desc = "code (block)", for = "windows" },
+    { run = 'nvim %*', block = true, desc = "nvim", for = "windows" },
 ]
-
 just = [
     { run = 'just default', desc = "default", block = true },
+    { run = 'just configure', desc = "configure", block = true },
     { run = 'just build', desc = "build", block = true },
     { run = 'just clean', desc = "clean", block = true },
 ]
+just-folder = [
+    { run = 'just %s/default', desc = "default", block = true },
+    { run = 'just %s/configure', desc = "configure", block = true },
+    { run = 'just %s/build', desc = "build", block = true },
+    { run = 'just %s/clean', desc = "clean", block = true },
+]
 
 [open]
-prepend_rules = [{ url = "*justfile", use = ["just", "edit"] }]
+prepend_rules = [
+    { url = "*justfile", use = [
+        "just",
+        "edit",
+    ] },
+    { url = "folder/*", use = [
+        "edit",
+        "just-folder",
+    ] },
+]
 
 [plugin]
 prepend_previewers = [
     { url = "*.dll", run = "inspect-dll" },
     { url = "*.exe", run = "inspect-dll" },
     { url = "*justfile", run = "justfile" },
+    { url = "*conanfile.py", run = "conanfile" },
 ]
 
 [[plugin.prepend_fetchers]]

@@ -1,5 +1,5 @@
 export def get [] {
-    glob $"C:($env.projects)/project-aims/projects/**/project-components.json"
+    glob $"($env.projects)/project-aims/projects/**/project-components.json"
         | each {
             {
                 project_path: ($in | path dirname | path split | skip until { $in == project-aims } | skip 2 | path join)

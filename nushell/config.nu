@@ -15,7 +15,7 @@ $env.config.rm.always_trash = true
 $env.JUST_COMMAND_COLOR = "purple"
 $env.JUST_HIGHLIGHT = true
 
-$env.YAZI_CONFIG_HOME = $"C:($env.projects)/.dotfiles/yazi/"
+$env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
 
 def "config lazygit" [] {
 	nvim ...(glob $"($env.projects)/.dotfiles/lazygit/*.yml" --no-dir)
@@ -42,7 +42,7 @@ def "import mprocs" [--out (-o): string = '.'] {
 }
 
 def "import justfile" [] {
-    mklink justfile ([$env.projects .dotfiles cpp justfile] | path join | str replace '/' '\' --all)
+    mklink .justfile ([$env.projects .dotfiles cpp justfile] | path join | str replace '/' '\' --all)
 }
 
 def "import vscode" [] {
@@ -67,8 +67,6 @@ alias j = just
 alias or = open-repo
 alias gh = cd $env.projects
 alias gp = cd (git rev-parse --show-toplevel)
-alias cbc = clipboard copy
-alias cbp = clipboard paste
 
 # change dir after exiting yazi
 def --env y [...args] {
@@ -156,44 +154,44 @@ export extern "just" [
     ...recipe: string@"nu-complete just", # Recipe(s) to run, may be with argument(s)
 ]
 
-def get-aims-latest [--conan2] {
-    let path = if $conan2 {
-        "Conan2"
-    } else {
-        "All"
-    }
-
-    let builds = http get $"http://cn-appaf-p01.ad.onepal.com:8082/ui/api/v1/ui/nativeBrowser/aims-builds-daily/($path)/"
-    | get children
-    let build_name = if $conan2 {
-        $builds | last | get name
-    } else {
-        # skip "AIMS_Latest.zip"
-        $builds | last 2 | first | get name
-    }
-    print $"Found ($build_name)"
-
-    let options = {
-        repoKey: "aims-builds-daily",
-        path: $"($path)/($build_name)",
-        archiveType: "zip",
-        includeChecksum: false
-    } | url build-query
-    let url = $"http://cn-appaf-p01.ad.onepal.com:8082/ui/api/v1/ui/artifactactions/downloadfolder?($options)"
-    print $"Downloading ($build_name) from ($url)"
-    rm [$env.temp $build_name] --force --verbose
-    http get $url
-    | into binary --compact
-    | save ([$env.temp $build_name] | path join | path expand) --force;
-
-    print "Download complete"
-
-    let out = [$env.projects AIMS_Latest ( if $conan2 { "Conan2" } else { "" } ) $build_name] | path join | path expand
-    if (not ($out | path exists)) {
-        mkdir $out
-    }
-
-    print $"Extracting to ($out)"
-    tar -xf ([$env.temp $build_name] | path join | path expand) -C $out
-    print "Extract complete"
-}
+# def get-aims-latest [--conan2] {
+#     let path = if $conan2 {
+#         "Conan2"
+#     } else {
+#         "All"
+#     }
+#
+#     let builds = http get $"http://cn-appaf-p01.ad.onepal.com:8082/ui/api/v1/ui/nativeBrowser/aims-builds-daily/($path)/"
+#     | get children
+#     let build_name = if $conan2 {
+#         $builds | last | get name
+#     } else {
+#         # skip "AIMS_Latest.zip"
+#         $builds | last 2 | first | get name
+#     }
+#     print $"Found ($build_name)"
+#
+#     let options = {
+#         repoKey: "aims-builds-daily",
+#         path: $"($path)/($build_name)",
+#         archiveType: "zip",
+#         includeChecksum: false
+#     } | url build-query
+#     let url = $"http://cn-appaf-p01.ad.onepal.com:8082/ui/api/v1/ui/artifactactions/downloadfolder?($options)"
+#     print $"Downloading ($build_name) from ($url)"
+#     rm [$env.temp $build_name] --force --verbose
+#     http get $url
+#     | into binary --compact
+#     | save ([$env.temp $build_name] | path join | path expand) --force;
+#
+#     print "Download complete"
+#
+#     let out = [$env.projects AIMS_Latest ( if $conan2 { "Conan2" } else { "" } ) $build_name] | path join | path expand
+#     if (not ($out | path exists)) {
+#         mkdir $out
+#     }
+#
+#     print $"Extracting to ($out)"
+#     tar -xf ([$env.temp $build_name] | path join | path expand) -C $out
+#     print "Extract complete"
+# }
