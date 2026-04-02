@@ -1,8 +1,8 @@
 use starship.nu;
 
-# use linux.nu *;
+use linux.nu *;
 # use hyprutils.nu *;
-use windows.nu *;
+# use windows.nu *;
 
 use search.nu;
 
