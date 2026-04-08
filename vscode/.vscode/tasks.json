@@ -30,7 +30,7 @@
         {
             "label": "Build Dependency",
             "options": {
-                "cwd": "${env:HOMEDRIVE}${env:projects}/${input:package_folder}"
+                "cwd": "${env:projects}/${input:package_folder}"
             },
             "command": "just",
             "args": ["build"],

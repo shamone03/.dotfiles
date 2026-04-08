@@ -14,6 +14,7 @@ export def --env switch [name, --aims-version: string, --no-remotes] {
 
         $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
         $env.CONAN_HOME = $env.CONAN_USER_HOME
+        $env.SHMN_CONAN_VENV_NAME = $"($name)_conan-($conan_version)";
         if not $no_remotes {
             conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/ConanConfig.zip
         }
@@ -34,6 +35,7 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
         }
         $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
         $env.CONAN_HOME = $env.CONAN_USER_HOME
+        $env.SHMN_CONAN_VENV_NAME = $name;
         if not $no_remotes {
             conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/Conan2Config.zip
         }
@@ -47,17 +49,17 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
         "tools.microsoft.msbuild:vs_version=18" | save ([$venv_dir "global.conf"] | path join) --force --progress
     }
     if $conan_version == "1" {
-        $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)";
+        $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)";
         if $aims_version != null {
-            $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan 1: ($name) v($aims_version)(ansi reset)";
+            $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name) v($aims_version)(ansi reset)";
         }
     } else if $conan_version == "2" {
-        $env.SHMN_CONAN_VENV = $"(ansi deeppink2)Conan: ($name)(ansi reset)";
+        $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan: ($name)(ansi reset)";
     }
 
     use ../starship.nu;
     let old_prompt = $env.PROMPT_COMMAND;
-    $env.PROMPT_COMMAND = {|| $"($env.SHMN_CONAN_VENV)(do $old_prompt)"}
+    $env.PROMPT_COMMAND = {|| $"($env.SHMN_CONAN_VENV_PROMPT)(do $old_prompt)"}
 
     print $"(ansi green)CONAN_USER_HOME=($env.CONAN_USER_HOME)(ansi reset)"
 }
@@ -76,7 +78,7 @@ export def --env remove [name] {
 
     rm $venv_dir --recursive --verbose
     try {
-        hide-env SHMN_CONAN_VENV CONAN_USER_HOME CONAN_HOME
+        hide-env SHMN_CONAN_VENV_PROMPT CONAN_USER_HOME CONAN_HOME
     }
     use ../starship.nu
 }

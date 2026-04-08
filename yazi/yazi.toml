@@ -12,12 +12,14 @@ edit = [
 ]
 just = [
     { run = 'just default', desc = "default", block = true },
+    { run = 'just rebuild', desc = "rebuild", block = true },
     { run = 'just configure', desc = "configure", block = true },
     { run = 'just build', desc = "build", block = true },
     { run = 'just clean', desc = "clean", block = true },
 ]
 just-folder = [
     { run = 'just %s/default', desc = "default", block = true },
+    { run = 'just %s/rebuild', desc = "rebuild", block = true },
     { run = 'just %s/configure', desc = "configure", block = true },
     { run = 'just %s/build', desc = "build", block = true },
     { run = 'just %s/clean', desc = "clean", block = true },
