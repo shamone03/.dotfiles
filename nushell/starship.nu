@@ -6,9 +6,9 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
 
     # Does not play well with default character module.
     # TODO: Also Use starship vi mode indicators?
-    PROMPT_INDICATOR: ""
+    PROMPT_INDICATOR: "", 
 
-    PROMPT_COMMAND: {||
+    PROMPT_COMMAND: { ||
         # jobs are not supported
         (
             ^'starship' prompt
@@ -22,7 +22,7 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
         render_right_prompt_on_last_line: true
     })
 
-    PROMPT_COMMAND_RIGHT: {||
+    PROMPT_COMMAND_RIGHT: { ||
         (
             ^'starship' prompt
                 --right
@@ -31,4 +31,4 @@ export-env { $env.STARSHIP_SHELL = "nu"; load-env {
                 --terminal-width (term size).columns
         )
     }
-}}
+} }

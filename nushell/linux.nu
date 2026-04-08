@@ -3,4 +3,3 @@ export-env {
         $env.projects = "~/Projects"
     }
 }
-

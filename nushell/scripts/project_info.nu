@@ -1,6 +1,6 @@
 export def get [] {
     glob $"($env.projects)/project-aims/projects/**/project-components.json"
-        | each {
+    | each {
             {
                 project_path: ($in | path dirname | path split | skip until { $in == project-aims } | skip 2 | path join)
                 project_name: ($in | path dirname | path basename),
@@ -9,7 +9,7 @@ export def get [] {
                 configuration: $"($in | path dirname)/config"
             }
         }
-        | each {
+    | each {
             {
                 ...$in,
                 service_plugins: (open ([$in.configuration CN_OptionsConfiguration.xml] | path join) | $in.content
@@ -18,7 +18,7 @@ export def get [] {
                 | each { $in.content | where tag == PluginKey | $in.0.attributes | $in.PluginType })
             }
         }
-        | each {
+    | each {
             {
                 ...$in,
                 ui_plugins: (open ([$in.configuration CN_OptionsConfiguration.xml] | path join) | $in.content
@@ -27,7 +27,7 @@ export def get [] {
                 | each { $in.content | where tag == PluginKey | $in.0.attributes | $in.PluginType })
             }
         }
-        | each {
+    | each {
             {
                 ...$in,
                 sensor_plugins: (open ([$in.configuration scs_configuration.xml] | path join) | $in.content
