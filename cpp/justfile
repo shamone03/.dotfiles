@@ -13,7 +13,14 @@ compiler := "msvc"
 generator := "ninja-multi"
 build_type := "debug"
 build_profile := compiler + "-" + generator + "-" + build_type
-sources_dir := if path_exists("CMakeLists.txt") == "true" { "." } else { "sources" }
+sources_dir := if path_exists( "CMakeLists.txt" ) == "true" {
+        replace( trim_start_match( canonicalize( "." ), '\\?\' ), '\', '/' )
+    } else if path_exists( "sources" / "CMakeLists.txt" ) == "true" {
+        replace( trim_start_match( canonicalize( "sources" ), '\\?\' ), '\', '/' )
+    } else {
+        error( "Not in sources directory" )
+    }
+
 conan_dir := justfile_directory()
 build_dir := if env_name != "" { projects_dir / ".builds" / file_name(conan_dir) / ( "build_" + env_name ) } else { projects_dir / ".builds" / file_name(conan_dir) }
 verbose := "false"
@@ -125,8 +132,12 @@ createf *FLAGS:
 recreatef *FLAGS: cleancache (createf FLAGS)
 
 [private]
-configuref *FLAGS: (user_preset sources_dir)
+configuref *FLAGS: (user_preset sources_dir) set_sources_dir
     cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON {{ FLAGS }}
+
+[private]
+@set_sources_dir:
+    "{{ sources_dir }}" | save {{ build_dir }}/.sources.txt --force
 
 [private]
 user_preset FOLDER:

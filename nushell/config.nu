@@ -2,6 +2,7 @@ use starship.nu
 # use linux.nu *;
 # use hyprutils.nu *;
 use windows.nu *
+use find_in_parent.nu *
 use search.nu
 use scripts/conan_venv.nu
 use scripts/project_info.nu
@@ -61,27 +62,6 @@ def open-repo [--pull-request(-p)] {
     }
 
     start $link
-}
-
-def find-in-parent [filename: string, ceiling: string] {
-    mut current = (pwd)
-    loop {
-        let target = $current | path join $filename
-        if ($target | path exists) {
-            return $target
-        }
-
-        $current = ($current | path dirname)
-
-        if $current == ($ceiling | path expand) {
-            let target = $current | path join $filename
-            if ($target | path exists) {
-                return $target
-            } else {
-                return null
-            }
-        }
-    }
 }
 
 alias l = lazygit
@@ -152,48 +132,6 @@ def "git-log" [] {
     git log --pretty='%H»¦«%an»¦«%ch»¦«%s' | lines | split column "»¦«" id name date message
 }
 
-# Just: A Command Runner
 export extern "just" [
     ...recipe: string@"nu-complete just", # Recipe(s) to run, may be with argument(s)
 ]
-# def get-aims-latest [--conan2] {
-#     let path = if $conan2 {
-#         "Conan2"
-#     } else {
-#         "All"
-#     }
-#
-#     let builds = http get $"http://cn-appaf-p01.ad.onepal.com:8082/ui/api/v1/ui/nativeBrowser/aims-builds-daily/($path)/"
-#     | get children
-#     let build_name = if $conan2 {
-#         $builds | last | get name
-#     } else {
-#         # skip "AIMS_Latest.zip"
-#         $builds | last 2 | first | get name
-#     }
-#     print $"Found ($build_name)"
-#
-#     let options = {
-#         repoKey: "aims-builds-daily",
-#         path: $"($path)/($build_name)",
-#         archiveType: "zip",
-#         includeChecksum: false
-#     } | url build-query
-#     let url = $"http://cn-appaf-p01.ad.onepal.com:8082/ui/api/v1/ui/artifactactions/downloadfolder?($options)"
-#     print $"Downloading ($build_name) from ($url)"
-#     rm [$env.temp $build_name] --force --verbose
-#     http get $url
-#     | into binary --compact
-#     | save ([$env.temp $build_name] | path join | path expand) --force;
-#
-#     print "Download complete"
-#
-#     let out = [$env.projects AIMS_Latest ( if $conan2 { "Conan2" } else { "" } ) $build_name] | path join | path expand
-#     if (not ($out | path exists)) {
-#         mkdir $out
-#     }
-#
-#     print $"Extracting to ($out)"
-#     tar -xf ([$env.temp $build_name] | path join | path expand) -C $out
-#     print "Extract complete"
-# }

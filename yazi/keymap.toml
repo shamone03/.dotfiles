@@ -14,6 +14,11 @@ run = 'plugin cd-build-output'
 desc = "Go to build output"
 
 [[mgr.prepend_keymap]]
+on = ["g", "s"]
+run = 'plugin cd-sources'
+desc = "Go to builds sources"
+
+[[mgr.prepend_keymap]]
 on = ["g", "j"]
 run = 'shell --block -- just --choose'
 desc = "Pick recipe"
