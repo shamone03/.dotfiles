@@ -6,9 +6,11 @@ alias b := build
 alias i := install
 alias t := test
 alias c := configure
+alias u := update
 
 # compiler := "clang"
 
+root := replace( justfile_directory(), '\', '/' )
 compiler := "msvc"
 generator := "ninja-multi"
 build_type := "debug"
@@ -18,16 +20,17 @@ sources_dir := if path_exists( "CMakeLists.txt" ) == "true" {
     } else if path_exists( "sources" / "CMakeLists.txt" ) == "true" {
         replace( trim_start_match( canonicalize( "sources" ), '\\?\' ), '\', '/' )
     } else {
-        error( "Not in sources directory" )
+        root
     }
 
-conan_dir := justfile_directory()
 build_dir := if env_name != "" { projects_dir / ".builds" / file_name(conan_dir) / ( "build_" + env_name ) } else { projects_dir / ".builds" / file_name(conan_dir) }
 verbose := "false"
 quiet := "false"
 
 # [private]
 # git_branch := `git branch --show-current`
+[private]
+conan_dir := root
 [private]
 projects_dir := env('projects', '.')
 [private]
@@ -68,8 +71,9 @@ build TARGET=all_build: (user_preset conan_dir) devenv
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Run the given test, runs all tests by default')]
-test TEST='.*': build
-    ctest --preset conan-{{ build_type }} --output-on-failure -R {{ TEST }}
+[arg("list", short="l", long="list", value="true")]
+test list="false" TEST='.*': build
+    ctest --preset conan-{{ build_type }} {{ if list == "true" { "-N" } else { "--output-on-failure -R " + TEST } }}
 
 [doc('Format all files')]
 format: (build "clangformatfix")
@@ -102,13 +106,15 @@ versions:
     {{ package_info_cmd }} | print $in.name
 
 [doc('Remove install and build artifacts')]
-clean:
-    rm {{ build_dir }} -rf --verbose --trash; \
-    rm {{ conan_dir }}/CMakeUserPresets.json -f --verbose; \
-    rm {{ sources_dir }}/CMakeUserPresets.json -f --verbose; \
-    rm compile_commands.json -f --verbose; \
-    rm .clang* -f --verbose; \
-    git clean -xdf test_package
+[arg("dry", long="dry", value="true")]
+clean dry="false":
+    [{{ build_dir }} {{ conan_dir }}/CMakeUserPresets.json {{ sources_dir }}/CMakeUserPresets.json {{ root }}/compile_commands.json ...(glob .clang*)] \
+        | where { $in | path exists } \
+        | uniq \
+        | each { \
+            {{ if dry == 'true' { 'print $"will delete ($in)"' } else { "rm $in --recursive --verbose --trash" } }}; \
+        }; \
+        {{ if dry == 'true' { 'git clean -nXdf test_package' } else { 'git clean -Xdf test_package' } }}
 
 [doc('Remove package from cache and conan create with the given flags')]
 recreate: recreatef
@@ -142,9 +148,9 @@ configuref *FLAGS: (user_preset sources_dir) set_sources_dir
 [private]
 user_preset FOLDER:
     #! nu
-    let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
-    let sources_dir = {{ quote(replace(sources_dir, '\', '/')) }}
-    let root = {{ quote(replace(FOLDER, '\', '/')) }}
+    let build_dir = {{ quote(build_dir) }}
+    let sources_dir = {{ quote(sources_dir) }}
+    let root = {{ quote(FOLDER) }}
     # needed for repos with sources/CMakeLists.txt
     let presets = glob $"($build_dir)/**/CMakePresets.json";
     if ($presets | is-not-empty) {
@@ -164,15 +170,15 @@ devenv:
     #! nu
     use std null-device
     $env.config.table.show_empty = false;
-    let root = {{ quote(replace(conan_dir, '\', '/')) }}
-    let build_dir = {{ quote(replace(build_dir, '\', '/')) }}
+    let root = {{ quote(conan_dir) }}
+    let build_dir = {{ quote(build_dir) }}
     let links = (glob $"($build_dir)/**/{compile_commands.json}") ++ (glob $"($env.projects)/.dotfiles/cpp/.clang*");
     $links
         | each { { file_name: ($in | path basename), file_path: ($in | str replace '/' '\' --all) } }
         | where not ([ $root $it.file_name ] | path join | path exists)
         | each {
-            mklink $in.file_name $in.file_path;
-            attrib +h $in.file_name /l o> (null-device)
+            mklink ([ $root $in.file_name ] | path join | str replace '/' '\' --all) $in.file_path;
+            attrib +h ([ $root $in.file_name ] | path join | str replace '/' '\' --all) /l o> (null-device)
         }
 
 [doc('List all recipes')]
@@ -181,18 +187,18 @@ devenv:
 
 # install1 *FLAGS:
 #     conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
-#
+# 
 # configure1:
 #     { "version": 4, "vendor": { "conan": {} }, "include": [ "{{ replace(build_dir, '\', '/') }}/build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
 #     cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
-#
+# 
 # build1:
 #     cmake --build --preset {{ build_type }}
-#
-# create1:
-#     conan create {{ conan_dir }} cn/staging -b missing
-#
+# 
+# create1 *FLAGS:
+#     conan create {{ conan_dir }} cn/staging -b missing {{ FLAGS }}
+# 
 # cleancache1:
 #     conan remove (pwd | path basename) -f
-#
+# 
 # recreate1: cleancache1 create1
