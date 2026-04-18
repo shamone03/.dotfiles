@@ -88,7 +88,9 @@ def get_file_list [path: string] {
     | '[' ++ $in ++ ']'
 }
 
-source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
+if $nu.is-interactive {
+  source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
+}
 
 let osc9_9 = if $nu.os-info == "linux" {
 	true
