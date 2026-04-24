@@ -71,6 +71,8 @@ alias j = just
 alias or = open-repo
 alias gh = cd $env.projects
 alias gp = cd (git rev-parse --show-toplevel)
+alias gb = cd (just output)
+alias gs = cd (open (find-in-parent .sources.txt ($env.projects)/.builds) --raw)
 
 def --env y [...args] {
     let tmp = (mktemp -t "yazi-cwd.XXXXXX")
