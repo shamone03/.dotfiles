@@ -72,8 +72,9 @@ build TARGET=all_build: (user_preset conan_dir) devenv
 
 [doc('Run the given test, runs all tests by default')]
 [arg("list", short="l", long="list", value="true")]
-test list="false" TEST='.*': build
-    ctest --preset conan-{{ build_type }} {{ if list == "true" { "-N" } else { "--output-on-failure -R " + TEST } }}
+[arg("exclude", short="e", long="exclude")]
+test list="false" exclude="" TEST='.*': build
+    ctest --preset conan-{{ build_type }} {{ if list == "true" { "-N" } else { '-E "' + exclude + '" --output-on-failure -R ' + TEST } }}
 
 [doc('Format all files')]
 format: (build "clangformatfix")
@@ -108,7 +109,7 @@ versions:
 [doc('Remove install and build artifacts')]
 [arg("dry", long="dry", value="true")]
 clean dry="false":
-    [{{ build_dir }} {{ conan_dir }}/CMakeUserPresets.json {{ sources_dir }}/CMakeUserPresets.json {{ root }}/compile_commands.json ...(glob .clang*)] \
+    [{{ build_dir }} {{ conan_dir }}/CMakeUserPresets.json {{ sources_dir }}/CMakeUserPresets.json {{ root }}/compile_commands.json ...(glob .clang*) {{ root }}/.cache] \
         | where { $in | path exists } \
         | uniq \
         | each { \
