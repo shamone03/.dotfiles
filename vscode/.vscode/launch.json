@@ -9,8 +9,8 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "CMake: build",
-            "program": "${$env:projects}/.builds/build_${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug/AIMS.exe",
-            "cwd": "${$env:projects}/.builds/build_${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug"
+            "program": "${env:projects}/.builds/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug/AIMS.exe",
+            "cwd": "${env:projects}/.builds/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug"
         },
         {
             "name": "Launch",
