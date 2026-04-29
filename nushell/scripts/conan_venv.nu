@@ -1,10 +1,10 @@
-export def --env switch [name, --aims-version: string, --no-remotes] {
+export def --env switch [name, --aims-version: string, --update] {
     let conan_version = conan --version
     | parse '{conan} {_} {major}.{minor}.{patch}'
     | get major
     | get 0
 
-    if $no_remotes and $aims_version != null {
+    if not $update and $aims_version != null {
         error make {msg: "idk how to deal with this"}
     }
 
@@ -18,12 +18,12 @@ export def --env switch [name, --aims-version: string, --no-remotes] {
         $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
         $env.CONAN_HOME = $env.CONAN_USER_HOME
         $env.SHMN_CONAN_VENV_NAME = $"($name)_conan-($conan_version)"
-        if not $no_remotes {
+        if $update or not ([$env.CONAN_HOME .conan profiles default] | path join | path exists) {
             conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/ConanConfig.zip
         }
         if $aims_version != null {
             let remote = $"http://cn-appaf-p01.ad.onepal.com:8081/artifactory/api/conan/conan-release-v($aims_version)"
-            let remote_name = $"cn-conan-($aims_version)"
+            let remote_name = $"cn-conan-v($aims_version)"
             conan remote rename cn-conan $remote_name
             conan remote update $remote_name $remote
         }
@@ -39,7 +39,7 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
         $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
         $env.CONAN_HOME = $env.CONAN_USER_HOME
         $env.SHMN_CONAN_VENV_NAME = $name
-        if not $no_remotes {
+        if $update or not ([$env.CONAN_HOME profiles default] | path join | path exists) {
             conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/Conan2Config.zip
         }
         glob $"($env.projects)/.dotfiles/conan-profiles/*" | each {

@@ -12,20 +12,28 @@
         {
             "label": "Install",
             "command": "just",
-            "args": ["install"],
+            "args": [
+                "install"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Update",
             "command": "just",
-            "args": ["update"],
+            "args": [
+                "update"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Build",
             "command": "just",
-            "args": ["build"],
-            "problemMatcher": ["$msCompile"]
+            "args": [
+                "build"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ]
         },
         {
             "label": "Build Dependency",
@@ -33,23 +41,32 @@
                 "cwd": "${env:projects}/${input:package_folder}"
             },
             "command": "just",
-            "args": ["build"],
+            "args": [
+                "build"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Debug With Deps",
-            "dependsOn": ["Build Dependency", "Build"]
+            "dependsOn": [
+                "Build Dependency",
+                "Build"
+            ]
         },
         {
             "label": "Rebuild",
             "command": "just",
-            "args": ["rebuild"],
+            "args": [
+                "rebuild"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Update and Rebuild",
             "command": "just",
-            "args": ["rerebuild"],
+            "args": [
+                "rerebuild"
+            ],
             "problemMatcher": []
         }
     ]

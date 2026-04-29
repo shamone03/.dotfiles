@@ -79,8 +79,10 @@ test list="false" exclude="" TEST='.*': build
 [doc('Format all files')]
 format: (build "clangformatfix")
 
+[doc('clean install configure build')]
 rebuild: clean install configure build
 
+[doc('clean update configure build')]
 rerebuild: clean update configure build
 
 [doc('Get build output')]
@@ -186,20 +188,20 @@ devenv:
 @list:
     just --list-prefix "" --list-heading $"(just --evaluate)\n" --unsorted --list
 
-# install1 *FLAGS:
-#     conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr {{ build_profile }} {{ FLAGS }}
-# 
-# configure1:
-#     { "version": 4, "vendor": { "conan": {} }, "include": [ "{{ replace(build_dir, '\', '/') }}/build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
-#     cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
-# 
-# build1:
-#     cmake --build --preset {{ build_type }}
-# 
-# create1 *FLAGS:
-#     conan create {{ conan_dir }} cn/staging -b missing {{ FLAGS }}
-# 
-# cleancache1:
-#     conan remove (pwd | path basename) -f
-# 
-# recreate1: cleancache1 create1
+install1 *FLAGS:
+    conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
+
+configure1:
+    { "version": 4, "vendor": { "conan": {} }, "include": [ "{{ replace(build_dir, '\', '/') }}/build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
+    cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
+
+build1:
+    cmake --build --preset {{ build_type }}
+
+create1 *FLAGS:
+    conan create {{ conan_dir }} cn/staging -b missing {{ FLAGS }}
+
+cleancache1:
+    conan remove (pwd | path basename) -f
+
+recreate1: cleancache1 create1
