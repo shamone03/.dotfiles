@@ -1,7 +1,7 @@
 use starship.nu;
 
 use linux.nu *;
-# use hyprutils.nu *;
+use hyprutils.nu *;
 # use windows.nu *;
 
 use search.nu;
@@ -114,7 +114,7 @@ $env.config.shell_integration = {
   # 133;C - Mark pre-execution
   # 133;D;exit - Mark execution finished with exit code
   # This is used to enable terminals to know where the prompt is, the command is, where the command finishes, and where the output of the command is
-  osc133: false
+  osc133: true
   # osc633 is closely related to osc133 but only exists in visual studio code (vscode) and supports their shell integration features
   # 633;A - Mark prompt start
   # 633;B - Mark prompt end

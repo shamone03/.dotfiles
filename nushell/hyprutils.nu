@@ -1,4 +1,4 @@
-
+const current_wallpaper_path = "~/.cache/shmn/current_wallpaper.txt" | path expand
 export def "to log" [path: string]: string -> nothing {
     let log_file = $"($env.projects | path expand)/.dotfiles/logs/($path)";
     if (not ($log_file | path exists )) {
@@ -10,7 +10,7 @@ export def "to log" [path: string]: string -> nothing {
 
 export def update-theme [--use-wallpaper] {
     if ($use_wallpaper) {
-        wal -i (hyprctl hyprpaper listloaded) -se -a fff
+        wal -i (open $current_wallpaper_path --raw | str trim) -se -a fff
     } else {
         wal --theme random
     }
@@ -18,12 +18,18 @@ export def update-theme [--use-wallpaper] {
 }
 
 export def update-wallpaper [wallpaper_path: string] {
-    hyprctl hyprpaper reload $",($wallpaper_path)";
+  let path = $wallpaper_path | path expand
+    hyprctl hyprpaper wallpaper $",($path)"
+    $path | str trim | save $current_wallpaper_path --force
     update-theme --use-wallpaper
 }
 
 export def random-wallpaper [wallpaper_dir?: string] {
-    mut current = hyprctl hyprpaper listloaded
+  if not ($current_wallpaper_path | path exists) {
+    mkdir ($current_wallpaper_path | | path dirname)
+    touch $current_wallpaper_path
+  }
+    mut current = open ~/.cache/shmn/current_wallpaper.txt --raw | str trim | default ""
     let get_random = { || glob ($wallpaper_dir | default $"($env.HOME)/Pictures/wallpapers/**") --no-dir | shuffle | first }
     mut random = do $get_random
     while $random == $current {
