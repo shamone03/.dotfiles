@@ -73,8 +73,10 @@ build TARGET=all_build: (user_preset conan_dir) devenv
 [doc('Run the given test, runs all tests by default')]
 [arg("list", short="l", long="list", value="true")]
 [arg("exclude", short="e", long="exclude")]
-test list="false" exclude="" TEST='.*': build
-    ctest --preset conan-{{ build_type }} {{ if list == "true" { "-N" } else { '-E "' + exclude + '" --output-on-failure -R ' + TEST } }}
+[arg("label", long="label")]
+test list="false" exclude="" label="" TEST='.*': build
+    ctest --preset conan-{{ build_type }} \
+    {{ if list == "true" { "-N" } else { '-E "' + exclude + '" -L "' + label + '" --output-on-failure -R ' + TEST } }}
 
 [doc('Format all files')]
 format: (build "clangformatfix")
@@ -99,7 +101,7 @@ versions:
     $env.config.table.show_empty = false;
     let info = {{ package_info_cmd }};
     let current = { source: "current", version: $info.version };
-    let remote_and_cache = conan list $info.name -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@cn/staging" | get version | first) } };
+    let remote_and_cache = conan list $info.name -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@{_}" | get version | first) } };
     let all = [ $current ] ++ $remote_and_cache;
     print $info.name
     $all | each { print $"($in.source): ($in.version)" };
@@ -110,12 +112,13 @@ versions:
 
 [doc('Remove install and build artifacts')]
 [arg("dry", long="dry", value="true")]
-clean dry="false":
+[arg("permanent", long="permanent", value="true")]
+clean dry="false" permanent="false":
     [{{ build_dir }} {{ conan_dir }}/CMakeUserPresets.json {{ sources_dir }}/CMakeUserPresets.json {{ root }}/compile_commands.json ...(glob .clang*) {{ root }}/.cache] \
         | where { $in | path exists } \
         | uniq \
         | each { \
-            {{ if dry == 'true' { 'print $"will delete ($in)"' } else { "rm $in --recursive --verbose --trash" } }}; \
+            {{ if dry == 'true' { 'print $"will' + ( if permanent == "true" { " permanently" } else { "" } ) + ' delete ($in)"' } else { "rm $in --recursive --verbose" + ( if permanent == "false" { " --trash" } else { " --permanent" } ) } }}; \
         }; \
         {{ if dry == 'true' { 'git clean -nXdf test_package' } else { 'git clean -Xdf test_package' } }}
 
@@ -142,7 +145,7 @@ recreatef *FLAGS: cleancache (createf FLAGS)
 
 [private]
 configuref *FLAGS: (user_preset sources_dir) set_sources_dir
-    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON {{ FLAGS }}
+    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCN_ENABLE_TEST_DISCOVERY=ON {{ FLAGS }}
 
 [private]
 @set_sources_dir:
@@ -204,4 +207,4 @@ create1 *FLAGS:
 cleancache1:
     conan remove (pwd | path basename) -f
 
-recreate1: cleancache1 create1
+recreate1 *FLAGS: cleancache1 (create1 FLAGS)

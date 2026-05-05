@@ -7,6 +7,11 @@ use search.nu
 use scripts/conan_venv.nu
 use scripts/project_info.nu
 
+mkdir $"($nu.cache-dir)"
+carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+
+source $"($nu.cache-dir)/carapace.nu"
+
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
@@ -134,6 +139,24 @@ def "git-log" [] {
     git log --pretty='%H»¦«%an»¦«%ch»¦«%s' | lines | split column "»¦«" id name date message
 }
 
+# @complete external
+# def --wrapped j [...args: string] {
+#   ^just ...$args
+# }
 export extern "just" [
     ...recipe: string@"nu-complete just", # Recipe(s) to run, may be with argument(s)
+]
+$env.config.hooks.pre_prompt = [
+{
+  let duration = $env.CMD_DURATION_MS | into duration --unit ms
+  let last_command = (history | last).command
+  if ( ($last_command == "j") or ($last_command | str starts-with "j ") or ($last_command | str starts-with "just") ) and $duration > 10sec {
+      let wd = $env.PWD | path relative-to $env.projects
+        if $env.LAST_EXIT_CODE == 0 {
+          notify --summary $"🟢($wd): ($last_command)" --body $"Completed in ($duration)"
+        } else {
+          notify --summary $"🔴($wd): ($last_command)" --body $"Completed in ($duration)"
+        }
+  }
+  }
 ]
