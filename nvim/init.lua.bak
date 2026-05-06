@@ -40,7 +40,8 @@ vim.pack.add({
 	"https://github.com/nvim-tree/nvim-web-devicons",
 	"https://github.com/mason-org/mason.nvim", -- install lang servers
 	"https://github.com/mason-org/mason-lspconfig.nvim", -- auto enable lang servers with configs
-    "https://github.com/rose-pine/neovim",
+	"https://github.com/rose-pine/neovim",
+	"https://github.com/folke/snacks.nvim"
 }, { confirm = false })
 
 require("mason").setup()
@@ -61,6 +62,55 @@ require("blink.cmp").setup({
         preset = "super-tab"
     }
 })
+
+local Snacks = require("snacks")
+Snacks.setup( {
+    picker = {
+      sources = {
+        explorer = {
+          auto_hide = false,
+          layout = { layout = { position = "right" } },
+        },
+      },
+    },
+    dashboard = {
+        enabled = true,
+	      sections = {
+		      {section = "header" },
+		      {section = "keys", gap = 1, padding = 1},
+	      },
+      preset = {
+        header = [[
+ █████╗ ██╗███╗   ███╗███████╗      ██╗███████╗██████╗ 
+██╔══██╗██║████╗ ████║██╔════╝      ██║██╔════╝██╔══██╗
+███████║██║██╔████╔██║███████╗█████╗██║███████╗██████╔╝
+██╔══██║██║██║╚██╔╝██║╚════██║╚════╝██║╚════██║██╔══██╗
+██║  ██║██║██║ ╚═╝ ██║███████║      ██║███████║██║  ██║
+╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝      ╚═╝╚══════╝╚═╝  ╚═╝]],
+        --         header = [[
+        --                 /########/
+        --                /########/
+        --              /########/
+        --            /########/
+        --          /########/
+        --        /########/     /\     \########\
+        --      /########/     /####\     \########\
+        --    /########/     /########\     \########\
+        --  /########/     /############\     \########\
+        -- /########/     /##############\     \########\
+        -- \########\     \##############/     /########/
+        --  \########\     \############/     /########/
+        --    \########\     \########/     /########/
+        --      \########\     \####/     /########/
+        --        \########\     \/     /########/
+        --                            /########/
+        --                          /########/
+        --                        /########/
+        --                      /########/
+        --                    /########/]],
+      },
+    },
+  })
 
 require("telescope").setup({})
 local telescope = require("telescope.builtin")
@@ -99,3 +149,6 @@ vim.cmd("colorscheme rose-pine")
 -- require("nvim-treesitter").setup({
 --     auto_install = true, -- autoinstall languages that are not installed yet
 -- })
+if next(vim.fn.argv()) == nil then
+	Snacks.dashboard()
+end

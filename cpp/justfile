@@ -71,12 +71,12 @@ build TARGET=all_build: (user_preset conan_dir) devenv
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Run the given test, runs all tests by default')]
-[arg("list", short="l", long="list", value="true")]
+[arg("list", short="l", long="list", value=" -N")]
 [arg("exclude", short="e", long="exclude")]
 [arg("label", long="label")]
-test list="false" exclude="" label="" TEST='.*': build
-    ctest --preset conan-{{ build_type }} \
-    {{ if list == "true" { "-N" } else { '-E "' + exclude + '" -L "' + label + '" --output-on-failure -R ' + TEST } }}
+test list="" exclude="" label="" TEST='.*': build
+    ctest --preset conan-{{ build_type }} --parallel \
+    {{ '-E "' + exclude + '" -L "' + label + '"' + list + ' --output-on-failure -R ' + TEST }}
 
 [doc('Format all files')]
 format: (build "clangformatfix")
@@ -145,7 +145,7 @@ recreatef *FLAGS: cleancache (createf FLAGS)
 
 [private]
 configuref *FLAGS: (user_preset sources_dir) set_sources_dir
-    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCN_ENABLE_TEST_DISCOVERY=ON {{ FLAGS }}
+    cmake -S {{ sources_dir }} {{ cmake_verbosity }}--preset conan-default -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCN_ENABLE_TEST_DISCOVERY=ON -DCMAKE_OBJECT_PATH_MAX=260 {{ FLAGS }}
 
 [private]
 @set_sources_dir:
