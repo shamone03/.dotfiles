@@ -1,5 +1,3 @@
-# https://just.systems
-
 set shell := ["nu", "--no-config-file", "-c"]
 
 alias b := build
@@ -8,10 +6,8 @@ alias t := test
 alias c := configure
 alias u := update
 
-# compiler := "clang"
-
 root := replace( justfile_directory(), '\', '/' )
-compiler := "msvc"
+compiler := "msvc" # or 'clang'
 generator := "ninja-multi"
 build_type := "debug"
 build_profile := compiler + "-" + generator + "-" + build_type
@@ -27,12 +23,10 @@ build_dir := if env_name != "" { projects_dir / ".builds" / file_name(conan_dir)
 verbose := "false"
 quiet := "false"
 
-# [private]
-# git_branch := `git branch --show-current`
 [private]
 conan_dir := root
 [private]
-projects_dir := env('projects', '.')
+projects_dir := replace(env('projects', (env('HOMEDRIVE') + env('HOMEPATH')) / "Projects"), '\', '/')
 [private]
 env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
 [private]
@@ -45,9 +39,6 @@ build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
-
-# [private]
-# conan_version := `conan --version | split column ' ' _1 _2 version | get version | parse "{major}.{_}.{_}" | get major | print $in --raw`
 
 default: install configure build
 
@@ -190,21 +181,3 @@ devenv:
 [doc('List all recipes')]
 @list:
     just --list-prefix "" --list-heading $"(just --evaluate)\n" --unsorted --list
-
-install1 *FLAGS:
-    conan install {{ conan_dir }} -b missing -if {{ build_dir }}/build/msvc17 -g cmake_multi -pr x64d {{ FLAGS }}
-
-configure1:
-    { "version": 4, "vendor": { "conan": {} }, "include": [ "{{ replace(build_dir, '\', '/') }}/build/msvc17/generators/CMakePresets.json" ] } | save sources/CMakeUserPresets.json --force
-    cmake -S {{ sources_dir }} --preset default -G "Visual Studio 18 2026" --fresh
-
-build1:
-    cmake --build --preset {{ build_type }}
-
-create1 *FLAGS:
-    conan create {{ conan_dir }} cn/staging -b missing {{ FLAGS }}
-
-cleancache1:
-    conan remove (pwd | path basename) -f
-
-recreate1 *FLAGS: cleancache1 (create1 FLAGS)

@@ -7,11 +7,10 @@ use search.nu
 use scripts/conan_venv.nu
 use scripts/project_info.nu
 
-mkdir $"($nu.cache-dir)"
-carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+# mkdir $"($nu.cache-dir)"
+# carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 
-source $"($nu.cache-dir)/carapace.nu"
-
+# source $"($nu.cache-dir)/carapace.nu"
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
@@ -93,7 +92,11 @@ def git-root [path?: string] {
     return (git rev-parse --show-toplevel)
 }
 
-def get_file_list [path: string] {
+def git-log [] {
+    git log --pretty='%H»¦«%an»¦«%ch»¦«%s' | lines | split column "»¦«" id name date message
+}
+
+def get-file-list [path: string] {
     ls **/*
     | where type == file
     | format pattern 'f"{name}",'
@@ -131,17 +134,32 @@ $env.config.history = {
     isolation: true
 }
 
-def "nu-complete just" [] {
+let just_completer = {
     (^just --dump --unstable --dump-format json | from json).recipes | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
 }
 
-def "git-log" [] {
-    git log --pretty='%H»¦«%an»¦«%ch»¦«%s' | lines | split column "»¦«" id name date message
+let external_completer = {|spans|
+    let expanded_alias = scope aliases
+    | where name == $spans.0
+    | get -o 0.expansion
+
+    let spans = if $expanded_alias != null {
+        $spans
+        | skip 1
+        | prepend ($expanded_alias | split row ' ' | take 1)
+    } else {
+        $spans
+    }
+
+    match $spans.0 {
+        just => $just_completer
+    } | do $in $spans
 }
 
-export extern "just" [
-    ...recipe: string@"nu-complete just", # Recipe(s) to run, may be with argument(s)
-]
+$env.config.completions.external = {
+    enable: true
+    completer: $external_completer
+}
 $env.config.hooks.pre_prompt = [
     {
         let duration = $env.CMD_DURATION_MS | into duration --unit ms
