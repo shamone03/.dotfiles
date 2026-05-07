@@ -7,10 +7,11 @@ use search.nu
 use scripts/conan_venv.nu
 use scripts/project_info.nu
 
-# mkdir $"($nu.cache-dir)"
-# carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+mkdir $"($nu.cache-dir)"
+carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+source $"($nu.cache-dir)/carapace.nu"
+# $env.CARAPACE_EXCLUDES = "just" # adds aliases to completion, so disable
 
-# source $"($nu.cache-dir)/carapace.nu"
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
@@ -134,32 +135,47 @@ $env.config.history = {
     isolation: true
 }
 
-let just_completer = {
-    (^just --dump --unstable --dump-format json | from json).recipes | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
-}
+# def just_completer [] {
+#     (^just --dump --unstable --dump-format json | from json).recipes | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
+# }
+# export extern "just" [
+#     ...recipe: string@just_completer, # Recipe(s) to run, may be with argument(s)
+# ]
+#
+# let just_completer = {
+#     (^just --dump --unstable --dump-format json | from json).recipes | transpose recipe data | flatten | where {|row| $row.private == false } | select recipe doc parameters | rename value description
+# }
 
-let external_completer = {|spans|
-    let expanded_alias = scope aliases
-    | where name == $spans.0
-    | get -o 0.expansion
+# let external_completer = {|spans|
+#     let expanded_alias = scope aliases
+#     | where name == $spans.0
+#     | get -o 0.expansion
+#
+#     let spans = if $expanded_alias != null {
+#         $spans
+#         | skip 1
+#         | prepend ($expanded_alias | split row ' ' | take 1)
+#     } else {
+#         $spans
+#     }
+#
+#     let completer = match $spans.0 {
+#         just => $just_completer
+#         _ => null
+#     }
+#
+#   if completer != null {
+#     do $completer $in
+#   }
+#   else {
+#     null
+#   }
+# }
 
-    let spans = if $expanded_alias != null {
-        $spans
-        | skip 1
-        | prepend ($expanded_alias | split row ' ' | take 1)
-    } else {
-        $spans
-    }
-
-    match $spans.0 {
-        just => $just_completer
-    } | do $in $spans
-}
-
-$env.config.completions.external = {
-    enable: true
-    completer: $external_completer
-}
+# $env.config.completions.external = {
+#     enable: true
+#     completer: $external_completer
+# }
 $env.config.hooks.pre_prompt = [
     {
         let duration = $env.CMD_DURATION_MS | into duration --unit ms
