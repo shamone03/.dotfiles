@@ -1,4 +1,7 @@
-set shell := ["nu", "--no-config-file", "-c"]
+set shell := ["nu", "--no-config-file", "--no-std-lib", "--no-history", "-c"]
+set script-interpreter := ["nu", "--no-config-file", "--no-history"]
+[private]
+version := "1.1.0"
 
 alias b := build
 alias i := install
@@ -62,12 +65,15 @@ build TARGET=all_build: (user_preset conan_dir) devenv
     cmake --build {{ build_verbosity }}--preset conan-{{ build_type }} -t {{ TARGET }}
 
 [doc('Run the given test, runs all tests by default')]
-[arg("list", short="l", long="list", value=" -N")]
+[arg("list", short="l", long="list", value="true")]
 [arg("exclude", short="e", long="exclude")]
 [arg("label", long="label")]
-test list="" exclude="" label="" TEST='.*': build
+test list="false" exclude="" label="" TEST='.*': build
     ctest --preset conan-{{ build_type }} --parallel \
-    {{ '-E "' + exclude + '" -L "' + label + '"' + list + ' --output-on-failure -R ' + TEST }}
+    {{ if exclude != "" { '-E "' + exclude + '" ' } else {''} }}\
+    {{ if label != "" { '-L "' + label + '" ' } else {''} }}\
+    {{ if list == "true" { "-N " } else {''} }}\
+    {{ '--output-on-failure -R ' + TEST }}
 
 [doc('Format all files')]
 format: (build "clangformatfix")
@@ -87,15 +93,16 @@ rerebuild: clean update configure build
     print ({{ package_info_cmd }} | get version)
 
 [doc('Print package current, remote and cache versions')]
-versions:
-    #! nu
+[script]
+[arg("json", long="json", value="true")]
+versions json="false":
     $env.config.table.show_empty = false;
     let info = {{ package_info_cmd }};
     let current = { source: "current", version: $info.version };
     let remote_and_cache = conan list $info.name -r* -c -v quiet --format json | from json | items { |source, versions| { source: $source, version: ($versions | columns | last | parse "{_}/{version}@{_}" | get version | first) } };
     let all = [ $current ] ++ $remote_and_cache;
-    print $info.name
-    $all | each { print $"($in.source): ($in.version)" };
+    let out = { name: $info.name, versions: $all }
+    {{ if json == "true" { "$out | to json --indent 4 | print $in" } else { 'print $info.name; $all | each { print $"($in.source): ($in.version)" };' } }}
 
 [doc('Print package name')]
 @name:
@@ -143,8 +150,8 @@ configuref *FLAGS: (user_preset sources_dir) set_sources_dir
     "{{ sources_dir }}" | save {{ build_dir }}/.sources.txt --force
 
 [private]
+[script]
 user_preset FOLDER:
-    #! nu
     let build_dir = {{ quote(build_dir) }}
     let sources_dir = {{ quote(sources_dir) }}
     let root = {{ quote(FOLDER) }}
@@ -163,8 +170,8 @@ user_preset FOLDER:
     }
 
 [private]
+[script]
 devenv:
-    #! nu
     use std null-device
     $env.config.table.show_empty = false;
     let root = {{ quote(conan_dir) }}
