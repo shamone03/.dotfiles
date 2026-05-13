@@ -14,6 +14,10 @@ vim.o.backupdir = "C:/.backup//"
 
 vim.g.lazyvim_rust_diagnostics = "rust-analyzer"
 vim.o.shell = "nu"
+if vim.g.vscode then
+  cmdheight = 8 -- this is the new line I added
+  return
+end
 
 -- -- Check if 'pwsh' is executable and set the shell accordingly
 -- if vim.fn.executable("pwsh") == 1 then

@@ -1,0 +1,43 @@
+export def info [] {
+    use std xml;
+    glob $"($env.projects)/project-aims/projects/**/project-components.json"
+    | each {
+            {
+                project_path: ($in | path dirname | path split | skip until { $in == project-aims } | skip 2 | path join)
+                project_name: ($in | path dirname | path basename),
+                packages: (open $in).packages,
+                network: (open $"($in | path dirname)/config/AIMS_CONFIGURATION/network.json"),
+                configuration: $"($in | path dirname)/config"
+            }
+        }
+    | each {
+            {
+                ...$in,
+                service_plugins: (open ([$in.configuration CN_OptionsConfiguration.xml] | path join)
+                | xml xaccess [Configuration ServiceProviderPluginList ServiceProviderPlugins * PluginKey]
+                | get attributes
+                | get PluginType
+                | sort)
+            }
+        }
+    | each {
+            {
+                ...$in,
+                ui_plugins: (open ([$in.configuration CN_OptionsConfiguration.xml] | path join)
+                | xml xaccess [Configuration UIPluginList UIPlugins * PluginKey]
+                | get attributes
+                | get PluginType
+                | sort)
+            }
+        }
+    | each {
+            {
+                ...$in,
+                sensor_plugins: (open ([$in.configuration scs_configuration.xml] | path join)
+                | xml xaccess [SCSConfig PluginList * PluginKey]
+                | get attributes
+                | get PluginType
+                | sort)
+            }
+        }
+}
