@@ -1,3 +1,4 @@
 {
-    exclude: ["nupm/**", "nu_scripts/**", "nu_plugin_desktop_notifications/**"]
+    exclude: ["nupm/**", "nu_scripts/**", "nu_plugin_desktop_notifications/**"],
+    indent: 4
 }

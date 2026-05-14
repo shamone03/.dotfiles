@@ -6,11 +6,13 @@ use find_in_parent.nu *
 use search.nu
 use scripts/conan_venv.nu
 use scripts/project_aims.nu
+use scripts/configure.nu
 
 mkdir $"($nu.cache-dir)"
 carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 source $"($nu.cache-dir)/carapace.nu"
 $env.CARAPACE_LENIENT = 1
+$env.CARAPACE_EXCLUDES = "go"
 
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
@@ -71,15 +73,31 @@ def open-repo [--pull-request(-p)] {
     start $link
 }
 
+def --env "go source" [] {
+    cd (open (find-in-parent .sources.txt ($env.projects)/.builds) --raw)
+}
+
+def --env "go build" [--release] {
+    if $release {
+        cd (just output)/build/msvc194/Release
+    } else {
+        cd (just output)/build/msvc194/Debug
+    }
+}
+
+def git-root [] {
+    return (git rev-parse --show-toplevel)
+}
+
 alias l = lazygit
 alias y = yazi
 alias o = nvim .
 alias j = just
 alias or = open-repo
 alias gh = cd $env.projects
-alias gp = cd (git rev-parse --show-toplevel)
-alias gb = cd (just output)
-alias gs = cd (open (find-in-parent .sources.txt ($env.projects)/.builds) --raw)
+alias gp = cd (git-root)
+alias gb = go build
+alias gs = go source
 
 def --env y [...args] {
     let tmp = (mktemp -t "yazi-cwd.XXXXXX")
@@ -89,10 +107,6 @@ def --env y [...args] {
         cd $cwd
     }
     rm -fp $tmp
-}
-
-def git-root [path?: string] {
-    return (git rev-parse --show-toplevel)
 }
 
 def git-log [] {

@@ -1,9 +1,30 @@
+const last_env_name = $"($nu.temp-dir)/shmn/last_env_name.txt"
+
 def completions [] {
     let venv_home = $"($env.HOMEDRIVE)/v"
     ls $venv_home | get name | each { $in | path basename }
 }
 
-export def --env switch [name: string@completions, --aims-version: string, --update] {
+def get-last-env-name [name?: string]: nothing -> string {
+    if not ($last_env_name | path dirname | path exists) {
+        mkdir ($last_env_name | path dirname)
+    }
+    if not ($last_env_name | path exists) {
+        "develop" | save $last_env_name --force
+    }
+
+    match $name {
+        null => {
+            open $last_env_name --raw | str trim
+        }
+        _ => {
+            $name | save $last_env_name --force
+            $name
+        }
+    }
+}
+
+export def --env switch [name?: string@completions, --aims-version: string, --update] {
     let conan_version = conan --version
     | parse '{conan} {_} {major}.{minor}.{patch}'
     | get major
@@ -12,6 +33,8 @@ export def --env switch [name: string@completions, --aims-version: string, --upd
     if not $update and $aims_version != null {
         error make {msg: "idk how to deal with this"}
     }
+
+    let name = get-last-env-name $name
 
     if $conan_version == "1" {
         let venv_home = $"($env.HOMEDRIVE)/v"
@@ -87,11 +110,13 @@ export def --env remove [name: string@completions] {
         ] | path join
     }
 
-    rm $venv_dir --recursive --verbose
-    try {
-        hide-env SHMN_CONAN_VENV_PROMPT CONAN_USER_HOME CONAN_HOME
+    rm $venv_dir --recursive --verbose --permanent
+    if ($env has SHMN_CONAN_VENV_NAME) and ($env | get SHMN_CONAN_VENV_NAME | $in == $name) {
+        try {
+            hide-env SHMN_CONAN_VENV_PROMPT CONAN_USER_HOME CONAN_HOME
+        }
+        use ../starship.nu
     }
-    use ../starship.nu
 }
 
 export def list [] {

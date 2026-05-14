@@ -1,5 +1,5 @@
 export def info [] {
-    use std xml;
+    use std xml
     glob $"($env.projects)/project-aims/projects/**/project-components.json"
     | each {
             {
@@ -37,6 +37,22 @@ export def info [] {
                 | xml xaccess [SCSConfig PluginList * PluginKey]
                 | get attributes
                 | get PluginType
+                | sort)
+            }
+        }
+    | each {
+            let nes_configuration_path = [$in.configuration nes_configuration.xml] | path join
+            let nes_configuration = if ($nes_configuration_path | path exists) {
+                open $nes_configuration_path
+            } else {
+                []
+            }
+            {
+                ...$in,
+                exported_sensor_plugins: ($nes_configuration
+                | xml xaccess [Configuration SensorList Sensor]
+                | get attributes
+                | get pluginType
                 | sort)
             }
         }
