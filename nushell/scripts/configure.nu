@@ -2,6 +2,7 @@ export def service_logging [] {
     use std xml
     (glob *_configuration.xml)
     | append ("./CN_OptionsConfiguration.xml" | path expand)
+    | where { $in | path exists }
     | each { |file|
       '<Logging>
         <Sinks>

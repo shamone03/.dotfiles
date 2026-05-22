@@ -19,5 +19,6 @@
     "C_Cpp.formatting": "clangFormat",
     "C_Cpp.clang_format_style": "file",
     "cmake.ctest.testSuiteDelimiter": "\\.|::",
-    "explorer.excludeGitIgnore": true
+    "explorer.excludeGitIgnore": true,
+    "cmake.ctest.neverDebugTestsWithLaunchConfiguration": true
 }

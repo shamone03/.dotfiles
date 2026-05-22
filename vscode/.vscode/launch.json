@@ -9,16 +9,16 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "CMake: build",
-            "program": "${env:projects}/.builds/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug/AIMS.exe",
-            "cwd": "${env:projects}/.builds/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug"
+            "program": "${env:project_builds}/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug/AIMS.exe",
+            "cwd": "${env:project_builds}/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug"
         },
         {
             "name": "Debug AIMS With Deps",
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "Debug With Deps",
-            "program": "${env:projects}/.builds/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug/AIMS.exe",
-            "cwd": "${env:projects}/.builds/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug"
+            "program": "${env:project_builds}/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug/AIMS.exe",
+            "cwd": "${env:project_builds}/track-sdk/build_${env:SHMN_CONAN_VENV_NAME}/build/msvc194/Debug"
         },
         {
             "name": "Launch",

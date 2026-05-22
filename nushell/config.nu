@@ -45,7 +45,14 @@ def "config justfile" [] {
 }
 
 def "import mprocs" [--out(-o): string = .] {
-    cp (["S:/aryah" tools aims.mprocs.yaml] | path join) $"($out)/mprocs.yaml"
+    open ([$out Services.csv] | path join)
+        | get ExeName
+        | each { { $"($in)": { cmd: [$in] } } }
+        | append { aims.exe: { cmd: [aims.exe], autostart: false } }
+        | reduce { |accum, val| $accum | merge $val }
+        | { procs: $in }
+        | to yaml
+        | save ([$out mprocs.yaml] | path join) -f
 }
 
 def "import justfile" [] {
