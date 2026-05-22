@@ -19,6 +19,7 @@
     "C_Cpp.formatting": "clangFormat",
     "C_Cpp.clang_format_style": "file",
     "cmake.ctest.testSuiteDelimiter": "\\.|::",
-    "explorer.excludeGitIgnore": true,
-    "cmake.ctest.neverDebugTestsWithLaunchConfiguration": true
+    "explorer.excludeGitIgnore": false,
+    "cmake.ctest.neverDebugTestsWithLaunchConfiguration": true,
+    "cmake.sourceDirectory": "C:/Users/aryah.kannan/Projects/track-sdk/sources"
 }
