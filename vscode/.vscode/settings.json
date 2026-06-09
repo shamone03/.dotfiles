@@ -7,19 +7,20 @@
     ],
     "cmake.configureEnvironment": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "ENABLE_CODE_COVERAGE": "ON"
+        "ENABLE_CODE_COVERAGE": "ON",
+        "CN_ENABLE_TEST_DISCOVERY": "ON"
     },
     "terminal.integrated.profiles.windows": {
         "nushell": {
             "path": "C:\\Program Files\\nu\\bin\\nu.exe"
         }
     },
+    "cmake.useCMakePresets": "always",
     "testing.coverageToolbarEnabled": true,
     "cmake.buildBeforeRun": true,
     "C_Cpp.formatting": "clangFormat",
     "C_Cpp.clang_format_style": "file",
     "cmake.ctest.testSuiteDelimiter": "\\.|::",
     "explorer.excludeGitIgnore": false,
-    "cmake.ctest.neverDebugTestsWithLaunchConfiguration": true,
-    "cmake.sourceDirectory": "C:/Users/aryah.kannan/Projects/track-sdk/sources"
+    "cmake.ctest.neverDebugTestsWithLaunchConfiguration": true
 }
