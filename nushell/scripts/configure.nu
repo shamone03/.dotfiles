@@ -1,7 +1,15 @@
-export def service_logging [] {
+export def logging [] {
     use std xml
-    (glob *_configuration.xml)
-    | append ("./CN_OptionsConfiguration.xml" | path expand)
+    [avg_db_configuration.xml
+    avs_configuration.xml
+    correlation_configuration.xml
+    db_configuration.xml
+    mcs_configuration.xml
+    nes_configuration.xml
+    poi_db_configuration.xml
+    scs_configuration.xml
+    ssas_configuration.xml
+    CN_OptionsConfiguration.xml]
     | where { $in | path exists }
     | each { |file|
       '<Logging>
@@ -12,8 +20,27 @@ export def service_logging [] {
         <MQTT Enable="true" IP="127.0.0.1"/>
       </Logging>' | from xml | let logging;
       open $file | let configuration
-      if ($configuration | xml xaccess [* Logging] | is-empty) {
+      if ($configuration | xml xaccess [* Logging Sinks *] | is-empty) {
         $configuration | xml xinsert [*] $logging | to xml --indent 4 --self-closed | save $file --force
+        print $"(ansi green)Configured ($file)(ansi reset)"
+      } else {
+        print $"Already configured ($file)"
       }
     }
+}
+
+def service_short [] {
+    open ([Services.csv] | path join) | get ExeName
+}
+
+export def launcher [...include: string@service_short] {
+    open ([Services.csv] | path join)
+        | get ExeName
+        | where { if ( $include | is-not-empty ) { $in in $include } else { true } }
+        | each { { $"($in)": { cmd: [$in] } } }
+        | append { aims.exe: { cmd: [aims.exe], autostart: false } }
+        | reduce { |accum, val| $accum | merge $val }
+        | { procs: $in }
+        | to yaml
+        | save ([mprocs.yaml] | path join) -f
 }

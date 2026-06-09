@@ -44,17 +44,6 @@ def "config justfile" [] {
     nvim $"($env.projects)/.dotfiles/cpp/justfile"
 }
 
-def "import mprocs" [--out(-o): string = .] {
-    open ([$out Services.csv] | path join)
-        | get ExeName
-        | each { { $"($in)": { cmd: [$in] } } }
-        | append { aims.exe: { cmd: [aims.exe], autostart: false } }
-        | reduce { |accum, val| $accum | merge $val }
-        | { procs: $in }
-        | to yaml
-        | save ([$out mprocs.yaml] | path join) -f
-}
-
 def "import justfile" [] {
     try {
         mklink .justfile (
@@ -86,9 +75,9 @@ def --env "go source" [] {
 
 def --env "go build" [--release] {
     if $release {
-        cd (just output)/build/msvc194/Release
+        cd (just output --binary)/Release
     } else {
-        cd (just output)/build/msvc194/Debug
+        cd (just output --binary)/Debug
     }
 }
 
