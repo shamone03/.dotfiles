@@ -27,6 +27,16 @@ export def logging [] {
         print $"Already configured ($file)"
       }
     }
+    if not ("env.json" | path exists) {
+      {} | to json | save env.json
+    }
+    let env_json = open env.json
+    if ($env_json.aims_configuration_parsing?.log_level? == info) {
+        print $"Already configured env.json"
+    } else {
+        open env.json | upsert aims_configuration_parsing.log_level info | to json | save env.json --force
+        print $"(ansi green)Configured env.json(ansi reset)"
+    }
 }
 
 def service_short [] {
