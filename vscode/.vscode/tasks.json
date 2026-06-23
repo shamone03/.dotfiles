@@ -12,20 +12,32 @@
         {
             "label": "Install",
             "command": "just",
-            "args": ["install"],
+            "args": [
+                "install"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Update",
             "command": "just",
-            "args": ["update"],
+            "args": [
+                "update"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Build",
             "command": "just",
-            "args": ["build"],
-            "problemMatcher": ["$msCompile"]
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "args": [
+                "build"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ]
         },
         {
             "label": "Build And Sym-link Dependency",
@@ -33,24 +45,48 @@
                 "cwd": "${env:projects}/${input:package_folder}"
             },
             "command": "just",
-            "args": ["build", "all", "link", "${workspaceFolderBasename}"],
+            "args": [
+                "build",
+                "all",
+                "link",
+                "${workspaceFolderBasename}"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Debug With Deps",
-            "dependsOn": ["Build And Sym-link Dependency", "Build"]
+            "dependsOn": [
+                "Build And Sym-link Dependency",
+                "Build"
+            ]
         },
         {
             "label": "Rebuild",
             "command": "just",
-            "args": ["rebuild"],
+            "args": [
+                "rebuild"
+            ],
             "problemMatcher": []
         },
         {
             "label": "Update and Rebuild",
             "command": "just",
-            "args": ["rerebuild"],
+            "args": [
+                "rerebuild"
+            ],
             "problemMatcher": []
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: build",
+            "command": "build",
+            "targets": [
+                "all"
+            ],
+            "preset": "conan-debug",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake template build task"
         }
     ]
 }
