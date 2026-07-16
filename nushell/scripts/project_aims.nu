@@ -45,15 +45,33 @@ export def info [] {
             let nes_configuration = if ($nes_configuration_path | path exists) {
                 open $nes_configuration_path
             } else {
-                []
+                null
             }
             {
                 ...$in,
-                exported_sensor_plugins: ($nes_configuration
-                | xml xaccess [Configuration SensorList Sensor]
-                | get attributes
-                | get pluginType
-                | sort)
+                exported_sensor_plugins: (
+                    if ($nes_configuration != null) {
+                        $nes_configuration
+                        | xml xaccess [Configuration SensorList Sensor]
+                        | get attributes
+                        | get pluginType
+                        | sort
+                    } else {
+                        null
+                    }
+                )
             }
         }
+    | each {
+            let services_path = [$in.configuration Services.csv] | path join
+            let services = if ($services_path | path exists) {
+                open $services_path | get ExeName
+            } else {
+                null
+            }
+            {
+                ...$in,
+                services: $services
+            }
+    }
 }
