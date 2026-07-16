@@ -135,9 +135,16 @@ clean dry="false" permanent="false":
     [{{ build_dir }} {{ conan_dir }}/CMakeUserPresets.json {{ sources_dir }}/CMakeUserPresets.json {{ root }}/compile_commands.json ...(glob .clang*) {{ root }}/.cache] \
         | where { $in | path exists } \
         | uniq \
-        | each { \
-            {{ if dry == 'true' { 'print $"will' + ( if permanent == "true" { " permanently" } else { "" } ) + ' delete ($in)"' } else { "rm $in --recursive --verbose" + ( if permanent == "false" { " --trash" } else { " --permanent" } ) } }}; \
-        }; \
+        | {{ if dry == 'true' {
+            'each { print $"will' + ( if permanent == "true" { " permanently" } else { "" } ) + ' delete ($in) "}'
+        } else {
+            'if ($in | is-not-empty) {' +
+                'rm ...$in --recursive --verbose' + ( if permanent == "true" { " --permanent" } else { " --trash" } ) +
+                '| each {' +
+                   ' if ($in.deleted) { print $"' + ( if permanent == "true" { "permanently " } else { "" } ) + 'deleted ($in.path)" } else { print $"(ansi red)did not delete ($in.path) because ($in.error)(ansi reset)" }' +
+                '}' +
+            '}'
+        } }}; \
         {{ if dry == 'true' { 'git clean -nXdf test_package' } else { 'git clean -Xdf test_package' } }}
 
 [doc('Remove package from cache and conan create with the given flags')]
