@@ -1,5 +1,5 @@
 gui:
-  useHunkModeInStagingView: false
+  # useHunkModeInStagingView: false
   # Added from C:\Users\aryah.kannan\AppData\Local\Temp\nvim\lazygit-theme.yml
   theme:
     unstagedChangesColor:
