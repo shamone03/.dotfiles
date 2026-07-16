@@ -31,9 +31,21 @@ projects_dir := replace(env('projects', (env('HOMEDRIVE') + env('HOMEPATH')) / "
 [private]
 env_name := if env('CONAN_HOME', '') != "" { file_name(env('CONAN_HOME')) } else { "" }
 [private]
-cmake_verbosity := if verbose == "true" { "--log-level VERBOSE --debug-find " } else if quiet == "true" { "--log-level WARNING " } else { "" }
+cmake_verbosity := if verbose == "true" {
+        "--log-level VERBOSE --debug-find "
+    } else if quiet == "true" {
+        "--log-level WARNING "
+    } else {
+        ""
+    }
 [private]
-conan_verbosity := if verbose == "true" { '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace ' } else if quiet == "true" { '-c:a tools.cmake:configure_args+=' + quote(trim(cmake_verbosity)) + ' -v warning ' } else { "" }
+conan_verbosity := if verbose == "true" {
+        '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace -c:a tools.cmake:configure_args+=' + quote(trim(cmake_verbosity))
+    } else if quiet == "true" {
+        '-c:a tools.cmake:configure_args+=' + quote(trim(cmake_verbosity)) + ' -v warning '
+    } else {
+        ""
+    }
 [private]
 build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 [private]
