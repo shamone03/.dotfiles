@@ -4,7 +4,7 @@ local function get_sources()
 			"--config",
 			"C:/Users/aryah.kannan/Projects/.dotfiles/nushell/scripts/find_in_parent.nu",
 			"-c",
-			"open (find-in-parent .sources.txt ($env.projects)/.builds) --raw",
+			"open (find-in-parent .sources.txt ($env.project_builds)) --raw",
 		})
 		:stdout(Command.PIPED)
 		:stderr(Command.PIPED)

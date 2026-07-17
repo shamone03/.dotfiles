@@ -1,9 +1,10 @@
 local function get_build_output()
-	local out, err = Command("nu"):arg({ "-c", "just output" }):stdout(Command.PIPED):stderr(Command.PIPED):output()
+	local out, err =
+		Command("nu"):arg({ "-c", "just output --binary" }):stdout(Command.PIPED):stderr(Command.PIPED):output()
 
 	if out.status.success then
 		local destination = out.stdout:gsub("[\n\r]", "") .. "/"
-		return string.format("%s/build/msvc194/Debug", destination), nil
+		return string.format("%s/Debug", destination), nil
 	else
 		return nil, out.stderr
 	end
