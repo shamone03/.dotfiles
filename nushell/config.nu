@@ -58,6 +58,22 @@ def "import vscode" [] {
     cp $"($env.projects)/.dotfiles/vscode/.vscode/" . --recursive --verbose
 }
 
+module version {
+    def levels [] {
+        ["major", "minor", "patch"]
+    }
+
+    export def bump [level: string@levels, --dry] {
+        let version = just version | str trim
+        let updated = $version | into semver | semver bump $level
+        if (not $dry) {
+            open conanfile.py | str replace $version { $updated | to text } | save conanfile.py --force
+        }
+        print $"($version) -> ($updated)"
+    }
+}
+use version;
+
 def open-repo [--pull-request(-p)] {
     mut link = git config --get remote.origin.url | str trim
     let branch = git branch --show-current | str trim
@@ -139,7 +155,7 @@ $env.config.shell_integration = {
 
 $env.config.table.mode = 'reinforced'
 $env.config.table.index_mode = 'auto'
-$env.config.edit_mode = "emacs"
+$env.config.edit_mode = "vi"
 $env.config.history = {
     file_format: sqlite
     max_size: 1_000_000_000
@@ -147,6 +163,13 @@ $env.config.history = {
     isolation: true
 }
 
+# Disable prompt from Nushell Because it is duplicated with that of Starship
+$env.PROMPT_INDICATOR_VI_NORMAL = ""
+$env.PROMPT_INDICATOR_VI_INSERT = ""
+
+# Use cursor shapes to differentiate instead
+$env.config.cursor_shape.vi_insert = "blink_line"
+$env.config.cursor_shape.vi_normal = "blink_block"
 $env.config.hooks.pre_prompt = [
     {
         let duration = $env.CMD_DURATION_MS | into duration --unit ms
@@ -158,6 +181,73 @@ $env.config.hooks.pre_prompt = [
             } else {
                 notify --summary $"🔴($wd): ($last_command)" --body $"Completed in ($duration)"
             }
+        }
+    }
+]
+$env.config.menus ++= [
+    {
+        name: just_menu,
+        only_buffer_difference: true,
+        style: {
+            text: white,
+            selected_text: magenta,
+            description_text: yellow
+        }
+        marker: "# ",
+        type: {
+            layout: columnar,
+            page_size: 24
+        },
+        source: { |buffer, position|
+            just --dump --unstable --dump-format json
+            | from json
+            | get recipes
+            | transpose recipe data
+            | where $in.data.private == false
+            | each {
+                {
+                    value: $"just ($in.recipe)",
+                    description: $in.data.doc?
+                }
+            }
+        }
+    }
+]
+$env.config.keybindings ++= [
+    {
+        name: open_yazi,
+        modifier: CONTROL,
+        keycode: char_y,
+        mode: [vi_normal vi_insert emacs],
+        event: [
+            {
+                send: executehostcommand,
+                cmd: "y"
+            }
+        ]
+    },
+    {
+        name: open_lazygit,
+        modifier: CONTROL,
+        keycode: char_g,
+        mode: [vi_normal vi_insert emacs],
+        event: [
+            {
+                send: executehostcommand,
+                cmd: "l"
+            }
+        ]
+    },
+    {
+        name: just_menu,
+        modifier: control
+        keycode: char_t
+        mode: [vi_insert vi_normal emacs]
+        event: {
+            until: [
+                { send: menu name: just_menu }
+                { send: menupagenext }
+            ]
         }
     }
 ]
