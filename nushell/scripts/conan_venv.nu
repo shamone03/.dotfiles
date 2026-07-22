@@ -79,20 +79,20 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
         }
         "tools.microsoft.msbuild:vs_version=18" | save ([$venv_dir "global.conf"] | path join) --force --progress
     }
-    if $conan_version == "1" {
-        $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)"
-        if $aims_version != null {
-            $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name) v($aims_version)(ansi reset)"
-        }
-    } else if $conan_version == "2" {
-        $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan: ($name)(ansi reset)"
-    }
-
-    use ../starship.nu
-    let old_prompt = $env.PROMPT_COMMAND
-    $env.PROMPT_COMMAND = {|| $"($env.SHMN_CONAN_VENV_PROMPT)(do $old_prompt)" }
-
-    print $"(ansi green)CONAN_USER_HOME=($env.CONAN_USER_HOME)(ansi reset)"
+    # if $conan_version == "1" {
+    #     $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)"
+    #     if $aims_version != null {
+    #         $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name) v($aims_version)(ansi reset)"
+    #     }
+    # } else if $conan_version == "2" {
+    #     $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan: ($name)(ansi reset)"
+    # }
+    #
+    # use ../starship.nu
+    # let old_prompt = $env.PROMPT_COMMAND
+    # $env.PROMPT_COMMAND = {|| $"($env.SHMN_CONAN_VENV_PROMPT)(do $old_prompt)" }
+    #
+    # print $"(ansi green)CONAN_USER_HOME=($env.CONAN_USER_HOME)(ansi reset)"
 }
 
 export def --env remove [name: string@completions] {
@@ -113,7 +113,7 @@ export def --env remove [name: string@completions] {
     rm $venv_dir --recursive --verbose --permanent
     if ($env has SHMN_CONAN_VENV_NAME) and ($env | get SHMN_CONAN_VENV_NAME | $in == $name) {
         try {
-            hide-env SHMN_CONAN_VENV_PROMPT CONAN_USER_HOME CONAN_HOME
+            hide-env CONAN_USER_HOME CONAN_HOME # SHMN_CONAN_VENV_PROMPT
         }
         use ../starship.nu
     }

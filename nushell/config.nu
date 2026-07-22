@@ -8,6 +8,7 @@ use scripts/conan_venv.nu
 use scripts/project_aims.nu
 use scripts/configure.nu
 
+conan_venv switch
 mkdir $"($nu.cache-dir)"
 carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 source $"($nu.cache-dir)/carapace.nu"
@@ -60,7 +61,7 @@ def "import vscode" [] {
 
 module version {
     def levels [] {
-        ["major", "minor", "patch"]
+        [major minor patch]
     }
 
     export def bump [level: string@levels, --dry] {
@@ -218,7 +219,7 @@ $env.config.keybindings ++= [
         name: open_yazi,
         modifier: CONTROL,
         keycode: char_y,
-        mode: [vi_normal vi_insert emacs],
+        mode: [vi_insert vi_normal emacs]
         event: [
             {
                 send: executehostcommand,
@@ -230,7 +231,7 @@ $env.config.keybindings ++= [
         name: open_lazygit,
         modifier: CONTROL,
         keycode: char_g,
-        mode: [vi_normal vi_insert emacs],
+        mode: [vi_insert vi_normal emacs]
         event: [
             {
                 send: executehostcommand,

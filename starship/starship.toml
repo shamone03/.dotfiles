@@ -1,3 +1,19 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$all$conan$cmake$cmd_duration$line_break$character"
+
+[custom.conan]
+symbol = "󰏗 "
+command = "just version"
+detect_files = ["conanfile.py", "justfile"]
+style = "green bold"
+format = "is[ $symbol$output]($style) "
+ignore_timeout = true
+
+[env_var.SHMN_CONAN_VENV_NAME]
+variable = "SHMN_CONAN_VENV_NAME"
+symbol = " "
+style = "197"
+format = "with [$symbol$env_value]($style) "
 
 [aws]
 symbol = "  "
