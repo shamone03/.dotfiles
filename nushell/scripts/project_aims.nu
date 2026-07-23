@@ -16,8 +16,8 @@ export def info [] {
                 service_plugins: (open ([$in.configuration CN_OptionsConfiguration.xml] | path join)
                 | xml xaccess [Configuration ServiceProviderPluginList ServiceProviderPlugins * PluginKey]
                 | get attributes
-                | get PluginType
-                | sort)
+                | rename --column { PluginType: plugin_type, PluginLabel: plugin_label }
+                | sort-by plugin_type)
             }
         }
     | each {
@@ -26,8 +26,8 @@ export def info [] {
                 ui_plugins: (open ([$in.configuration CN_OptionsConfiguration.xml] | path join)
                 | xml xaccess [Configuration UIPluginList UIPlugins * PluginKey]
                 | get attributes
-                | get PluginType
-                | sort)
+                | rename --column { PluginType: plugin_type, PluginLabel: plugin_label }
+                | sort-by plugin_type)
             }
         }
     | each {
@@ -36,8 +36,8 @@ export def info [] {
                 sensor_plugins: (open ([$in.configuration scs_configuration.xml] | path join)
                 | xml xaccess [SCSConfig PluginList * PluginKey]
                 | get attributes
-                | get PluginType
-                | sort)
+                | rename --column { PluginType: plugin_type, PluginLabel: plugin_label }
+                | sort-by plugin_type)
             }
         }
     | each {
@@ -54,8 +54,8 @@ export def info [] {
                         $nes_configuration
                         | xml xaccess [Configuration SensorList Sensor]
                         | get attributes
-                        | get pluginType
-                        | sort
+                        | rename --column { pluginType: plugin_type, sensorLabel: plugin_label, label: label }
+                        | sort-by plugin_type
                     } else {
                         null
                     }
@@ -74,4 +74,26 @@ export def info [] {
                 services: $services
             }
     }
+}
+
+export def "add ui_plugin" [--project_name: string, --plugin_type: string, --plugin_label: string = "01"] {
+    use std xml;
+    $'<($plugin_type)_($plugin_label)>
+        <PluginKey PluginType="($plugin_type)" PluginLabel="($plugin_label)"/>
+    </($plugin_type)_($plugin_label)>' | from xml | let new_plugin;
+
+    let project = info | where project_name == $project_name | first
+    let existing = $project.ui_plugins | where plugin_type == $plugin_type and plugin_label == $plugin_label | is-not-empty
+    if $existing {
+        print $"($project_name) already has ($plugin_type)"
+        return
+    }
+    let cn_options_path = $"($project.configuration)/CN_OptionsConfiguration.xml"
+    let cn_options = open $cn_options_path
+    $cn_options | xml xinsert [Configuration UIPluginList UIPlugins] $new_plugin | let updated;
+    $updated | xml xaccess [Configuration UIPluginList UIPlugins *] | sort-by tag --ignore-case | let sorted_plugins;
+    let sorted_str = $"<UIPlugins>($sorted_plugins | each { $in | to xml --indent 4 --self-closed } | str join (char newline))</UIPlugins>" | from xml
+    $updated | xml xupdate [Configuration UIPluginList UIPlugins] { $sorted_str } | to xml --indent 4 --self-closed | save $cn_options_path --force
+
+    print $"(ansi green)Added ($plugin_type) to ($project_name)(ansi reset)"
 }
