@@ -40,7 +40,7 @@ function get-aims-latest {
     }
     Invoke-WebRequest "http://cn-appaf-p01.ad.onepal.com:8081/artifactory/aims-builds-daily/All/AIMS_Latest.zip" -OutFile $outfile
 
-    $outdir = "$projectHome/$((Get-Item $outfile).BaseName)"
+    $outdir = "C:/AIMS_Latest/$((Get-Item $outfile).BaseName)"
     Expand-Archive $outfile -DestinationPath $outdir -Force
     
     rm $outfile -force
