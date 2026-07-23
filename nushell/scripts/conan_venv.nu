@@ -64,8 +64,7 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
         if $aims_version != null {
             error make "Cannot specify aims version for conan 2 yet"
         }
-        $env.CONAN_USER_HOME = ($venv_dir | path join | str replace '\' '/' --all)
-        $env.CONAN_HOME = $env.CONAN_USER_HOME
+        $env.CONAN_HOME = ($venv_dir | path join | str replace '\' '/' --all)
         $env.SHMN_CONAN_VENV_NAME = $name
         if $update or not ([$env.CONAN_HOME profiles default] | path join | path exists) {
             conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/Conan2Config.zip
@@ -95,6 +94,13 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
     # print $"(ansi green)CONAN_USER_HOME=($env.CONAN_USER_HOME)(ansi reset)"
 }
 
+export def --env exit [] {
+    if ($env has SHMN_CONAN_VENV_NAME) {
+        hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors # SHMN_CONAN_VENV_PROMPT
+        use ../starship.nu
+    }
+}
+
 export def --env remove [name: string@completions] {
     let conan_version = conan --version
     | parse '{conan} {_} {major}.{minor}.{patch}'
@@ -111,10 +117,9 @@ export def --env remove [name: string@completions] {
     }
 
     rm $venv_dir --recursive --verbose --permanent
+    rm $last_env_name
     if ($env has SHMN_CONAN_VENV_NAME) and ($env | get SHMN_CONAN_VENV_NAME | $in == $name) {
-        try {
-            hide-env CONAN_USER_HOME CONAN_HOME # SHMN_CONAN_VENV_PROMPT
-        }
+        hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors # SHMN_CONAN_VENV_PROMPT
         use ../starship.nu
     }
 }
