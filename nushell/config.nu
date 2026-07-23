@@ -8,21 +8,18 @@ use scripts/conan_venv.nu
 use scripts/project_aims.nu
 use scripts/configure.nu
 
-conan_venv switch
+if $nu.is-interactive {
+    conan_venv switch
+}
 mkdir $"($nu.cache-dir)"
 carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 source $"($nu.cache-dir)/carapace.nu"
 $env.CARAPACE_LENIENT = 1
 $env.CARAPACE_EXCLUDES = "go"
-
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
-$env.config.buffer_editor = "nvim"
-$env.config.show_banner = false
-$env.config.rm.always_trash = true
 $env.JUST_COMMAND_COLOR = "purple"
 $env.JUST_HIGHLIGHT = true
-
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
 
 def "config lazygit" [] {
@@ -154,6 +151,9 @@ $env.config.shell_integration = {
     reset_application_mode: true
 }
 
+$env.config.buffer_editor = "nvim"
+$env.config.show_banner = false
+$env.config.rm.always_trash = true
 $env.config.table.mode = 'reinforced'
 $env.config.table.index_mode = 'auto'
 $env.config.edit_mode = "vi"
