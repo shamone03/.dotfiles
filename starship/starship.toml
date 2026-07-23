@@ -6,7 +6,7 @@ symbol = "󰏗 "
 command = "just version"
 detect_files = ["conanfile.py", "justfile"]
 style = "green bold"
-format = "is[ $symbol$output]($style) "
+format = "(is[ $symbol$output]($style) )"
 ignore_timeout = true
 
 [env_var.SHMN_CONAN_VENV_NAME]
