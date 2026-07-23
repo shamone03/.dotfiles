@@ -250,5 +250,29 @@ $env.config.keybindings ++= [
                 { send: menupagenext }
             ]
         }
+    },
+    {
+        name: just_build,
+        modifier: CONTROL,
+        keycode: char_b,
+        mode: [vi_insert vi_normal emacs]
+        event: [
+            {
+                send: executehostcommand,
+                cmd: "just build"
+            }
+        ]
+    },
+    {
+        name: just_rebuild,
+        modifier: CONTROL_SHIFT,
+        keycode: char_b,
+        mode: [vi_insert vi_normal emacs]
+        event: [
+            {
+                send: executehostcommand,
+                cmd: "just rebuild"
+            }
+        ]
     }
 ]
