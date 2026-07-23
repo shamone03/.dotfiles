@@ -82,18 +82,21 @@ export def "add ui_plugin" [--project_name: string, --plugin_type: string, --plu
         <PluginKey PluginType="($plugin_type)" PluginLabel="($plugin_label)"/>
     </($plugin_type)_($plugin_label)>' | from xml | let new_plugin;
 
-    let project = info | where project_name == $project_name | first
-    let existing = $project.ui_plugins | where plugin_type == $plugin_type and plugin_label == $plugin_label | is-not-empty
+    let project = info | where project_name == $project_name | first;
+    let existing = $project.ui_plugins | where plugin_type == $plugin_type and plugin_label == $plugin_label | is-not-empty;
     if $existing {
-        print $"($project_name) already has ($plugin_type)"
-        return
+        print $"($project_name) already has ($plugin_type)_($plugin_label)";
+        return;
     }
-    let cn_options_path = $"($project.configuration)/CN_OptionsConfiguration.xml"
-    let cn_options = open $cn_options_path
-    $cn_options | xml xinsert [Configuration UIPluginList UIPlugins] $new_plugin | let updated;
-    $updated | xml xaccess [Configuration UIPluginList UIPlugins *] | sort-by tag --ignore-case | let sorted_plugins;
-    let sorted_str = $"<UIPlugins>($sorted_plugins | each { $in | to xml --indent 4 --self-closed } | str join (char newline))</UIPlugins>" | from xml
-    $updated | xml xupdate [Configuration UIPluginList UIPlugins] { $sorted_str } | to xml --indent 4 --self-closed | save $cn_options_path --force
+    let cn_options_path = $"($project.configuration)/CN_OptionsConfiguration.xml";
+    let cn_options = open $cn_options_path;
 
-    print $"(ansi green)Added ($plugin_type) to ($project_name)(ansi reset)"
+    let updated_cn_options = $cn_options | xml xinsert [Configuration UIPluginList UIPlugins] $new_plugin;
+    let sorted_plugins = $updated_cn_options | xml xaccess [Configuration UIPluginList UIPlugins *] | sort-by tag --ignore-case;
+
+    let sorted_plugins_xml = $"<UIPlugins>($sorted_plugins | each { $in | to xml --indent 4 --self-closed } | str join (char newline))</UIPlugins>" | from xml;
+    let sorted_cn_options = $updated_cn_options | xml xupdate [Configuration UIPluginList UIPlugins] { $sorted_plugins_xml };
+
+    $sorted_cn_options | to xml --indent 4 --self-closed | save $cn_options_path --force;
+    print $"(ansi green)Added ($plugin_type)_($plugin_label) to ($project_name)(ansi reset)";
 }
