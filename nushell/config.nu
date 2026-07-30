@@ -56,6 +56,21 @@ def "import vscode" [] {
     cp $"($env.projects)/.dotfiles/vscode/.vscode/" . --recursive --verbose
 }
 
+def "history today" [] {
+    history | where start_timestamp > ((date now) - 12hr)
+}
+
+def get-aims-latest [] {
+    let out_file = ($nu.temp-dir)/AIMS_Latest.zip
+    if ($out_file | path exists) {
+        rm ($out_file) --force --verbose
+    }
+    http get http://cn-appaf-p01.ad.onepal.com:8081/artifactory/aims-builds-daily/All/AIMS_Latest.zip --raw
+        | into binary
+        | save ($nu.temp-dir)/AIMS_Latest.zip --force --raw
+    ouch decompress ($nu.temp-dir)/AIMS_Latest.zip --dir ($env.HOMEDRIVE)/AIMS_Latest
+}
+
 module version {
     def levels [] {
         [major minor patch]
@@ -135,17 +150,11 @@ def get-file-list [path: string] {
 
 source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
 
-let osc9_9 = if $nu.os-info == "linux" {
-    true
-} else {
-    false
-}
-
 $env.config.shell_integration = {
     osc2: true
     osc7: true
     osc8: true
-    osc9_9: $osc9_9
+    osc9_9: ($nu.os-info == "linux")
     osc133: false
     osc633: true
     reset_application_mode: true
@@ -241,7 +250,7 @@ $env.config.keybindings ++= [
     },
     {
         name: just_menu,
-        modifier: control
+        modifier: ALT
         keycode: char_t
         mode: [vi_insert vi_normal emacs]
         event: {
@@ -264,14 +273,14 @@ $env.config.keybindings ++= [
         ]
     },
     {
-        name: just_rebuild,
+        name: just_default,
         modifier: CONTROL_SHIFT,
         keycode: char_b,
         mode: [vi_insert vi_normal emacs]
         event: [
             {
                 send: executehostcommand,
-                cmd: "just rebuild"
+                cmd: "just default"
             }
         ]
     }
