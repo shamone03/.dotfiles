@@ -168,6 +168,8 @@ local function setup_keymaps()
     vim.keymap.set("n", "<C-c>", function()
         if not vim.bo.modified then
             tab_bar.unpin_and_close()
+        else
+            vim.notify("Buffer unsaved!!!")
         end
     end, { desc = "Close current buffer" })
     vim.keymap.set({ "i", "n" }, "<A-o>", "<cmd>LspClangdSwitchSourceHeader<CR>", { desc = "Switch source/header" })
