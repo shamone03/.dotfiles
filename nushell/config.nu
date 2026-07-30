@@ -11,6 +11,7 @@ $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 $env.config.rm.always_trash = true
+$env.config.edit_mode = 'vi'
 
 $env.YAZI_CONFIG_HOME = $"C:($env.projects)/.dotfiles/yazi/"
 
