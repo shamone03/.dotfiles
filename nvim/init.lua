@@ -185,6 +185,11 @@ local function setup_keymaps()
     vim.keymap.set("n", "<A-k>", ":m .-2<CR>==") -- move line down(n)
     vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv") -- move line up(v)
     vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv") -- move line down(v)
+    vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
+    vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
+    vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
+    vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
+    vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
 end
 
 local function setup_smooth_scroll()
