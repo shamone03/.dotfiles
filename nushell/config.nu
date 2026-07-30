@@ -116,7 +116,7 @@ def git-root [] {
 
 alias l = lazygit
 alias y = yazi
-alias o = nvim .
+alias o = nvim
 alias j = just
 alias or = open-repo
 alias gh = cd $env.projects
