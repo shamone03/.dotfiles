@@ -185,13 +185,30 @@ local function setup_keymaps()
     vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv") -- move line down(v)
 end
 
+local function setup_smooth_scroll()
+    vim.pack.add({ "https://github.com/karb94/neoscroll.nvim" })
+    require("neoscroll").setup({
+        duration_multiplier = 0.25,
+    })
+end
+
+local function setup_smooth_cursor()
+    vim.pack.add({ "https://github.com/sphamba/smear-cursor.nvim" })
+    require("smear_cursor").setup()
+end
+
 local function setup_theme()
     vim.pack.add({
         "https://github.com/rose-pine/neovim",
         "https://github.com/nvim-tree/nvim-web-devicons",
         "https://github.com/nvim-mini/mini.icons",
     })
-    vim.cmd("colorscheme rose-pine")
+    vim.cmd.colorscheme("rose-pine")
+end
+
+local function setup_autocomplete_pairs()
+    vim.pack.add({ "https://github.com/windwp/nvim-autopairs" })
+    require("nvim-autopairs").setup()
 end
 
 setup_lsp()
@@ -201,7 +218,11 @@ setup_file_picker()
 setup_tab_bars()
 setup_explorer()
 setup_autocomplete_menu()
+setup_autocomplete_pairs()
 setup_dashboard()
 setup_keymaps()
 setup_keymap_hints()
+
 setup_theme()
+setup_smooth_scroll()
+setup_smooth_cursor()
