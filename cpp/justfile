@@ -1,11 +1,12 @@
 set shell := ["nu", "--no-config-file", "--no-std-lib", "--no-history", "-c"]
 set script-interpreter := ["nu", "--no-config-file", "--no-history"]
 set unstable
+set lazy
 
 [private]
 version := "1.2.0"
 
-root := replace( justfile_directory(), '\', '/' )
+root := `git rev-parse --show-toplevel`
 compiler := "msvc" # or 'clang'
 generator := "ninja-multi"
 build_type := "debug"
@@ -18,7 +19,9 @@ sources_dir := if path_exists( "CMakeLists.txt" ) == "true" {
         root
     }
 
-build_dir := if env_name != "" { builds_dir / file_name(conan_dir) / ( "build_" + env_name ) } else { builds_dir / file_name(conan_dir) }
+[private]
+unique_build_dir := trim( replace( shell(f"'{{ root }}' | path relative-to $env.projects"), '\', '/' ) )
+build_dir := if env_name != "" { builds_dir / env_name / unique_build_dir } else { builds_dir / unique_build_dir }
 verbose := "false"
 quiet := "false"
 
@@ -40,9 +43,9 @@ cmake_verbosity := if verbose == "true" {
     }
 [private]
 conan_verbosity := if verbose == "true" {
-        '-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace -c:a tools.cmake:configure_args+=' + quote(trim(cmake_verbosity))
+        f"-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace -c:a tools.cmake:configure_args+={{ quote(trim(cmake_verbosity)) }}"
     } else if quiet == "true" {
-        '-c:a tools.cmake:configure_args+=' + quote(trim(cmake_verbosity)) + ' -v warning '
+        "-c:a tools.cmake:configure_args+={{ quote(trim(cmake_verbosity)) }} -v warning "
     } else {
         ""
     }
@@ -104,9 +107,9 @@ link TO:
 [arg("binary", long="binary", value="true")]
 @output binary="false":
     {{ if binary == "true" {\
-    "print ( " + cmake_output_cmd(root) + ")"\
+    f"print ( {{ cmake_output_cmd(root) }} )"\
     } else {\
-    "print " + build_dir } }}
+    f"print {{ build_dir }}" } }}
 
 [doc('Print current package version')]
 @version:
