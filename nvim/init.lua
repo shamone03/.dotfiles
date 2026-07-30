@@ -3,6 +3,9 @@ vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
+
+vim.opt.backup = true
+vim.opt.backupdir = "C:/.backup//"
 vim.opt.relativenumber = true
 vim.opt.tabstop = 4 -- A TAB character looks like 4 spaces
 vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
@@ -21,6 +24,7 @@ vim.opt.fillchars = { eob = " " }
 vim.opt.termguicolors = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+
 vim.diagnostic.config({
     signs = {
         text = {
@@ -36,7 +40,11 @@ vim.diagnostic.config({
 local function setup_treesitter()
     vim.pack.add({
         "https://github.com/nvim-treesitter/nvim-treesitter",
-    }, { confirm = false })
+    })
+
+    require("nvim-treesitter").setup({
+        auto_install = true, -- autoinstall languages that are not installed yet
+    })
 end
 
 local function setup_lsp()
@@ -146,25 +154,35 @@ local function setup_keymaps()
     local picker = require("telescope.builtin")
     local explorer = require("nvim-tree.api")
     local tab_bar = require("bufferline.commands")
+
     vim.keymap.set("n", "<leader><space>", picker.find_files, { desc = "Search files" })
     vim.keymap.set("n", "<leader>/", picker.live_grep, { desc = "Search project" })
     vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition)
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
     vim.keymap.set("n", "H", function()
         tab_bar.cycle(-1)
-    end)
+    end, { desc = "Go to previous buffer" })
     vim.keymap.set("n", "L", function()
         tab_bar.cycle(1)
-    end)
-    vim.keymap.set({ "i", "n" }, "<M-o>", "<cmd>LspClangdSwitchSourceHeader<CR>")
-    vim.keymap.set({ "i", "n" }, "<M-F>", vim.lsp.buf.format)
-    vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-    vim.keymap.set("i", "<C-s>", "<Esc><cmd>w<CR>")
-    vim.keymap.set("n", "<C-s>", "<cmd>w<CR>")
+    end, { desc = "Go to next buffer" })
+    vim.keymap.set("n", "<C-c>", function()
+        if not vim.bo.modified then
+            tab_bar.unpin_and_close()
+        end
+    end, { desc = "Close current buffer" })
+    vim.keymap.set({ "i", "n" }, "<M-o>", "<cmd>LspClangdSwitchSourceHeader<CR>", { desc = "Switch source/header" })
+    vim.keymap.set({ "i", "n" }, "<M-F>", vim.lsp.buf.format, { desc = "Format current buffer" })
+    vim.keymap.set({ "i", "n" }, "<C-s>", vim.cmd.write, { desc = "Write buffer" })
+    vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
     vim.keymap.set("n", "<leader>od", function()
         vim.g.shmn_virtual_text = not vim.g.shmn_virtual_text
         vim.diagnostic.config({ virtual_text = vim.g.shmn_virtual_text })
     end, { desc = "Toggle inline diagnostics" })
+
+    vim.keymap.set("n", "<A-j>", ":m .+1<CR>==") -- move line up(n)
+    vim.keymap.set("n", "<A-k>", ":m .-2<CR>==") -- move line down(n)
+    vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv") -- move line up(v)
+    vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv") -- move line down(v)
 end
 
 local function setup_theme()
@@ -187,7 +205,3 @@ setup_dashboard()
 setup_keymaps()
 setup_keymap_hints()
 setup_theme()
-
-require("nvim-treesitter").setup({
-    auto_install = true, -- autoinstall languages that are not installed yet
-})
