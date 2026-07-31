@@ -95,6 +95,15 @@ config.keys = {
 		mods = "CTRL",
 		action = act.ScrollByLine(5),
 	},
+    {
+        key = "d",
+        mods = "CTRL|SHIFT",
+        action = act.DisableDefaultAssignment
+    },{
+        key = "u",
+        mods = "CTRL|SHIFT",
+        action = act.DisableDefaultAssignment
+    }
 }
 
 for i = 1, 8 do

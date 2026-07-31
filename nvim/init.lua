@@ -3,6 +3,7 @@ vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
+vim.g.shmn_show_tabs = false
 
 vim.opt.backup = true
 vim.opt.backupdir = "C:/.backup//"
@@ -22,7 +23,7 @@ vim.opt.cursorline = true
 vim.opt.breakindent = true
 vim.opt.fillchars = { eob = " " }
 vim.opt.termguicolors = true
-vim.opt.list = true
+vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 vim.diagnostic.config({
@@ -75,10 +76,10 @@ local function setup_lsp()
         },
     })
 
-    vim.lsp.enable("lua_ls")
-
     vim.lsp.on_type_formatting.enable()
     vim.lsp.inlay_hint.enable()
+    vim.lsp.enable("lua_ls")
+    vim.lsp.enable("nushell")
 end
 
 local function setup_explorer()
@@ -154,16 +155,34 @@ local function setup_dashboard()
     })
 end
 
-local function setup_file_picker()
-    vim.pack.add({ "https://github.com/nvim-lua/plenary.nvim", "https://github.com/nvim-telescope/telescope.nvim" })
-    require("telescope").setup({
+local function setup_picker()
+    vim.pack.add({
+        "https://github.com/nvim-lua/plenary.nvim",
+        "https://github.com/nvim-telescope/telescope.nvim",
+        "https://github.com/nvim-telescope/telescope-ui-select.nvim",
+    })
+    local picker = require("telescope")
+    picker.setup({
         defaults = {
             sorting_strategy = "ascending",
             layout_config = {
                 prompt_position = "top",
             },
         },
+        extensions = {
+            ["ui-select"] = {
+                -- Pass layout overrides directly into the dropdown theme generator
+                require("telescope.themes").get_dropdown({
+                    layout_config = {
+                        -- 0.8 means 80% of the screen width. You can also use an absolute character count like 80.
+                        width = 0.3,
+                        height = 0.2,
+                    },
+                }),
+            },
+        },
     })
+    picker.load_extension("ui-select")
 end
 
 local function setup_tab_bars()
@@ -177,6 +196,10 @@ local function setup_keymap_hints()
     ---@class wk.Opts
     local config = {
         preset = "helix",
+        keys = {
+            scroll_down = "<c-s-d>",
+            scroll_up = "<c-s-u>",
+        },
     }
     wk.setup(config)
 end
@@ -215,16 +238,25 @@ local function setup_keymaps()
         vim.g.shmn_virtual_text = not vim.g.shmn_virtual_text
         vim.diagnostic.config({ virtual_text = vim.g.shmn_virtual_text })
     end, { desc = "Toggle inline diagnostics" })
+    vim.keymap.set("n", "<leader>us", function()
+        vim.g.shmn_show_tabs = not vim.g.shmn_show_tabs
+        vim.opt_local.list = vim.g.shmn_show_tabs
+    end, { desc = "Toggle show tabs" })
 
-    vim.keymap.set("n", "<A-j>", ":m .+1<CR>==") -- move line up(n)
-    vim.keymap.set("n", "<A-k>", ":m .-2<CR>==") -- move line down(n)
-    vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv") -- move line up(v)
-    vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv") -- move line down(v)
+    vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+    vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+    vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+    vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
     vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
     vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
     vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
     vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
     vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
+
+    vim.keymap.set({ "n", "i", "x" }, "<leader>.", function()
+        vim.lsp.buf.code_action({ apply = true })
+    end, { desc = "Show and/or apply code action" })
 
     vim.keymap.set("n", "<leader>gb", function()
         git.blame_line({ full = true })
@@ -267,7 +299,7 @@ end
 setup_lsp()
 setup_treesitter()
 
-setup_file_picker()
+setup_picker()
 setup_tab_bars()
 setup_explorer()
 setup_autocomplete_menu()

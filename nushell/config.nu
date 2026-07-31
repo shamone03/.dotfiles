@@ -283,5 +283,12 @@ $env.config.keybindings ++= [
                 cmd: "just default"
             }
         ]
+    },
+    {
+        name: no_ctrl_q,
+        modifier: CONTROL,
+        keycode: char_q,
+        mode: [emacs, vi_normal, vi_insert]
+        event: null
     }
 ]
