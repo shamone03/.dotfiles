@@ -1,12 +1,22 @@
-use starship.nu;
-
+use starship.nu
 use linux.nu *;
-use hyprutils.nu *;
-# use windows.nu *;
+# use hyprutils.nu *;
+# use windows.nu *
+# use find_in_parent.nu *
+use search.nu
+# use scripts/conan_venv.nu
+# use scripts/project_aims.nu
+# use scripts/configure.nu
 
-use search.nu;
-
-$env.PATH ++= [ $"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
+if $nu.is-interactive {
+    # conan_venv switch
+}
+mkdir $"($nu.cache-dir)"
+carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+source $"($nu.cache-dir)/carapace.nu"
+$env.CARAPACE_LENIENT = 1
+$env.CARAPACE_EXCLUDES = "go"
+$env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
 $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
@@ -56,7 +66,7 @@ def open-repo [--pull-request (-p)] {
 
 alias l = lazygit
 alias y = yazi
-alias o = nvim .
+alias o = nvim
 alias j = just
 alias or = open-repo
 alias gh = cd $env.projects

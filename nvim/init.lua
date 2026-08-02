@@ -3,10 +3,10 @@ vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
-vim.g.shmn_show_tabs = false
 
+vim.g.shmn_show_tabs = false
 vim.opt.backup = true
-vim.opt.backupdir = "C:/.backup//"
+vim.opt.backupdir = "/home/shamone/.nvim-backup//"
 vim.opt.relativenumber = true
 vim.opt.tabstop = 4 -- A TAB character looks like 4 spaces
 vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
