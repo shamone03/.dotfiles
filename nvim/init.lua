@@ -92,7 +92,17 @@ local function setup_explorer()
         renderer = {
             group_empty = true,
         },
+        update_focused_file = {
+            enable = true,
+        },
+        modified = {
+            enable = true,
+        },
+        diagnostics = {
+            enable = true,
+        },
     }
+
     require("nvim-tree").setup(nvim_tree_config)
 end
 
@@ -118,7 +128,7 @@ end
 local function setup_dashboard()
     vim.pack.add({ "https://github.com/nvimdev/dashboard-nvim" })
     local header = [[
- █████╗ ██╗███╗   ███╗███████╗      ██╗███████╗██████╗
+█████╗ ██╗███╗   ███╗███████╗      ██╗███████╗██████╗
 ██╔══██╗██║████╗ ████║██╔════╝      ██║██╔════╝██╔══██╗
 ███████║██║██╔████╔██║███████╗█████╗██║███████╗██████╔╝
 ██╔══██║██║██║╚██╔╝██║╚════██║╚════╝██║╚════██║██╔══██╗
@@ -223,7 +233,7 @@ local function setup_keymaps()
     vim.keymap.set("n", "L", function()
         tab_bar.cycle(1)
     end, { desc = "Go to next buffer" })
-    vim.keymap.set("n", "<C-c>", function()
+    vim.keymap.set({ "n", "t" }, "<C-c>", function()
         if not vim.bo.modified then
             tab_bar.unpin_and_close()
         else
@@ -231,7 +241,7 @@ local function setup_keymaps()
         end
     end, { desc = "Close current buffer" })
     vim.keymap.set({ "i", "n" }, "<A-o>", "<cmd>LspClangdSwitchSourceHeader<CR>", { desc = "Switch source/header" })
-    vim.keymap.set({ "i", "n" }, "<A-F>", vim.lsp.buf.format, { desc = "Format current buffer" })
+    vim.keymap.set({ "i", "n", "x" }, "<A-F>", vim.lsp.buf.format, { desc = "Format current buffer" })
     vim.keymap.set({ "i", "n" }, "<C-s>", vim.cmd.write, { desc = "Write buffer" })
     vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
     vim.keymap.set("n", "<leader>ud", function()
@@ -253,8 +263,11 @@ local function setup_keymaps()
     vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
     vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
     vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
+    vim.keymap.set("n", "<C-Right>", "<C-w>>", { desc = "Increase window width" })
+    vim.keymap.set("n", "<C-Left>", "<C-w><", { desc = "Decrease window width" })
 
-    vim.keymap.set({ "n", "i", "x" }, "<leader>.", function()
+
+    vim.keymap.set({ "n", "x" }, "<leader>.", function()
         vim.lsp.buf.code_action({ apply = true })
     end, { desc = "Show and/or apply code action" })
 
@@ -263,6 +276,10 @@ local function setup_keymaps()
     end, { desc = "Blame Line" })
     vim.keymap.set("n", "<leader>gB", git.blame, { desc = "Blame Buffer" })
     vim.keymap.set({ "n", "x" }, "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "Reset Hunk" })
+
+    vim.keymap.set({ "n", "i" }, "<C-S-b>", function()
+        vim.fn.system("just build")
+    end)
 end
 
 local function setup_smooth_scroll()
