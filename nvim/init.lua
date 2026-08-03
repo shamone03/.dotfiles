@@ -187,7 +187,13 @@ end
 
 local function setup_tab_bars()
     vim.pack.add({ "https://github.com/akinsho/bufferline.nvim" })
-    require("bufferline").setup()
+    require("bufferline").setup({
+        options = {
+            custom_filter = function(buf_number)
+                return vim.bo[buf_number].buftype ~= "terminal"
+            end,
+        },
+    })
 end
 
 local function setup_keymap_hints()
@@ -209,7 +215,9 @@ local function setup_keymaps()
     local explorer = require("nvim-tree.api")
     local tab_bar = require("bufferline.commands")
     local git = require("gitsigns")
+    local terminal = require("shmn-terminal")
 
+    vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
     vim.keymap.set("n", "<leader><space>", picker.find_files, { desc = "Search files" })
     vim.keymap.set("n", "<leader>/", picker.live_grep, { desc = "Search project" })
     vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
@@ -254,7 +262,7 @@ local function setup_keymaps()
     vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
     vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
 
-    vim.keymap.set({ "n", "i", "x" }, "<leader>.", function()
+    vim.keymap.set({ "n", "x" }, "<leader>.", function()
         vim.lsp.buf.code_action({ apply = true })
     end, { desc = "Show and/or apply code action" })
 
@@ -291,6 +299,13 @@ local function setup_theme()
     vim.cmd.colorscheme("rose-pine")
 end
 
+local function setup_terminal()
+    -- vim.pack.add({ vim.fs.normalize((os.getenv("projects")) or ".") .. "/.dotfiles/nvim/plugin/shmn-terminal.nvim" }, )
+
+    vim.opt.rtp:prepend(vim.fs.normalize((os.getenv("projects")) or ".") .. "/.dotfiles/nvim/plugin/shmn-terminal.nvim")
+    require("shmn-terminal").setup()
+end
+
 local function setup_autocomplete_pairs()
     vim.pack.add({ "https://github.com/windwp/nvim-autopairs" })
     require("nvim-autopairs").setup()
@@ -306,6 +321,7 @@ setup_autocomplete_menu()
 setup_autocomplete_pairs()
 setup_dashboard()
 setup_git_hints()
+setup_terminal()
 setup_keymaps()
 setup_keymap_hints()
 
