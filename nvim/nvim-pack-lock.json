@@ -64,6 +64,10 @@
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
+    "shmn-terminal.nvim": {
+      "rev": "50a1a652098f08959207c39782f1fb261bd2baa2",
+      "src": "https://github.com/shamone03/shmn-terminal.nvim"
+    },
     "smear-cursor.nvim": {
       "rev": "9e9378d6ee34bb3782e0e8c63d9ec8ca618b479b",
       "src": "https://github.com/sphamba/smear-cursor.nvim"

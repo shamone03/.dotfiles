@@ -1,16 +1,16 @@
 use starship.nu
-# use linux.nu *;
-# use hyprutils.nu *;
-use windows.nu *
-use find_in_parent.nu *
-use search.nu
-use scripts/conan_venv.nu
-use scripts/project_aims.nu
-use scripts/configure.nu
+const os_tools = if $nu.os-info.name == "linux" { "linux.nu" } else { "windows.nu" }
+const scripts = if $nu.os-info.name == "linux" { null } else { "scripts" }
+
+use $os_tools *
+use $scripts *
 
 if $nu.is-interactive {
     conan_venv switch
 }
+use find_in_parent.nu *
+use search.nu
+
 mkdir $"($nu.cache-dir)"
 carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 source $"($nu.cache-dir)/carapace.nu"
