@@ -202,7 +202,13 @@ end
 
 local function setup_tab_bars()
     vim.pack.add({ "https://github.com/akinsho/bufferline.nvim" })
-    require("bufferline").setup()
+    require("bufferline").setup({
+        options = {
+            custom_filter = function(buf_number)
+                return vim.bo[buf_number].buftype ~= "terminal"
+            end,
+        },
+    })
 end
 
 local function setup_keymap_hints()
@@ -224,7 +230,9 @@ local function setup_keymaps()
     local explorer = require("nvim-tree.api")
     local tab_bar = require("bufferline.commands")
     local git = require("gitsigns")
+    local terminal = require("shmn-terminal")
 
+    vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
     vim.keymap.set("n", "<leader><space>", picker.find_files, { desc = "Search files" })
     vim.keymap.set("n", "<leader>/", picker.live_grep, { desc = "Search project" })
     vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
@@ -313,6 +321,11 @@ local function setup_theme()
     vim.cmd.colorscheme("rose-pine")
 end
 
+local function setup_terminal()
+    vim.pack.add({ "https://github.com/shamone03/shmn-terminal.nvim" })
+    require("shmn-terminal").setup()
+end
+
 local function setup_autocomplete_pairs()
     vim.pack.add({ "https://github.com/windwp/nvim-autopairs" })
     require("nvim-autopairs").setup()
@@ -328,6 +341,7 @@ setup_autocomplete_menu()
 setup_autocomplete_pairs()
 setup_dashboard()
 setup_git_hints()
+setup_terminal()
 setup_keymaps()
 setup_keymap_hints()
 
