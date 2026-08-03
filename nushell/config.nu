@@ -148,7 +148,9 @@ def get-file-list [path: string] {
     | '[' ++ $in ++ ']'
 }
 
-source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
+if $nu.is-interactive {
+  source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
+}
 
 $env.config.shell_integration = {
     osc2: true
