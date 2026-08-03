@@ -300,9 +300,7 @@ local function setup_theme()
 end
 
 local function setup_terminal()
-    -- vim.pack.add({ vim.fs.normalize((os.getenv("projects")) or ".") .. "/.dotfiles/nvim/plugin/shmn-terminal.nvim" }, )
-
-    vim.opt.rtp:prepend(vim.fs.normalize((os.getenv("projects")) or ".") .. "/.dotfiles/nvim/plugin/shmn-terminal.nvim")
+    vim.pack.add({ "https://github.com/shamone03/shmn-terminal.nvim" })
     require("shmn-terminal").setup()
 end
 
