@@ -23,16 +23,16 @@ local configuration = {
 }
 
 local function toggle_terminal()
-    local win_height = vim.o.lines
-    local win_width = vim.o.columns
-
-    local term_height = math.floor(win_height * configuration.height)
-    local term_width = math.floor(win_width * configuration.width)
-
-    local term_pos_row = math.floor((win_height - term_height) / 2)
-    local term_pos_col = math.floor((win_width - term_width) / 2)
-
     if not vim.api.nvim_win_is_valid(shmn_term_state.win_id) then
+        local win_height = vim.o.lines
+        local win_width = vim.o.columns
+
+        local term_height = math.floor(win_height * configuration.height)
+        local term_width = math.floor(win_width * configuration.width)
+
+        local term_pos_row = math.floor((win_height - term_height) / 2)
+        local term_pos_col = math.floor((win_width - term_width) / 2)
+
         if not vim.api.nvim_buf_is_valid(shmn_term_state.buf_id) then
             shmn_term_state.buf_id = vim.api.nvim_create_buf(false, true)
         end
