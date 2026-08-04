@@ -108,7 +108,13 @@ local function setup_explorer()
         },
     }
 
+    local function keymaps()
+        local explorer = require("nvim-tree.api")
+        vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
+    end
+
     require("nvim-tree").setup(nvim_tree_config)
+    keymaps()
 end
 
 local function setup_autocomplete_menu()
@@ -198,6 +204,17 @@ local function setup_picker()
         },
     })
     picker.load_extension("ui-select")
+
+    local function keymaps()
+        local telescope = require("telescope.builtin")
+        vim.keymap.set("n", "<leader><space>", telescope.find_files, { desc = "Search files" })
+        vim.keymap.set("n", "<leader>/", telescope.live_grep, { desc = "Search project" })
+        vim.keymap.set("n", "<leader>s", telescope.lsp_document_symbols, { desc = "Search buffer symbols" })
+        vim.keymap.set("n", "<leader>S", telescope.lsp_workspace_symbols, { desc = "Search buffer symbols" })
+        vim.keymap.set("n", "<leader>d", telescope.diagnostics, { desc = "Search diagnostics" })
+    end
+
+    keymaps()
 end
 
 local function setup_tab_bars()
@@ -209,6 +226,25 @@ local function setup_tab_bars()
             end,
         },
     })
+
+    local function keymaps()
+        local tab_bar = require("bufferline.commands")
+
+        vim.keymap.set("n", "H", function()
+            tab_bar.cycle(-1)
+        end, { desc = "Go to previous buffer" })
+        vim.keymap.set("n", "L", function()
+            tab_bar.cycle(1)
+        end, { desc = "Go to next buffer" })
+        vim.keymap.set({ "n", "t" }, "<C-c>", function()
+            if not vim.bo.modified then
+                tab_bar.unpin_and_close()
+            else
+                vim.notify("Buffer unsaved!!!")
+            end
+        end, { desc = "Close current buffer" })
+    end
+    keymaps()
 end
 
 local function setup_keymap_hints()
@@ -225,74 +261,44 @@ local function setup_keymap_hints()
     wk.setup(config)
 end
 
-local function setup_keymaps()
-    local picker = require("telescope.builtin")
-    local explorer = require("nvim-tree.api")
-    local tab_bar = require("bufferline.commands")
-    local git = require("gitsigns")
-    local terminal = require("shmn-terminal")
+local function setup_common_keymaps()
+    local function lsp_keymaps()
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+        vim.keymap.set({ "i", "n" }, "<A-o>", "<cmd>LspClangdSwitchSourceHeader<CR>", { desc = "Switch source/header" })
+        vim.keymap.set({ "i", "n", "x" }, "<A-F>", vim.lsp.buf.format, { desc = "Format current buffer" })
+        vim.keymap.set({ "n", "x" }, "<leader>.", function()
+            vim.lsp.buf.code_action({ apply = true })
+        end, { desc = "Show and/or apply code action" })
+    end
 
-    vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
-    vim.keymap.set("n", "<leader><space>", picker.find_files, { desc = "Search files" })
-    vim.keymap.set("n", "<leader>/", picker.live_grep, { desc = "Search project" })
-    vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
-    vim.keymap.set("n", "<leader>s", picker.lsp_document_symbols, { desc = "Search buffer symbols" })
-    vim.keymap.set("n", "<leader>S", picker.lsp_workspace_symbols, { desc = "Search buffer symbols" })
-    vim.keymap.set("n", "<leader>d", picker.diagnostics, { desc = "Search diagnostics" })
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-    vim.keymap.set("n", "H", function()
-        tab_bar.cycle(-1)
-    end, { desc = "Go to previous buffer" })
-    vim.keymap.set("n", "L", function()
-        tab_bar.cycle(1)
-    end, { desc = "Go to next buffer" })
-    vim.keymap.set({ "n", "t" }, "<C-c>", function()
-        if not vim.bo.modified then
-            tab_bar.unpin_and_close()
-        else
-            vim.notify("Buffer unsaved!!!")
-        end
-    end, { desc = "Close current buffer" })
-    vim.keymap.set({ "i", "n" }, "<A-o>", "<cmd>LspClangdSwitchSourceHeader<CR>", { desc = "Switch source/header" })
-    vim.keymap.set({ "i", "n", "x" }, "<A-F>", vim.lsp.buf.format, { desc = "Format current buffer" })
-    vim.keymap.set({ "i", "n" }, "<C-s>", vim.cmd.write, { desc = "Write buffer" })
-    vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
-    vim.keymap.set("n", "<leader>ud", function()
-        vim.g.shmn_virtual_text = not vim.g.shmn_virtual_text
-        vim.diagnostic.config({ virtual_text = vim.g.shmn_virtual_text })
-    end, { desc = "Toggle inline diagnostics" })
-    vim.keymap.set("n", "<leader>us", function()
-        vim.g.shmn_show_tabs = not vim.g.shmn_show_tabs
-        vim.opt_local.list = vim.g.shmn_show_tabs
-    end, { desc = "Toggle show tabs" })
+    local function editor_keymaps()
+        vim.keymap.set({ "i", "n" }, "<C-s>", vim.cmd.write, { desc = "Write buffer" })
+        vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
+        vim.keymap.set("n", "<leader>ud", function()
+            vim.g.shmn_virtual_text = not vim.g.shmn_virtual_text
+            vim.diagnostic.config({ virtual_text = vim.g.shmn_virtual_text })
+        end, { desc = "Toggle inline diagnostics" })
+        vim.keymap.set("n", "<leader>us", function()
+            vim.g.shmn_show_tabs = not vim.g.shmn_show_tabs
+            vim.opt_local.list = vim.g.shmn_show_tabs
+        end, { desc = "Toggle show tabs" })
 
-    vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
-    vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
-    vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
-    vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+        vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+        vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+        vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+        vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
-    vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
-    vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
-    vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
-    vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
-    vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
-    vim.keymap.set("n", "<C-Right>", "<C-w>>", { desc = "Increase window width" })
-    vim.keymap.set("n", "<C-Left>", "<C-w><", { desc = "Decrease window width" })
+        vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
+        vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
+        vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
+        vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
+        vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
+        vim.keymap.set("n", "<C-Right>", "<C-w>>", { desc = "Increase window width" })
+        vim.keymap.set("n", "<C-Left>", "<C-w><", { desc = "Decrease window width" })
+    end
 
-
-    vim.keymap.set({ "n", "x" }, "<leader>.", function()
-        vim.lsp.buf.code_action({ apply = true })
-    end, { desc = "Show and/or apply code action" })
-
-    vim.keymap.set("n", "<leader>gb", function()
-        git.blame_line({ full = true })
-    end, { desc = "Blame Line" })
-    vim.keymap.set("n", "<leader>gB", git.blame, { desc = "Blame Buffer" })
-    vim.keymap.set({ "n", "x" }, "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "Reset Hunk" })
-
-    vim.keymap.set({ "n", "i" }, "<C-S-b>", function()
-        vim.fn.system("just build")
-    end)
+    lsp_keymaps()
+    editor_keymaps()
 end
 
 local function setup_smooth_scroll()
@@ -310,6 +316,16 @@ end
 local function setup_git_hints()
     vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" })
     require("gitsigns").setup()
+
+    local function keymaps()
+        local git = require("gitsigns")
+        vim.keymap.set("n", "<leader>gb", function()
+            git.blame_line({ full = true })
+        end, { desc = "Blame Line" })
+        vim.keymap.set("n", "<leader>gB", git.blame, { desc = "Blame Buffer" })
+        vim.keymap.set({ "n", "x" }, "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "Reset Hunk" })
+    end
+    keymaps()
 end
 
 local function setup_theme()
@@ -323,12 +339,26 @@ end
 
 local function setup_terminal()
     vim.pack.add({ "https://github.com/shamone03/shmn-terminal.nvim" })
-    require("shmn-terminal").setup()
+    require("shmn-terminal").setup({
+        width = 0.6,
+        height = 0.6,
+    })
+
+    local function keymaps()
+        local terminal = require("shmn-terminal")
+        vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+    end
+    keymaps()
 end
 
 local function setup_autocomplete_pairs()
     vim.pack.add({ "https://github.com/windwp/nvim-autopairs" })
     require("nvim-autopairs").setup()
+end
+
+setup_common_keymaps()
+if vim.g.vscode then
+    return
 end
 
 setup_lsp()
@@ -342,7 +372,6 @@ setup_autocomplete_pairs()
 setup_dashboard()
 setup_git_hints()
 setup_terminal()
-setup_keymaps()
 setup_keymap_hints()
 
 setup_theme()
