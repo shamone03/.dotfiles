@@ -6,7 +6,9 @@ use $os_tools *
 use $scripts *
 
 if $nu.is-interactive {
-    conan_venv switch
+    try {
+        conan_venv switch
+    }
 }
 use find_in_parent.nu *
 use search.nu
