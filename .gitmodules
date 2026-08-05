@@ -9,6 +9,3 @@
 [submodule "rose-pine"]
     path = yazi/flavors/rose-pine.yazi
     url = https://github.com/Mintass/rose-pine.yazi
-[submodule "nu_plugin_desktop_notifications"]
-	path = nushell/nu_plugin_desktop_notifications
-	url = https://github.com/fmotalleb/nu_plugin_desktop_notifications.git
