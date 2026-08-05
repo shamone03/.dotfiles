@@ -14,7 +14,7 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
 	}
 	config.default_cwd = "C:/Users/aryah.kannan/Projects/"
 else
-	config.default_prog = { "nu" }
+	config.default_prog = { "nu", "--experimental-options=native-clip" }
 	config.window_decorations = "NONE"
 	config.default_cwd = "/home/shamone/Projects/"
 end
@@ -95,15 +95,16 @@ config.keys = {
 		mods = "CTRL",
 		action = act.ScrollByLine(5),
 	},
-    {
-        key = "d",
-        mods = "CTRL|SHIFT",
-        action = act.DisableDefaultAssignment
-    },{
-        key = "u",
-        mods = "CTRL|SHIFT",
-        action = act.DisableDefaultAssignment
-    }
+	{
+		key = "d",
+		mods = "CTRL|SHIFT",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "u",
+		mods = "CTRL|SHIFT",
+		action = act.DisableDefaultAssignment,
+	},
 }
 
 for i = 1, 8 do

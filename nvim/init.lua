@@ -6,7 +6,8 @@ vim.g.shmn_virtual_text = true
 vim.g.shmn_show_tabs = false
 
 vim.opt.backup = true
-if vim.uv.os_uname().sysname == "Windows_NT" then
+local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
+if is_windows then
     vim.opt.backupdir = "C:/.backup//"
 else
     vim.opt.backupdir = "/home/shamone/.nvim-backup//"
@@ -346,7 +347,11 @@ local function setup_terminal()
 
     local function keymaps()
         local terminal = require("shmn-terminal")
-        vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+        if is_windows then
+            vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+        else
+            vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+        end
     end
     keymaps()
 end
