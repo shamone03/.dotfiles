@@ -1,2 +1,4 @@
 [flavor]
 dark = "rose-pine"
+[app]
+overall = {} # to stop color from resetting when exiting yazi

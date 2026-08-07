@@ -270,6 +270,8 @@ local function setup_common_keymaps()
         vim.keymap.set({ "n", "x" }, "<leader>.", function()
             vim.lsp.buf.code_action({ apply = true })
         end, { desc = "Show and/or apply code action" })
+        vim.keymap.set({ "i", "n" }, "<C-k>", vim.lsp.buf.signature_help, { desc = "Signature help" })
+        vim.keymap.set({ "i", "n" }, "<C-k>", "<Plug>(nvim.lsp.ctrl-s)")
     end
 
     local function editor_keymaps()
@@ -289,10 +291,10 @@ local function setup_common_keymaps()
         vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
         vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
-        vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
-        vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
-        vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
-        vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
+        -- vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
+        -- vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
+        -- vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
+        -- vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
         vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
         vim.keymap.set("n", "<C-Right>", "<C-w>>", { desc = "Increase window width" })
         vim.keymap.set("n", "<C-Left>", "<C-w><", { desc = "Decrease window width" })
@@ -361,6 +363,19 @@ local function setup_autocomplete_pairs()
     require("nvim-autopairs").setup()
 end
 
+local function setup_autocmds()
+    vim.api.nvim_create_autocmd("BufReadPost", {
+        callback = function()
+            local mark = vim.api.nvim_buf_get_mark(0, '"')
+            local lcount = vim.api.nvim_buf_line_count(0)
+            if mark[1] > 0 and mark[1] <= lcount then
+                pcall(vim.api.nvim_win_set_cursor, 0, mark)
+            end
+        end,
+    })
+end
+
+setup_autocmds()
 setup_common_keymaps()
 if vim.g.vscode then
     return
