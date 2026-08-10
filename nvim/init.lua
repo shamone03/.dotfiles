@@ -88,34 +88,60 @@ local function setup_lsp()
     vim.lsp.enable("nushell")
 end
 
-local function setup_explorer()
-    vim.pack.add({ "https://github.com/nvim-tree/nvim-tree.lua" })
-    ---@type nvim_tree.config
-    local nvim_tree_config = {
-        view = {
-            side = "right",
-        },
-        renderer = {
-            group_empty = true,
-        },
-        update_focused_file = {
-            enable = true,
-        },
-        modified = {
-            enable = true,
-        },
-        diagnostics = {
-            enable = true,
-        },
-    }
+---@enum ExplorerType
+local ExplorerType = {
+    Yazi = "yazi",
+    Tree = "nvim-tree",
+}
 
-    local function keymaps()
-        local explorer = require("nvim-tree.api")
-        vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
+---@param type ExplorerType
+local function setup_explorer(type)
+    local function setup_nvim_tree()
+        vim.pack.add({ "https://github.com/nvim-tree/nvim-tree.lua" })
+        ---@type nvim_tree.config
+        local nvim_tree_config = {
+            view = {
+                side = "right",
+            },
+            renderer = {
+                group_empty = true,
+            },
+            update_focused_file = {
+                enable = true,
+            },
+            modified = {
+                enable = true,
+            },
+            diagnostics = {
+                enable = true,
+            },
+        }
+
+        local function keymaps()
+            local explorer = require("nvim-tree.api")
+            vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
+        end
+
+        require("nvim-tree").setup(nvim_tree_config)
+        keymaps()
     end
 
-    require("nvim-tree").setup(nvim_tree_config)
-    keymaps()
+    local function setup_yazi()
+        vim.pack.add({ "https://github.com/mikavilpas/yazi.nvim" })
+        local function keymaps()
+            local explorer = require("yazi")
+            vim.keymap.set("n", "<leader>e", explorer.yazi, { desc = "Toggle Explorer" })
+        end
+
+        require("yazi").setup({})
+        keymaps()
+    end
+
+    if type == ExplorerType.Yazi then
+        setup_yazi()
+    elseif type == ExplorerType.Tree then
+        setup_nvim_tree()
+    end
 end
 
 local function setup_autocomplete_menu()
@@ -386,7 +412,7 @@ setup_treesitter()
 
 setup_picker()
 setup_tab_bars()
-setup_explorer()
+setup_explorer(ExplorerType.Yazi)
 setup_autocomplete_menu()
 setup_autocomplete_pairs()
 setup_dashboard()
