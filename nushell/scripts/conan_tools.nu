@@ -25,3 +25,20 @@ export def list-local-updates [] {
         $local_cache_version != $remote_version
     }
 }
+
+export module version {
+    def levels [] {
+        [major minor patch]
+    }
+
+    export def bump [level: string@levels, --dry] {
+        let version = just version | str trim
+        let updated = $version | into semver | semver bump $level
+        if (not $dry) {
+            open conanfile.py | str replace $version { $updated | to text } | save conanfile.py --force
+        }
+        print $"($version) -> ($updated)"
+    }
+}
+
+export use version
