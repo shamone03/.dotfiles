@@ -1,7 +1,6 @@
 set shell := ["nu", "--no-config-file", "--no-std-lib", "--no-history", "-c"]
 set script-interpreter := ["nu", "--no-config-file", "--no-history"]
 set unstable
-set lazy
 
 [private]
 version := "1.2.0"
@@ -85,10 +84,10 @@ build TARGET=all_build: (user_preset conan_dir) devenv
 [arg("label", long="label")]
 test list="false" exclude="" label="" TEST='.*': build
     ctest --preset conan-{{ build_type }} --parallel \
-    {{ if exclude != "" { '-E "' + exclude + '" ' } else {''} }}\
-    {{ if label != "" { '-L "' + label + '" ' } else {''} }}\
+    {{ if exclude != "" { f'-E "{{ exclude }}" ' } else {''} }}\
+    {{ if label != "" { f'-L "{{ label }}" ' } else {''} }}\
     {{ if list == "true" { "-N " } else {''} }}\
-    {{ '--output-on-failure -R ' + TEST }}
+    {{ f"--output-on-failure -R {{ TEST }}" }}
 
 [doc('Format all files')]
 format: (build "clangformatfix")

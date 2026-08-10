@@ -13,8 +13,10 @@ if $nu.is-interactive {
 use find_in_parent.nu *
 use search.nu
 
-mkdir $"($nu.cache-dir)"
-carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {
+    mkdir $"($nu.cache-dir)"
+    carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+}
 source $"($nu.cache-dir)/carapace.nu"
 $env.CARAPACE_LENIENT = 1
 $env.CARAPACE_EXCLUDES = "go"
