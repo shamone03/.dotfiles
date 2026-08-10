@@ -9,9 +9,8 @@ if $nu.is-interactive {
     try {
         conan_venv switch
     }
+    source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
 }
-use find_in_parent.nu *
-use search.nu
 
 if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {
     mkdir $"($nu.cache-dir)"
@@ -26,108 +25,6 @@ $env.JUST_COMMAND_COLOR = "purple"
 $env.JUST_HIGHLIGHT = true
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
 
-def "config lazygit" [] {
-    nvim ...(glob $"($env.projects)/.dotfiles/lazygit/*.yml" --no-dir)
-}
-
-def "config nvim" [] {
-    nvim $"($env.projects)/.dotfiles/nvim"
-}
-
-def "config starship" [] {
-    nvim ...(glob $"($env.projects)/.dotfiles/starship/*.toml" --no-dir)
-}
-
-def "config wezterm" [] {
-    nvim $env.WEZTERM_CONFIG_FILE
-}
-
-def "config justfile" [] {
-    nvim $"($env.projects)/.dotfiles/cpp/justfile"
-}
-
-def "import justfile" [] {
-    try {
-        mklink .justfile (
-      [$env.projects .dotfiles cpp justfile]
-      | path join
-      | str replace '/' '\' --all
-    )
-    }
-}
-
-def "import vscode" [] {
-    cp $"($env.projects)/.dotfiles/vscode/.vscode/" . --recursive --verbose
-}
-
-def "history today" [] {
-    history | where start_timestamp > ((date now) - 12hr)
-}
-
-def get-aims-latest [] {
-    let out_file = ($nu.temp-dir)/AIMS_Latest.zip
-    if ($out_file | path exists) {
-        rm ($out_file) --force --verbose
-    }
-    http get http://cn-appaf-p01.ad.onepal.com:8081/artifactory/aims-builds-daily/All/AIMS_Latest.zip --raw
-        | into binary
-        | save ($nu.temp-dir)/AIMS_Latest.zip --force --raw
-    ouch decompress ($nu.temp-dir)/AIMS_Latest.zip --dir ($env.HOMEDRIVE)/AIMS_Latest
-}
-
-module version {
-    def levels [] {
-        [major minor patch]
-    }
-
-    export def bump [level: string@levels, --dry] {
-        let version = just version | str trim
-        let updated = $version | into semver | semver bump $level
-        if (not $dry) {
-            open conanfile.py | str replace $version { $updated | to text } | save conanfile.py --force
-        }
-        print $"($version) -> ($updated)"
-    }
-}
-use version;
-
-def open-repo [--pull-request(-p)] {
-    mut link = git config --get remote.origin.url | str trim
-    let branch = git branch --show-current | str trim
-    let attach = $"/pullrequestcreate?sourceRef=($branch)"
-    if $pull_request {
-        $link = [$link, $attach] | str join
-    }
-
-    start $link
-}
-
-def --env "go source" [] {
-    cd (open (find-in-parent .sources.txt ($env.projects)/.builds) --raw)
-}
-
-def --env "go build" [--release] {
-    if $release {
-        cd (just output --binary)/Release
-    } else {
-        cd (just output --binary)/Debug
-    }
-}
-
-def git-root [] {
-    return (git rev-parse --show-toplevel)
-}
-
-alias l = lazygit
-alias y = yazi
-alias o = nvim
-alias j = just
-alias or = open-repo
-alias gh = cd $env.projects
-alias gp = cd (git-root)
-alias gb = go build
-alias gs = go source
-
 def --env y [...args] {
     let tmp = (mktemp -t "yazi-cwd.XXXXXX")
     yazi ...$args --cwd-file $tmp
@@ -138,23 +35,15 @@ def --env y [...args] {
     rm -fp $tmp
 }
 
-def git-log [] {
-    git log --pretty='%H»¦«%an»¦«%ch»¦«%s' | lines | split column "»¦«" id name date message
-}
-
-def get-file-list [path: string] {
-    ls **/*
-    | where type == file
-    | format pattern 'f"{name}",'
-    | str join
-    | str replace '\' '/' --all
-    | str replace '.dll' '{plugin_ext}.dll' --all
-    | '[' ++ $in ++ ']'
-}
-
-if $nu.is-interactive {
-  source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
-}
+alias l = lazygit
+alias y = yazi
+alias o = nvim
+alias j = just
+alias or = open-repo
+alias gh = goto projects
+alias gp = goto git-root
+alias gb = goto build
+alias gs = goto source
 
 $env.config.shell_integration = {
     osc2: true

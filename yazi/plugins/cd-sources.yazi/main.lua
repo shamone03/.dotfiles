@@ -2,7 +2,7 @@ local function get_sources()
 	local out, err = Command("nu")
 		:arg({
 			"--config",
-			"C:/Users/aryah.kannan/Projects/.dotfiles/nushell/scripts/find_in_parent.nu",
+			"C:/Users/aryah.kannan/Projects/.dotfiles/nushell/scripts/path.nu",
 			"-c",
 			"open (find-in-parent .sources.txt ($env.project_builds)) --raw",
 		})
