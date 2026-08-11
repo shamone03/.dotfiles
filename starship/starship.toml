@@ -2,6 +2,7 @@
 format = "$all$conan$cmake$cmd_duration$line_break$character"
 
 [custom.conan]
+shell = "nu"
 symbol = "󰏗 "
 command = "just version"
 detect_files = ["conanfile.py", "justfile"]
