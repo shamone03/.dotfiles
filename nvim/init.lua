@@ -130,7 +130,7 @@ local function setup_explorer(type)
         vim.pack.add({ "https://github.com/mikavilpas/yazi.nvim" })
         local function keymaps()
             local explorer = require("yazi")
-            vim.keymap.set("n", "<leader>e", explorer.yazi, { desc = "Toggle Explorer" })
+            vim.keymap.set("n", "<leader>e", explorer.yazi, { desc = "Show Explorer" })
         end
 
         require("yazi").setup({})
@@ -236,9 +236,9 @@ local function setup_picker()
         local telescope = require("telescope.builtin")
         vim.keymap.set("n", "<leader><space>", telescope.find_files, { desc = "Search files" })
         vim.keymap.set("n", "<leader>/", telescope.live_grep, { desc = "Search project" })
-        vim.keymap.set("n", "<leader>s", telescope.lsp_document_symbols, { desc = "Search buffer symbols" })
-        vim.keymap.set("n", "<leader>S", telescope.lsp_workspace_symbols, { desc = "Search buffer symbols" })
-        vim.keymap.set("n", "<leader>d", telescope.diagnostics, { desc = "Search diagnostics" })
+        vim.keymap.set("n", "<leader>ss", telescope.lsp_document_symbols, { desc = "Search buffer symbols" })
+        vim.keymap.set("n", "<leader>sS", telescope.lsp_workspace_symbols, { desc = "Search workspace symbols" })
+        vim.keymap.set("n", "<leader>sd", telescope.diagnostics, { desc = "Search diagnostics" })
     end
 
     keymaps()
@@ -286,6 +286,12 @@ local function setup_keymap_hints()
         },
     }
     wk.setup(config)
+    wk.add({
+        { "<leader>s", group = "Search" },
+        { "<leader>u", group = "UI" },
+        { "<leader>c", group = "Code" },
+        { "<leader>g", group = "Git" },
+    })
 end
 
 local function setup_common_keymaps()
@@ -296,6 +302,8 @@ local function setup_common_keymaps()
         vim.keymap.set({ "n", "x" }, "<leader>.", function()
             vim.lsp.buf.code_action({ apply = true })
         end, { desc = "Show and/or apply code action" })
+        vim.keymap.set({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Show code action" })
+        vim.keymap.set({ "n", "x" }, "<leader>cd", vim.diagnostic.open_float, { desc = "Show diagnostic" })
         vim.keymap.set({ "i", "n" }, "<C-k>", vim.lsp.buf.signature_help, { desc = "Signature help" })
         vim.keymap.set({ "i", "n" }, "<C-k>", "<Plug>(nvim.lsp.ctrl-s)")
     end

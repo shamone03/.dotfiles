@@ -3,6 +3,11 @@ use = "yazi-rs/plugins:git"
 rev = "0be29a9"
 hash = "fbb53c3c04f816d737f9f4b1d29f3310"
 
+[[plugin.deps]]
+use = "Rolv-Apneseth/starship"
+rev = "159eaba"
+hash = "7de446280b1ba8c49ffd86dbc24bbbe6"
+
 [[flavor.deps]]
 use = "Mintass/rose-pine"
 rev = "d91f8f2"

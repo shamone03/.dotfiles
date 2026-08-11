@@ -32,11 +32,10 @@ def --env y [...args] {
     if $cwd != "" and $cwd != $env.PWD {
         cd $cwd
     }
-    rm -fp $tmp
+    rm $tmp -fp
 }
 
 alias l = lazygit
-alias y = yazi
 alias o = nvim
 alias j = just
 alias or = open-repo
