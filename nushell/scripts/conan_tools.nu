@@ -26,6 +26,10 @@ export def list-local-updates [] {
     }
 }
 
+export def get-test-package-list [] {
+    glob **/* --no-dir  | each { $in | path relative-to (pwd) } | each { $'"($in)"' | str replace '\' '/' --all } | str join ", " | $"[($in)]"
+}
+
 export module version {
     def levels [] {
         [major minor patch]
