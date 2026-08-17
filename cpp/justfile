@@ -7,8 +7,8 @@ version := "1.2.0"
 
 root := `git rev-parse --show-toplevel`
 compiler := "msvc" # or 'clang'
-generator := "ninja-multi"
-build_type := "debug"
+generator := "ninja-multi" # or 'vstudio'
+build_type := "debug" # or 'release'
 build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists( "CMakeLists.txt" ) == "true" {
         replace( trim_start_match( canonicalize( "." ), '\\?\' ), '\', '/' )
@@ -51,7 +51,7 @@ conan_verbosity := if verbose == "true" {
 [private]
 build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 [private]
-all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
+all_build := if build_profile == "vstudio" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
 
