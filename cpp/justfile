@@ -25,6 +25,8 @@ verbose := "false"
 quiet := "false"
 
 [private]
+cmake_base_dir := "." # or None for default value
+[private]
 conan_dir := root
 [private]
 builds_dir := replace(env('project_builds', env('HOMEDRIVE') / "b"), '\', '/')
@@ -161,7 +163,7 @@ cleanbuild: (build "clean")
 
 [doc('Conan install with the given flags')]
 installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }}{{ FLAGS }}
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }} -c tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }} {{ FLAGS }}
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
