@@ -20,7 +20,7 @@ return {
 		local err = nil
 		if job.args.allbuilds then
 			-- TODO: use env variable
-			destination = "C:/b"
+			destination = os.getenv("project_builds") or "C:/b"
 		else
 			local build_output, build_err = get_build_output()
 			err = build_err
