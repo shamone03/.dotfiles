@@ -15,9 +15,18 @@ local function fail(s, ...)
 end
 
 return {
-	entry = function()
-		local destination, err = get_build_output()
-		ya.dbg(destination)
+	entry = function(self, job)
+		local destination = nil
+		local err = nil
+		if job.args.allbuilds then
+			-- TODO: use env variable
+			destination = "C:/b"
+		else
+			local build_output, build_err = get_build_output()
+			err = build_err
+			destination = build_output
+		end
+
 		if destination ~= nil then
 			local target = Url(destination)
 			local cha, file_err = fs.cha(target)
@@ -27,7 +36,11 @@ return {
 				fail("%s", file_err or "")
 			end
 		else
-			fail(err)
+			if err ~= nil then
+				fail(err)
+            else
+                fail("Could not get build directory")
+			end
 		end
 	end,
 }
