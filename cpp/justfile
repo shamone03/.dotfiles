@@ -82,13 +82,15 @@ build TARGET=all_build: (user_preset conan_dir) devenv
 
 [doc('Run the given test, runs all tests by default')]
 [arg("list", short="l", long="list", value="true")]
+[arg("single-threaded", long="single-threaded", value="true")]
 [arg("exclude", short="e", long="exclude")]
 [arg("label", long="label")]
-test list="false" exclude="" label="" TEST='.*': build
+test single-threaded="false" list="false" exclude="" label="" TEST='.*': build
     ctest --preset conan-{{ build_type }} --parallel \
     {{ if exclude != "" { f'-E "{{ exclude }}" ' } else {''} }}\
     {{ if label != "" { f'-L "{{ label }}" ' } else {''} }}\
     {{ if list == "true" { "-N " } else {''} }}\
+    {{ if single-threaded == "true" { "-j 1 " } else { '--parallel ' } }}\
     {{ f"--output-on-failure -R {{ TEST }}" }}
 
 [doc('Format all files')]
