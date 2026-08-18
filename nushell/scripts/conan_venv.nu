@@ -1,7 +1,11 @@
 const last_env_name = $"($nu.temp-dir)/shmn/last_env_name.txt"
 
+export def home []: nothing -> string {
+    $"($env.HOMEDRIVE)/v"
+}
+
 def completions [] {
-    let venv_home = $"($env.HOMEDRIVE)/v"
+    let venv_home = home
     ls $venv_home | get name | each { $in | path basename }
 }
 
@@ -37,7 +41,7 @@ export def --env switch [name?: string@completions, --aims-version: string, --up
     let name = get-last-env-name $name
 
     if $conan_version == "1" {
-        let venv_home = $"($env.HOMEDRIVE)/v"
+        let venv_home = home
         let venv_dir = [
             $venv_home
             $"($name)_conan-($conan_version)"
@@ -58,7 +62,7 @@ export def --env switch [name?: string@completions, --aims-version: string, --up
         r#'tools.microsoft.msbuild:vs_version=18
 tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir ".conan" "global.conf"] | path join) --force --progress
     } else if $conan_version == "2" {
-        let venv_home = $"($env.HOMEDRIVE)/v"
+        let venv_home = home
         let venv_dir = [$venv_home $name] | path join
 
         if $aims_version != null {
@@ -78,25 +82,11 @@ tools.cmake.cmaketoolchain:generator=Visual Studio 18 2026'# | save ([$venv_dir 
         }
         "tools.microsoft.msbuild:vs_version=18" | save ([$venv_dir "global.conf"] | path join) --force --progress
     }
-    # if $conan_version == "1" {
-    #     $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name)(ansi reset)"
-    #     if $aims_version != null {
-    #         $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan 1: ($name) v($aims_version)(ansi reset)"
-    #     }
-    # } else if $conan_version == "2" {
-    #     $env.SHMN_CONAN_VENV_PROMPT = $"(ansi deeppink2)Conan: ($name)(ansi reset)"
-    # }
-    #
-    # use ../starship.nu
-    # let old_prompt = $env.PROMPT_COMMAND
-    # $env.PROMPT_COMMAND = {|| $"($env.SHMN_CONAN_VENV_PROMPT)(do $old_prompt)" }
-    #
-    # print $"(ansi green)CONAN_USER_HOME=($env.CONAN_USER_HOME)(ansi reset)"
 }
 
 export def --env exit [] {
     if ($env has SHMN_CONAN_VENV_NAME) {
-        hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors # SHMN_CONAN_VENV_PROMPT
+        hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors
         use ../starship.nu
     }
 }
@@ -106,7 +96,7 @@ export def --env remove [name: string@completions] {
     | parse '{conan} {_} {major}.{minor}.{patch}'
     | get major
     | get 0
-    let venv_home = $"($env.HOMEDRIVE)/v"
+    let venv_home = home
     let venv_dir = if $conan_version == "2" {
         [$venv_home $name] | path join
     } else if $conan_version == "1" {
@@ -119,12 +109,12 @@ export def --env remove [name: string@completions] {
     rm $venv_dir --recursive --verbose --permanent
     rm $last_env_name
     if ($env has SHMN_CONAN_VENV_NAME) and ($env | get SHMN_CONAN_VENV_NAME | $in == $name) {
-        hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors # SHMN_CONAN_VENV_PROMPT
+        hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors
         use ../starship.nu
     }
 }
 
 export def list [] {
-    let venv_home = $"($env.HOMEDRIVE)/v"
-    ls $venv_home | select name
+    let venv_home = home
+    ls $venv_home | get name
 }

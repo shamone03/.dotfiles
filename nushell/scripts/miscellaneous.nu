@@ -24,6 +24,6 @@ export def git-root [] {
     return (git rev-parse --show-toplevel)
 }
 
-def git-log [] {
+export def git-log [] {
     git log --pretty='%H»¦«%an»¦«%ch»¦«%s' | lines | split column "»¦«" id name date message
 }
