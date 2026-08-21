@@ -4,6 +4,7 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
 vim.g.shmn_show_tabs = false
+vim.g.shmn_animations_enabled = true
 
 vim.opt.backup = true
 local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
@@ -31,6 +32,7 @@ vim.opt.fillchars = { eob = " " }
 vim.opt.termguicolors = true
 vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.guifont = "Hurmit Nerd Font Mono"
 
 vim.diagnostic.config({
     signs = {
@@ -210,11 +212,18 @@ local function setup_picker()
         "https://github.com/nvim-telescope/telescope-ui-select.nvim",
     })
     local picker = require("telescope")
+    local actions = require("telescope.actions")
     picker.setup({
         defaults = {
             sorting_strategy = "ascending",
             layout_config = {
                 prompt_position = "top",
+            },
+            mappings = {
+                i = {
+                    ["<C-Down>"] = actions.cycle_history_next,
+                    ["<C-Up>"] = actions.cycle_history_prev,
+                },
             },
         },
         extensions = {
@@ -291,6 +300,7 @@ local function setup_keymap_hints()
         { "<leader>u", group = "UI" },
         { "<leader>c", group = "Code" },
         { "<leader>g", group = "Git" },
+        { "<leader>n", group = "Neovim" },
     })
 end
 
@@ -298,7 +308,7 @@ local function setup_common_keymaps()
     local function lsp_keymaps()
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
         vim.keymap.set({ "i", "n" }, "<A-o>", "<cmd>LspClangdSwitchSourceHeader<CR>", { desc = "Switch source/header" })
-        vim.keymap.set({ "i", "n", "x" }, "<A-F>", vim.lsp.buf.format, { desc = "Format current buffer" })
+        vim.keymap.set({ "n", "x" }, "<leader>f", vim.lsp.buf.format, { desc = "Format current buffer/selection" })
         vim.keymap.set({ "n", "x" }, "<leader>.", function()
             vim.lsp.buf.code_action({ apply = true })
         end, { desc = "Show and/or apply code action" })
@@ -310,6 +320,7 @@ local function setup_common_keymaps()
 
     local function editor_keymaps()
         vim.keymap.set({ "i", "n" }, "<C-s>", vim.cmd.write, { desc = "Write buffer" })
+        vim.keymap.set({ "n" }, "<leader>w", vim.cmd.write, { desc = "Write buffer" })
         vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
         vim.keymap.set("n", "<leader>ud", function()
             vim.g.shmn_virtual_text = not vim.g.shmn_virtual_text
@@ -319,16 +330,17 @@ local function setup_common_keymaps()
             vim.g.shmn_show_tabs = not vim.g.shmn_show_tabs
             vim.opt_local.list = vim.g.shmn_show_tabs
         end, { desc = "Toggle show tabs" })
+        vim.keymap.set("n", "<leader>nr", vim.cmd.restart, { desc = "Restart neovim" })
 
         vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
         vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
         vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
         vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
-        -- vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
-        -- vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
-        -- vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
-        -- vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
+        vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window" })
+        vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window" })
+        vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window" })
+        vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window" })
         vim.keymap.set("n", "<C-q>", "<C-w>q", { desc = "Close Window" })
         vim.keymap.set("n", "<C-Right>", "<C-w>>", { desc = "Increase window width" })
         vim.keymap.set("n", "<C-Left>", "<C-w><", { desc = "Decrease window width" })
@@ -429,5 +441,10 @@ setup_terminal()
 setup_keymap_hints()
 
 setup_theme()
-setup_smooth_scroll()
-setup_smooth_cursor()
+if vim.g.neovide then
+    return
+end
+if vim.g.shmn_animations_enabled then
+    setup_smooth_scroll()
+    setup_smooth_cursor()
+end
