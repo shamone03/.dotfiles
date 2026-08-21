@@ -86,11 +86,11 @@ build TARGET=all_build: (user_preset conan_dir) devenv
 [arg("exclude", short="e", long="exclude")]
 [arg("label", long="label")]
 test single-threaded="false" list="false" exclude="" label="" TEST='.*': build
-    ctest --preset conan-{{ build_type }} --parallel \
+    ctest --preset conan-{{ build_type }} \
+    {{ if single-threaded == "true" { "-j 1 " } else { '--parallel ' } }}\
     {{ if exclude != "" { f'-E "{{ exclude }}" ' } else {''} }}\
     {{ if label != "" { f'-L "{{ label }}" ' } else {''} }}\
     {{ if list == "true" { "-N " } else {''} }}\
-    {{ if single-threaded == "true" { "-j 1 " } else { '--parallel ' } }}\
     {{ f"--output-on-failure -R {{ TEST }}" }}
 
 [doc('Format all files')]
@@ -163,6 +163,7 @@ cleancache PACKAGE='':
 [doc('Remove build artifacts')]
 cleanbuild: (build "clean")
 
+[private]
 [doc('Conan install with the given flags')]
 installf *FLAGS:
     conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }} -c tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }} {{ FLAGS }}
