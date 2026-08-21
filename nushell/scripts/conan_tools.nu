@@ -39,7 +39,16 @@ export module version {
         let version = just version | str trim
         let updated = $version | into semver | semver bump $level
         if (not $dry) {
-            open conanfile.py | str replace $version { $updated | to text } | save conanfile.py --force
+            if ("conanfile.py" | path exists) {
+                let contents = open conanfile.py
+                if ($contents | str contains $version) {
+                    $contents | str replace $version { $updated | to text } | save conanfile.py --force
+                } else if ("version.txt" | path exists) {
+                    open version.txt | str replace $version { $updated | to text } | save version.txt --force
+                } else {
+                    error make "Don't know where to update version :("
+                }
+            }
         }
         print $"($version) -> ($updated)"
     }
