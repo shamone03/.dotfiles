@@ -14,6 +14,11 @@ run = 'plugin cd-build-output'
 desc = "Go to build output"
 
 [[mgr.prepend_keymap]]
+on = ["g", "B"]
+run = 'plugin cd-build-output -- --allbuilds'
+desc = "Go to all builds"
+
+[[mgr.prepend_keymap]]
 on = ["g", "s"]
 run = 'plugin cd-sources'
 desc = "Go to builds sources"

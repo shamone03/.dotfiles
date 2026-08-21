@@ -77,13 +77,15 @@ $env.config.cursor_shape.vi_normal = "blink_block"
 $env.config.hooks.pre_prompt = [
     {
         let duration = $env.CMD_DURATION_MS | into duration --unit ms
-        let last_command = (history | last).command
-        if (($last_command == "j") or ($last_command | str starts-with "j ") or ($last_command | str starts-with "just")) and $duration > 10sec {
-            let wd = $env.PWD | path relative-to $env.projects
-            if $env.LAST_EXIT_CODE == 0 {
-                notify --summary $"🟢($wd): ($last_command)" --body $"Completed in ($duration)"
-            } else {
-                notify --summary $"🔴($wd): ($last_command)" --body $"Completed in ($duration)"
+        let last_command = (history --long | where session_id == (history session) | last).command?
+        if ($last_command != null) {
+            if (($last_command == "j") or ($last_command | str starts-with "j ") or ($last_command | str starts-with "just")) and $duration > 10sec {
+                let wd = $env.PWD | path relative-to $env.projects
+                if $env.LAST_EXIT_CODE == 0 {
+                    notify --summary $"🟢($wd): ($last_command)" --body $"Completed in ($duration)"
+                } else {
+                    notify --summary $"🔴($wd): ($last_command)" --body $"Completed in ($duration)"
+                }
             }
         }
     }

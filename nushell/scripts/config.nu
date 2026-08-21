@@ -3,7 +3,7 @@ export def lazygit [] {
 }
 
 export def nvim [] {
-    ^nvim $"($env.projects)/.dotfiles/nvim"
+    ^nvim $"($env.projects)/.dotfiles/nvim/init.lua"
 }
 
 export def starship [] {

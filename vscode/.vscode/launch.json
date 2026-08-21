@@ -5,29 +5,29 @@
             "name": "Attach AIMS",
             "type": "cppvsdbg",
             "request": "attach",
-            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug/aims.exe"
+            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug/aims.exe"
         },
         {
             "name": "Attach SCS",
             "type": "cppvsdbg",
             "request": "attach",
-            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug/sensor-communication-service.exe"
+            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug/sensor-communication-service.exe"
         },
         {
             "name": "Debug AIMS",
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "Build",
-            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug/AIMS.exe",
-            "cwd": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug"
+            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug/AIMS.exe",
+            "cwd": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug"
         },
         {
             "name": "Debug SCS",
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "Build",
-            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug/sensor-communication-service.exe",
-            "cwd": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug",
+            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug/sensor-communication-service.exe",
+            "cwd": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug",
             "console": "integratedTerminal"
         },
         {
@@ -35,8 +35,8 @@
             "type": "cppvsdbg",
             "request": "launch",
             "preLaunchTask": "Debug With Deps",
-            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug/AIMS.exe",
-            "cwd": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/build/msvc194/Debug"
+            "program": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug/AIMS.exe",
+            "cwd": "${env:project_builds}/${env:SHMN_CONAN_VENV_NAME}/track-sdk/Debug"
         },
         {
             "name": "Launch",

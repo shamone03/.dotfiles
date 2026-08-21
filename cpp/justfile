@@ -7,8 +7,8 @@ version := "1.2.0"
 
 root := `git rev-parse --show-toplevel`
 compiler := "msvc" # or 'clang'
-generator := "ninja-multi"
-build_type := "debug"
+generator := "ninja-multi" # or 'vstudio'
+build_type := "debug" # or 'release'
 build_profile := compiler + "-" + generator + "-" + build_type
 sources_dir := if path_exists( "CMakeLists.txt" ) == "true" {
         replace( trim_start_match( canonicalize( "." ), '\\?\' ), '\', '/' )
@@ -24,6 +24,8 @@ build_dir := if env_name != "" { builds_dir / env_name / unique_build_dir } else
 verbose := "false"
 quiet := "false"
 
+[private]
+cmake_base_dir := "." # or None for default value
 [private]
 conan_dir := root
 [private]
@@ -51,7 +53,7 @@ conan_verbosity := if verbose == "true" {
 [private]
 build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 [private]
-all_build := if build_profile == "default" { "ALL_BUILD" } else { "all" }
+all_build := if build_profile == "vstudio" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
 
@@ -80,10 +82,12 @@ build TARGET=all_build: (user_preset conan_dir) devenv
 
 [doc('Run the given test, runs all tests by default')]
 [arg("list", short="l", long="list", value="true")]
+[arg("single-threaded", long="single-threaded", value="true")]
 [arg("exclude", short="e", long="exclude")]
 [arg("label", long="label")]
-test list="false" exclude="" label="" TEST='.*': build
-    ctest --preset conan-{{ build_type }} --parallel \
+test single-threaded="false" list="false" exclude="" label="" TEST='.*': build
+    ctest --preset conan-{{ build_type }} \
+    {{ if single-threaded == "true" { "-j 1 " } else { '--parallel ' } }}\
     {{ if exclude != "" { f'-E "{{ exclude }}" ' } else {''} }}\
     {{ if label != "" { f'-L "{{ label }}" ' } else {''} }}\
     {{ if list == "true" { "-N " } else {''} }}\
@@ -159,9 +163,10 @@ cleancache PACKAGE='':
 [doc('Remove build artifacts')]
 cleanbuild: (build "clean")
 
+[private]
 [doc('Conan install with the given flags')]
 installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }}{{ FLAGS }}
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }} -c tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }} {{ FLAGS }}
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
