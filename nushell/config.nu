@@ -9,7 +9,10 @@ if $nu.is-interactive {
     try {
         conan_venv switch
     }
-    source ( [~/Projects .dotfiles nushell nu_scripts/themes/nu-themes/rose-pine.nu] | path join )
+    const theme = "rose-pine"
+    use nu_scripts/themes/nu-themes/($theme).nu;
+    rose-pine set color_config
+    rose-pine update terminal
 }
 
 if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {
@@ -42,7 +45,7 @@ alias or = open-repo
 alias gh = goto projects
 alias gp = goto git-root
 alias gb = goto build
-alias gs = goto source
+alias gs = goto project_source
 
 $env.config.shell_integration = {
     osc2: true
@@ -66,6 +69,7 @@ $env.config.history = {
     sync_on_enter: false
     isolation: true
 }
+$env.config.max_last_result_size = 10mb
 
 # Disable prompt from Nushell Because it is duplicated with that of Starship
 $env.PROMPT_INDICATOR_VI_NORMAL = ""
