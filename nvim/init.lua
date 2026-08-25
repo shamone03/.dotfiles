@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
 vim.g.shmn_show_tabs = false
 vim.g.shmn_animations_enabled = true
@@ -33,6 +33,7 @@ vim.opt.termguicolors = true
 vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.guifont = "Hurmit Nerd Font Mono"
+vim.opt.background = "dark"
 
 vim.diagnostic.config({
     signs = {
@@ -63,7 +64,9 @@ local function setup_lsp()
         "https://github.com/neovim/nvim-lspconfig",
     })
     require("mason").setup()
-    require("mason-lspconfig").setup()
+    require("mason-lspconfig").setup({
+        ensure_installed = { "lua_ls", "marksman" },
+    })
 
     local pack_path = vim.fn.stdpath("data") .. "/site/pack"
 
@@ -86,7 +89,6 @@ local function setup_lsp()
 
     vim.lsp.on_type_formatting.enable()
     vim.lsp.inlay_hint.enable()
-    vim.lsp.enable("lua_ls")
     vim.lsp.enable("nushell")
 end
 
@@ -197,6 +199,12 @@ local function setup_dashboard()
                     action = vim.cmd.quit,
                     group = "DiagnosticError",
                     key = "q",
+                },
+                {
+                    desc = "󰁯 Restore",
+                    action = "ShmnRestoreSession",
+                    group = "DiagnosticTrace",
+                    key = "s",
                 },
             },
             footer = {},
@@ -321,6 +329,7 @@ local function setup_common_keymaps()
     local function editor_keymaps()
         vim.keymap.set({ "i", "n" }, "<C-s>", vim.cmd.write, { desc = "Write buffer" })
         vim.keymap.set({ "n" }, "<leader>w", vim.cmd.write, { desc = "Write buffer" })
+        vim.keymap.set({ "n" }, "<leader>q", vim.cmd.quit, { desc = "Quit" })
         vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
         vim.keymap.set("n", "<leader>ud", function()
             vim.g.shmn_virtual_text = not vim.g.shmn_virtual_text
@@ -380,6 +389,9 @@ end
 local function setup_theme()
     vim.pack.add({
         "https://github.com/rose-pine/neovim",
+        "https://github.com/metalelf0/black-metal-theme-neovim",
+        "https://github.com/vague-theme/vague.nvim",
+        "https://github.com/nyoom-engineering/oxocarbon.nvim",
         "https://github.com/nvim-tree/nvim-web-devicons",
         "https://github.com/nvim-mini/mini.icons",
     })
@@ -405,8 +417,13 @@ local function setup_terminal()
 end
 
 local function setup_autocomplete_pairs()
-    vim.pack.add({ "https://github.com/windwp/nvim-autopairs" })
-    require("nvim-autopairs").setup()
+    vim.pack.add({ "https://github.com/nvim-mini/mini.pairs" })
+    require("mini.pairs").setup()
+end
+
+local function setup_surround_pairs()
+    vim.pack.add({ "https://github.com/nvim-mini/mini.surround" })
+    require("mini.surround").setup()
 end
 
 local function setup_autocmds()
@@ -419,6 +436,11 @@ local function setup_autocmds()
             end
         end,
     })
+end
+
+local function setup_session_management()
+    vim.pack.add({ "https://github.com/shamone03/shmn-sessions.nvim" })
+    require("shmn-sessions").setup()
 end
 
 setup_autocmds()
@@ -435,10 +457,12 @@ setup_tab_bars()
 setup_explorer(ExplorerType.Yazi)
 setup_autocomplete_menu()
 setup_autocomplete_pairs()
+setup_surround_pairs()
 setup_dashboard()
 setup_git_hints()
 setup_terminal()
 setup_keymap_hints()
+setup_session_management()
 
 setup_theme()
 if vim.g.neovide then

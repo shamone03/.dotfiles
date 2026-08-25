@@ -1,5 +1,5 @@
 use path.nu
-export def --env source [] {
+export def --env project_source [] {
     cd (open (path find-in-parent .sources.txt ($env.projects)/.builds) --raw)
 }
 
