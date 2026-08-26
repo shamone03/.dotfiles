@@ -4,6 +4,7 @@ local wezterm = require("wezterm")
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
+local TEMP_DIR = nil
 -- This is where you actually apply your config choices.
 config.window_background_opacity = 1.0
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
@@ -13,10 +14,12 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
 		XDG_CONFIG_HOME = os.getenv("projects") .. "/.dotfiles",
 	}
 	config.default_cwd = os.getenv("projects")
+    TEMP_DIR = os.getenv("TEMP")
 else
 	config.default_prog = { "nu" }
 	config.window_decorations = "NONE"
 	config.default_cwd = os.getenv("HOME") .. "/Projects"
+    TEMP_DIR = os.getenv("HOME") .. "/.cache"
 end
 
 -- config.hide_tab_bar_if_only_one_tab = true
@@ -37,11 +40,14 @@ local function file_exists(path)
 	return false
 end
 
-local theme_path = os.getenv("temp") .. "/shmn/wezterm-base16-theme.yaml"
+local theme_path = TEMP_DIR .. "/shmn/wezterm-base16-theme.yaml"
 if file_exists(theme_path) then
 	local colors, _ = wezterm.color.load_base16_scheme(theme_path)
 	config.colors = colors
 	wezterm.add_to_config_reload_watch_list(theme_path)
+    print("Using theme " .. theme_path)
+else
+    print(theme_path .. " doesn't exist")
 end
 
 local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")

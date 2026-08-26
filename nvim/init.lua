@@ -8,10 +8,13 @@ vim.g.shmn_animations_enabled = false
 
 vim.opt.backup = true
 local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
+local TEMP_DIR = nil
 if is_windows then
     vim.opt.backupdir = "C:/.backup//"
+    TEMP_DIR = os.getenv("TEMP")
 else
     vim.opt.backupdir = "/home/shamone/.nvim-backup//"
+    TEMP_DIR = os.getenv("HOME") .. "/.cache"
 end
 
 vim.opt.relativenumber = true
@@ -393,7 +396,7 @@ local function setup_git_hints()
 end
 
 local function apply_theme()
-    local theme_file = os.getenv("TEMP") .. "/shmn/nvim-base16-theme.txt"
+    local theme_file = TEMP_DIR .. "/shmn/nvim-base16-theme.txt"
     if vim.uv.fs_stat(theme_file) then
         local content = vim.fn.readfile(theme_file)
         local theme = table.concat(content, "\n"):gsub("%s+", "")

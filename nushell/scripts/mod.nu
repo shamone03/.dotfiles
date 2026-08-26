@@ -9,4 +9,5 @@ export module search.nu
 export module goto.nu
 export module theme.nu
 
+export use constants.nu
 export use miscellaneous.nu *

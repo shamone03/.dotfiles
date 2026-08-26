@@ -1,7 +1,8 @@
-const lazygit_theme_config_path = ($nu.temp-dir)/shmn/lazygit-base16-theme.yaml
-const wezterm_theme_config_path = ($nu.temp-dir)/shmn/wezterm-base16-theme.yaml
-const nvim_theme_config_path = ($nu.temp-dir)/shmn/nvim-base16-theme.txt
-const tinted_theme_config_path = ($nu.temp-dir)/shmn/tinted-theme.yaml
+use constants.nu
+const lazygit_theme_config_path = ($constants.temp_dir)/lazygit-base16-theme.yaml
+const wezterm_theme_config_path = ($constants.temp_dir)/wezterm-base16-theme.yaml
+const nvim_theme_config_path = ($constants.temp_dir)/nvim-base16-theme.txt
+const tinted_theme_config_path = ($constants.temp_dir)/tinted-theme.yaml
 
 export def list [] {
     http get https://api.github.com/repos/tinted-theming/schemes/git/trees/spec-0.11?recursive=1

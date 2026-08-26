@@ -1,9 +1,5 @@
 {
   "plugins": {
-    "base16-nvim": {
-      "rev": "09944b3120451d2881dc8cfb13c85c11949f477d",
-      "src": "https://github.com/RRethy/base16-nvim"
-    },
     "blink.cmp": {
       "rev": "101d71861f6a012f2be80e4100720874330d86aa",
       "src": "https://github.com/saghen/blink.cmp"
@@ -85,7 +81,7 @@
       "src": "https://github.com/folke/which-key.nvim"
     },
     "yazi.nvim": {
-      "rev": "0d390dbfff599b84699eb302433fd48df5abff81",
+      "rev": "955a96ed05b4ac542e61b3968f62d536413cd06f",
       "src": "https://github.com/mikavilpas/yazi.nvim"
     }
   }
