@@ -402,8 +402,8 @@ end
 local function setup_terminal()
     vim.pack.add({ "https://github.com/shamone03/shmn-terminal.nvim" })
     require("shmn-terminal").setup({
-        width = 0.6,
-        height = 0.6,
+        width = 0.7,
+        height = 0.7,
     })
 
     local function keymaps()

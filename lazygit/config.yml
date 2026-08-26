@@ -1,3 +1,6 @@
+os:
+  edit: nvim {{filename}}
+notARepository: quit
 #
 #
 # name: Black Metal
@@ -32,3 +35,4 @@ gui:
       - '#5f8787'
     defaultFgColor:
       - '#c1c1c1'
+    nerdFontsVersion: "3"
