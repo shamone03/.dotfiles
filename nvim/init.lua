@@ -33,7 +33,6 @@ vim.opt.termguicolors = true
 vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.guifont = "Hurmit Nerd Font Mono"
-vim.opt.background = "dark"
 
 vim.diagnostic.config({
     signs = {
@@ -190,7 +189,7 @@ local function setup_dashboard()
                 },
                 {
                     desc = " Files",
-                    action = "NvimTreeToggle",
+                    action = "Yazi",
                     group = "DiagnosticInfo",
                     key = "f",
                 },
@@ -222,6 +221,12 @@ local function setup_picker()
     local picker = require("telescope")
     local actions = require("telescope.actions")
     picker.setup({
+        pickers = {
+            colorscheme = {
+                enable_preview = true,
+                ignore_builtins = true,
+            },
+        },
         defaults = {
             sorting_strategy = "ascending",
             layout_config = {
@@ -389,14 +394,19 @@ end
 
 local function setup_theme()
     vim.pack.add({
-        -- "https://github.com/rose-pine/neovim",
-        -- "https://github.com/vague-theme/vague.nvim",
         "https://github.com/nvim-tree/nvim-web-devicons",
         "https://github.com/nvim-mini/mini.icons",
-        "https://github.com/RRethy/base16-nvim",
+        "https://github.com/tinted-theming/tinted-nvim",
     })
-    -- use https://github.com/tinted-theming/home to sync other configs
-    vim.cmd.colorscheme("base16-black-metal")
+    require("tinted-nvim").setup()
+    local theme_file = os.getenv("TEMP") .. "/shmn/theme.txt"
+    if vim.uv.fs_stat(theme_file) then
+        local content = vim.fn.readfile(theme_file)
+        local theme = table.concat(content, "\n"):gsub("%s+", "")
+        vim.cmd.colorscheme(theme)
+    else
+        vim.cmd.colorscheme("base24-flexoki-dark")
+    end
 end
 
 local function setup_terminal()

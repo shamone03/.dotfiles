@@ -7,43 +7,60 @@ local config = wezterm.config_builder()
 -- This is where you actually apply your config choices.
 config.window_background_opacity = 1.0
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-	config.default_prog = { "C:\\Users\\aryah.kannan\\Projects\\.dotfiles\\wezterm\\nu-vs-dev-cmd.bat" }
+	config.default_prog = { os.getenv("projects") .. "/.dotfiles/wezterm/nu-vs-dev-cmd.bat" }
 	config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 	config.set_environment_variables = {
-		XDG_CONFIG_HOME = "C:/Users/aryah.kannan/Projects/.dotfiles",
+		XDG_CONFIG_HOME = os.getenv("projects") .. "/.dotfiles",
 	}
-	config.default_cwd = "C:/Users/aryah.kannan/Projects/"
+	config.default_cwd = os.getenv("projects")
 else
 	config.default_prog = { "nu" }
 	config.window_decorations = "NONE"
 	config.default_cwd = os.getenv("HOME") .. "/Projects"
 end
 
-config.hide_tab_bar_if_only_one_tab = true
+-- config.hide_tab_bar_if_only_one_tab = true
 config.font = wezterm.font({ family = "Hurmit Nerd Font Mono" })
--- config.window_frame.font = wezterm.font({ family = "Hurmit Nerd Font Mono", weight = "Bold" })
 config.initial_rows = 25
 config.initial_cols = 110
 config.cursor_blink_rate = 800
 config.front_end = "WebGpu"
+config.tab_bar_at_bottom = true
 local act = wezterm.action
 
--- config.window_frame = {
--- 	inactive_titlebar_bg = "#6e6a86",
--- 	active_titlebar_bg = "#191724",
---
--- 	inactive_titlebar_fg = "#e0def4",
--- 	active_titlebar_fg = "#e0def4",
--- 	--
--- 	inactive_titlebar_border_bottom = "#6e6a86",
--- 	active_titlebar_border_bottom = "#1f1d2e",
--- 	--
--- 	button_fg = "#191724",
--- 	button_bg = "#191724",
--- 	button_hover_fg = "#191724",
--- 	button_hover_bg = "#191724",
--- }
--- config.color_scheme = 'rose-pine'
+local colors, _ = wezterm.color.load_base16_scheme(os.getenv("projects") .. "/.dotfiles/wezterm/base16-theme.yml")
+config.colors = colors
+
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
+tabline.setup({
+	options = {
+		theme = config.colors,
+	},
+	sections = {
+		tabline_a = {
+			cond = function()
+				return false
+			end,
+		},
+		tabline_b = {
+			cond = function()
+				return false
+			end,
+		},
+		tab_active = {
+			"index",
+			{ "cwd", padding = { left = 0, right = 1 } },
+			{ "zoomed", padding = 0 },
+			max_length = 30,
+		},
+		tab_inactive = {
+			"index",
+			{ "cwd", padding = { left = 0, right = 1 } },
+			{ "zoomed", padding = 0 },
+		},
+	},
+})
+tabline.apply_to_config(config)
 
 config.keys = {
 	{

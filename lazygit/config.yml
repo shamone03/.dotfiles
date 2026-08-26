@@ -1,38 +1,26 @@
-os:
-  edit: nvim {{filename}}
-notARepository: quit
-#
-#
-# name: Black Metal
-# author: metalelf0 (https://github.com/metalelf0)
-# slug: black-metal
-# slug-underscored: black_metal
-# system: base16
-# variant: dark
-#
-#
-
 gui:
   theme:
     activeBorderColor:
-      - '#888888'
-      - bold
+    - "#33b1ff"
+    - bold
     inactiveBorderColor:
-      - '#333333'
+    - "#525252"
     searchingActiveBorderColor:
-      - '#aaaaaa'
+    - "#ff7eb6"
     optionsTextColor:
-      - '#888888'
+    - "#33b1ff"
     selectedLineBgColor:
-      - '#222222'
+    - "#393939"
     cherryPickedCommitBgColor:
-      - '#333333'
+    - "#525252"
     cherryPickedCommitFgColor:
-      - '#888888'
+    - "#33b1ff"
     markedBaseCommitFgColor:
-      - '#888888'
+    - "#33b1ff"
     unstagedChangesColor:
-      - '#5f8787'
+    - "#ee5396"
     defaultFgColor:
-      - '#c1c1c1'
-    nerdFontsVersion: "3"
+    - "#f2f4f8"
+os:
+  edit: nvim {{filename}}
+notARepository: quit

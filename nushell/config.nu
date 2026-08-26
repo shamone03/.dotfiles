@@ -9,10 +9,6 @@ if $nu.is-interactive {
     try {
         conan_venv switch
     }
-    const theme = "black-metal"
-    use nu_scripts/themes/nu-themes/($theme).nu;
-    black-metal set color_config
-    black-metal update terminal
 }
 
 if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {
