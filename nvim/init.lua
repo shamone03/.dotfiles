@@ -393,7 +393,7 @@ local function setup_git_hints()
 end
 
 local function apply_theme()
-    local theme_file = os.getenv("TEMP") .. "/shmn/nvim-theme.txt"
+    local theme_file = os.getenv("TEMP") .. "/shmn/nvim-base16-theme.txt"
     if vim.uv.fs_stat(theme_file) then
         local content = vim.fn.readfile(theme_file)
         local theme = table.concat(content, "\n"):gsub("%s+", "")

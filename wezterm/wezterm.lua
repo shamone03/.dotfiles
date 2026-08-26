@@ -28,8 +28,21 @@ config.front_end = "WebGpu"
 config.tab_bar_at_bottom = true
 local act = wezterm.action
 
-local colors, _ = wezterm.color.load_base16_scheme(os.getenv("projects") .. "/.dotfiles/wezterm/base16-theme.yml")
-config.colors = colors
+local function file_exists(path)
+	local f = io.open(path, "r")
+	if f then
+		f:close()
+		return true
+	end
+	return false
+end
+
+local theme_path = os.getenv("temp") .. "/shmn/wezterm-base16-theme.yaml"
+if file_exists(theme_path) then
+	local colors, _ = wezterm.color.load_base16_scheme(theme_path)
+	config.colors = colors
+	wezterm.add_to_config_reload_watch_list(theme_path)
+end
 
 local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 tabline.setup({

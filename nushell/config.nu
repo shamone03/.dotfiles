@@ -15,6 +15,9 @@ if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {
     mkdir $"($nu.cache-dir)"
     carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 }
+if (not ($"($nu.temp-dir)/shmn" | path exists)) {
+    mkdir $"($nu.temp-dir)/shmn"
+}
 source $"($nu.cache-dir)/carapace.nu"
 $env.CARAPACE_LENIENT = 1
 $env.CARAPACE_EXCLUDES = "go"
@@ -23,6 +26,7 @@ $env.STARSHIP_CONFIG = $"($env.projects)/.dotfiles/starship/starship.toml"
 $env.JUST_COMMAND_COLOR = "purple"
 $env.JUST_HIGHLIGHT = true
 $env.YAZI_CONFIG_HOME = $"($env.projects)/.dotfiles/yazi/"
+$env.LG_CONFIG_DIR = $"($env.projects)/.dotfiles/lazygit/config.yml,($nu.temp-dir)/shmn/lazygit-base16-theme.yaml"
 
 def --env y [...args] {
     let tmp = (mktemp -t "yazi-cwd.XXXXXX")

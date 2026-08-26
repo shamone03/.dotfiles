@@ -1,3 +1,8 @@
+const lazygit_theme_config_path = ($nu.temp-dir)/shmn/lazygit-base16-theme.yaml
+const wezterm_theme_config_path = ($nu.temp-dir)/shmn/wezterm-base16-theme.yaml
+const nvim_theme_config_path = ($nu.temp-dir)/shmn/nvim-base16-theme.txt
+const tinted_theme_config_path = ($nu.temp-dir)/shmn/tinted-theme.yaml
+
 export def list [] {
     http get https://api.github.com/repos/tinted-theming/schemes/git/trees/spec-0.11?recursive=1
         | get tree
@@ -8,10 +13,9 @@ export def list [] {
 }
 
 export def show [theme?: string@list]: nothing -> record {
-    let theme_file = ($nu.temp-dir)/shmn/tinted-theme.yaml
-    if $theme == null and ($theme_file | path exists) {
-        open $theme_file
-    } else if theme == null and (not ($theme_file | path exists)) {
+    if $theme == null and ($tinted_theme_config_path | path exists) {
+        open $tinted_theme_config_path
+    } else if $theme == null and (not ($tinted_theme_config_path | path exists)) {
       error make "Theme not initialized"
     } else {
         try {
@@ -25,25 +29,24 @@ export def show [theme?: string@list]: nothing -> record {
 def update-cache [theme: string] {
     let theme_scheme = show $theme
     let base = $theme_scheme | get system 
-    $theme_scheme | save ($nu.temp-dir)/shmn/tinted-theme.yaml --force
+    $theme_scheme | save $tinted_theme_config_path --force
 }
 
 export def nvim [theme: string] {
     let theme_name = show $theme | $"($in.system)-($theme)"
-    $theme_name | save ($nu.temp-dir)/shmn/nvim-theme.txt --force
+    $theme_name | save $nvim_theme_config_path --force
     print $"Updated neovim theme to ($theme_name)"
 }
 
 export def wezterm [theme: string@list] {
-    let wezterm_dir = [$env.projects .dotfiles wezterm] | path join
     let theme_scheme = show $theme
     $theme_scheme
         | rename --column { system: scheme }
         | flatten --all palette
         | into record
         | to yaml
-        | save ($wezterm_dir | path join base16-theme.yml) --force
-    touch ($wezterm_dir | path join wezterm.lua)
+        | save $wezterm_theme_config_path --force
+    touch ([$env.projects .dotfiles wezterm wezterm.lua] | path join)
     let result_theme = $theme_scheme | get system | $"($in)-($theme)"
 
     print $"Updated wezterm theme to ($result_theme)"
@@ -76,9 +79,7 @@ export def lazygit [theme: string@list] {
         }
     }
 
-    $lazygit_theme
-        | merge (open ($lazygit_dir | path join config.yml) | reject gui)
-        | save ($lazygit_dir | path join config.yml) --force
+    $lazygit_theme | save $lazygit_theme_config_path --force
     print $"Updated lazygit theme to base16-($theme)"
 }
 
