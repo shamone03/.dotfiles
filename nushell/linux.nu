@@ -1,6 +1,6 @@
 export-env {
     if $nu.os-info.name == "linux" {
-        $env.projects = "~/Projects"
+        $env.projects = $env.HOME | path join Projects
     }
 }
 

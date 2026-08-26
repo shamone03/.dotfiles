@@ -14,9 +14,9 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
 	}
 	config.default_cwd = "C:/Users/aryah.kannan/Projects/"
 else
-	config.default_prog = { "nu", "--experimental-options=native-clip" }
+	config.default_prog = { "nu" }
 	config.window_decorations = "NONE"
-	config.default_cwd = "/home/shamone/Projects/"
+	config.default_cwd = os.getenv("HOME") .. "/Projects"
 end
 
 config.hide_tab_bar_if_only_one_tab = true

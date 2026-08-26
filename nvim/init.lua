@@ -4,7 +4,7 @@ vim.g.maplocalleader = " "
 -- vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
 vim.g.shmn_show_tabs = false
-vim.g.shmn_animations_enabled = true
+vim.g.shmn_animations_enabled = false
 
 vim.opt.backup = true
 local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
@@ -256,6 +256,7 @@ local function setup_picker()
         vim.keymap.set("n", "<leader>ss", telescope.lsp_document_symbols, { desc = "Search buffer symbols" })
         vim.keymap.set("n", "<leader>sS", telescope.lsp_workspace_symbols, { desc = "Search workspace symbols" })
         vim.keymap.set("n", "<leader>sd", telescope.diagnostics, { desc = "Search diagnostics" })
+        vim.keymap.set("n", "<leader>ut", telescope.colorscheme, { desc = "Pick theme" })
     end
 
     keymaps()
@@ -388,14 +389,14 @@ end
 
 local function setup_theme()
     vim.pack.add({
-        "https://github.com/rose-pine/neovim",
-        "https://github.com/metalelf0/black-metal-theme-neovim",
-        "https://github.com/vague-theme/vague.nvim",
-        "https://github.com/nyoom-engineering/oxocarbon.nvim",
+        -- "https://github.com/rose-pine/neovim",
+        -- "https://github.com/vague-theme/vague.nvim",
         "https://github.com/nvim-tree/nvim-web-devicons",
         "https://github.com/nvim-mini/mini.icons",
+        "https://github.com/RRethy/base16-nvim",
     })
-    vim.cmd.colorscheme("rose-pine")
+    -- use https://github.com/tinted-theming/home to sync other configs
+    vim.cmd.colorscheme("base16-black-metal")
 end
 
 local function setup_terminal()

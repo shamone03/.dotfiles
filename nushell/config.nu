@@ -1,6 +1,6 @@
 use starship.nu
 const os_tools = if $nu.os-info.name == "linux" { "linux.nu" } else { "windows.nu" }
-const scripts = if $nu.os-info.name == "linux" { null } else { "scripts" }
+const scripts = if $nu.os-info.name == "linux" { "scripts" } else { "scripts" }
 
 use $os_tools *
 use $scripts *
@@ -9,10 +9,10 @@ if $nu.is-interactive {
     try {
         conan_venv switch
     }
-    const theme = "rose-pine"
+    const theme = "black-metal"
     use nu_scripts/themes/nu-themes/($theme).nu;
-    rose-pine set color_config
-    rose-pine update terminal
+    black-metal set color_config
+    black-metal update terminal
 }
 
 if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {

@@ -5,3 +5,4 @@ nushell/plugin.msgpackz
 /get-dll-version/build
 /yazi/plugins/git.yazi
 /yazi/plugins/starship.yazi
+/yazi/flavors/base16.yazi

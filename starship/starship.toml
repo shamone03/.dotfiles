@@ -1,29 +1,19 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 format = "$all$conan$cmake$cmd_duration$line_break$character"
-palette = "rose-pine"
-
-[palettes.rose-pine]
-overlay = '#26233a'
-love = '#eb6f92'
-gold = '#f6c177'
-rose = '#ebbcba'
-pine = '#31748f'
-foam = '#9ccfd8'
-iris = '#c4a7e7'
 
 [custom.conan]
 shell = "nu"
 symbol = "󰏗 "
 command = "just version"
 detect_files = ["conanfile.py", "justfile"]
-style = "pine"
+style = "green bold"
 format = "(is[ $symbol$output]($style) )"
 ignore_timeout = true
 
 [env_var.SHMN_CONAN_VENV_NAME]
 variable = "SHMN_CONAN_VENV_NAME"
 symbol = " "
-style = "gold"
+style = "magenta"
 format = "with [$symbol$env_value]($style) "
 
 [cmake]
@@ -31,8 +21,7 @@ symbol = " "
 
 [directory]
 read_only = " 󰌾"
-# style = "bright-red"
-style = "fg:love"
+style = "bright-red"
 
 [python]
 disabled = true

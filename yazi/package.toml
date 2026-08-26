@@ -12,3 +12,8 @@ hash = "7de446280b1ba8c49ffd86dbc24bbbe6"
 use = "Mintass/rose-pine"
 rev = "d91f8f2"
 hash = "87da3630653b6d272e43658418599188"
+
+[[flavor.deps]]
+use = "matt-dong-123/base16"
+rev = "ed79352"
+hash = "94659ef90cd557d05dbda7076fbbb3f4"
