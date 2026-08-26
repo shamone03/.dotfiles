@@ -399,7 +399,7 @@ local function setup_theme()
         "https://github.com/tinted-theming/tinted-nvim",
     })
     require("tinted-nvim").setup()
-    local theme_file = os.getenv("TEMP") .. "/shmn/theme.txt"
+    local theme_file = os.getenv("TEMP") .. "/shmn/nvim-theme.txt"
     if vim.uv.fs_stat(theme_file) then
         local content = vim.fn.readfile(theme_file)
         local theme = table.concat(content, "\n"):gsub("%s+", "")

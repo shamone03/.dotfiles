@@ -7,18 +7,31 @@ export def list [] {
         | uniq
 }
 
-def show [theme: string]: nothing -> record {
-    try {
-        http get $"https://raw.githubusercontent.com/tinted-theming/schemes/refs/heads/spec-0.11/base24/($theme).yaml"
-    } catch {
-        http get $"https://raw.githubusercontent.com/tinted-theming/schemes/refs/heads/spec-0.11/base16/($theme).yaml"
+export def show [theme?: string@list]: nothing -> record {
+    let theme_file = ($nu.temp-dir)/shmn/tinted-theme.yaml
+    if $theme == null and ($theme_file | path exists) {
+        open $theme_file
+    } else if theme == null and (not ($theme_file | path exists)) {
+      error make "Theme not initialized"
+    } else {
+        try {
+            http get $"https://raw.githubusercontent.com/tinted-theming/schemes/refs/heads/spec-0.11/base24/($theme).yaml"
+        } catch {
+            http get $"https://raw.githubusercontent.com/tinted-theming/schemes/refs/heads/spec-0.11/base16/($theme).yaml"
+        }
     }
 }
 
-export def nvim [theme: string] {
+def update-cache [theme: string] {
     let theme_scheme = show $theme
     let base = $theme_scheme | get system 
-    $"($base)-($theme)" | save ($nu.temp-dir)/shmn/theme.txt --force
+    $theme_scheme | save ($nu.temp-dir)/shmn/tinted-theme.yaml --force
+}
+
+export def nvim [theme: string] {
+    let theme_name = show $theme | $"($in.system)-($theme)"
+    $theme_name | save ($nu.temp-dir)/shmn/nvim-theme.txt --force
+    print $"Updated neovim theme to ($theme_name)"
 }
 
 export def wezterm [theme: string@list] {
@@ -45,6 +58,7 @@ export def lazygit [theme: string@list] {
 }
 
 export def all [theme: string@list] {
+    update-cache $theme
     wezterm $theme
     lazygit $theme
     nvim $theme
