@@ -392,6 +392,20 @@ local function setup_git_hints()
     keymaps()
 end
 
+local function apply_theme()
+    local theme_file = os.getenv("TEMP") .. "/shmn/nvim-theme.txt"
+    if vim.uv.fs_stat(theme_file) then
+        local content = vim.fn.readfile(theme_file)
+        local theme = table.concat(content, "\n"):gsub("%s+", "")
+        vim.cmd.colorscheme(theme)
+        return theme
+    else
+        local default_theme = "base24-flexoki-dark"
+        vim.cmd.colorscheme(default_theme)
+        return default_theme
+    end
+end
+
 local function setup_theme()
     vim.pack.add({
         "https://github.com/nvim-tree/nvim-web-devicons",
@@ -399,14 +413,22 @@ local function setup_theme()
         "https://github.com/tinted-theming/tinted-nvim",
     })
     require("tinted-nvim").setup()
-    local theme_file = os.getenv("TEMP") .. "/shmn/nvim-theme.txt"
-    if vim.uv.fs_stat(theme_file) then
-        local content = vim.fn.readfile(theme_file)
-        local theme = table.concat(content, "\n"):gsub("%s+", "")
-        vim.cmd.colorscheme(theme)
-    else
-        vim.cmd.colorscheme("base24-flexoki-dark")
+    apply_theme()
+
+    local function execute()
+        local theme = apply_theme()
+        vim.notify(string.format("Applied theme %s", theme))
     end
+
+    local function user_commands()
+        vim.api.nvim_create_user_command("ShmnApplyTheme", execute, { desc = "Apply theme" })
+    end
+
+    local function keymaps()
+        vim.keymap.set("n", "<leader>ut", execute, { desc = "Apply theme" })
+    end
+    user_commands()
+    keymaps()
 end
 
 local function setup_terminal()
