@@ -1,26 +1,26 @@
 gui:
   theme:
     activeBorderColor:
-    - "#33b1ff"
+    - "#4385be"
     - bold
     inactiveBorderColor:
-    - "#525252"
+    - "#575653"
     searchingActiveBorderColor:
-    - "#ff7eb6"
+    - "#da702c"
     optionsTextColor:
-    - "#33b1ff"
+    - "#4385be"
     selectedLineBgColor:
-    - "#393939"
+    - "#282726"
     cherryPickedCommitBgColor:
-    - "#525252"
+    - "#575653"
     cherryPickedCommitFgColor:
-    - "#33b1ff"
+    - "#4385be"
     markedBaseCommitFgColor:
-    - "#33b1ff"
+    - "#4385be"
     unstagedChangesColor:
-    - "#ee5396"
+    - "#d14d41"
     defaultFgColor:
-    - "#f2f4f8"
+    - "#cecdc3"
 os:
   edit: nvim {{filename}}
 notARepository: quit

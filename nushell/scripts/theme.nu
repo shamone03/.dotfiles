@@ -51,7 +51,32 @@ export def wezterm [theme: string@list] {
 
 export def lazygit [theme: string@list] {
     let lazygit_dir = [$env.projects .dotfiles lazygit] | path join
-    http get $"https://raw.githubusercontent.com/tinted-theming/tinted-lazygit/refs/heads/main/themes/base16-($theme).yml"
+    let theme_scheme = show $theme
+    let palette = $theme_scheme.palette
+    
+    let lazygit_theme = try {
+        http get $"https://raw.githubusercontent.com/tinted-theming/tinted-lazygit/refs/heads/main/themes/base16-($theme).yml"
+    } catch {
+        print $"Creating custom lazygit theme"
+        {
+            gui: {
+                theme: {
+                    activeBorderColor: [$palette.base0D, bold],
+                    inactiveBorderColor: [$palette.base03],
+                    searchingActiveBorderColor: [$palette.base09],
+                    optionsTextColor: [$palette.base0D],
+                    selectedLineBgColor: [$palette.base02],
+                    cherryPickedCommitBgColor: [$palette.base03],
+                    cherryPickedCommitFgColor: [$palette.base0D],
+                    markedBaseCommitFgColor: [$palette.base0D],
+                    unstagedChangesColor: [$palette.base08],
+                    defaultFgColor: [$palette.base05]
+                }
+            }
+        }
+    }
+
+    $lazygit_theme
         | merge (open ($lazygit_dir | path join config.yml) | reject gui)
         | save ($lazygit_dir | path join config.yml) --force
     print $"Updated lazygit theme to base16-($theme)"
