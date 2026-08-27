@@ -1,6 +1,6 @@
 export-env {
     if $nu.os-info.name == "windows" {
-        $env.YAZI_FILE_ONE = [$env.LOCALAPPDATA $env.PROGRAMFILES]
+        $env.YAZI_FILE_ONE = [($env.LOCALAPPDATA)/Programs $env.PROGRAMFILES]
         | each { $"($in)/Git/usr/bin/file.exe" }
         | where { $in | path exists }
         | str replace --all '\' '/'
