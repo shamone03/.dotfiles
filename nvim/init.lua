@@ -443,11 +443,8 @@ local function setup_terminal()
 
     local function keymaps()
         local terminal = require("shmn-terminal")
-        if is_windows then
-            vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
-        else
-            vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
-        end
+        vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+        vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
     end
     keymaps()
 end
