@@ -1,7 +1,5 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
--- vim.g.loaded_netrw = 1
--- vim.g.loaded_netrwPlugin = 1
 vim.g.shmn_virtual_text = true
 vim.g.shmn_show_tabs = false
 vim.g.shmn_animations_enabled = false
@@ -18,10 +16,10 @@ else
 end
 
 vim.opt.relativenumber = true
-vim.opt.tabstop = 4 -- A TAB character looks like 4 spaces
+vim.opt.tabstop = 4      -- A TAB character looks like 4 spaces
 vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
-vim.opt.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
-vim.opt.shiftwidth = 4 -- Number of spaces inserted when indenting
+vim.opt.softtabstop = 4  -- Number of spaces inserted instead of a TAB character
+vim.opt.shiftwidth = 4   -- Number of spaces inserted when indenting
 vim.opt.fixendofline = false
 vim.opt.number = true
 vim.opt.shell = "nu"
@@ -61,7 +59,7 @@ end
 
 local function setup_lsp()
     vim.pack.add({
-        "https://github.com/mason-org/mason.nvim", -- install lang servers
+        "https://github.com/mason-org/mason.nvim",           -- install lang servers
         "https://github.com/mason-org/mason-lspconfig.nvim", -- auto enable lang servers with configs
         "https://github.com/neovim/nvim-lspconfig",
     })
@@ -94,60 +92,15 @@ local function setup_lsp()
     vim.lsp.enable("nushell")
 end
 
----@enum ExplorerType
-local ExplorerType = {
-    Yazi = "yazi",
-    Tree = "nvim-tree",
-}
-
----@param type ExplorerType
-local function setup_explorer(type)
-    local function setup_nvim_tree()
-        vim.pack.add({ "https://github.com/nvim-tree/nvim-tree.lua" })
-        ---@type nvim_tree.config
-        local nvim_tree_config = {
-            view = {
-                side = "right",
-            },
-            renderer = {
-                group_empty = true,
-            },
-            update_focused_file = {
-                enable = true,
-            },
-            modified = {
-                enable = true,
-            },
-            diagnostics = {
-                enable = true,
-            },
-        }
-
-        local function keymaps()
-            local explorer = require("nvim-tree.api")
-            vim.keymap.set("n", "<leader>e", explorer.tree.toggle, { desc = "Toggle Explorer" })
-        end
-
-        require("nvim-tree").setup(nvim_tree_config)
-        keymaps()
+local function setup_explorer()
+    vim.pack.add({ "https://github.com/mikavilpas/yazi.nvim" })
+    local function keymaps()
+        local explorer = require("yazi")
+        vim.keymap.set("n", "<leader>e", explorer.yazi, { desc = "Show Explorer" })
     end
 
-    local function setup_yazi()
-        vim.pack.add({ "https://github.com/mikavilpas/yazi.nvim" })
-        local function keymaps()
-            local explorer = require("yazi")
-            vim.keymap.set("n", "<leader>e", explorer.yazi, { desc = "Show Explorer" })
-        end
-
-        require("yazi").setup({})
-        keymaps()
-    end
-
-    if type == ExplorerType.Yazi then
-        setup_yazi()
-    elseif type == ExplorerType.Tree then
-        setup_nvim_tree()
-    end
+    require("yazi").setup({})
+    keymaps()
 end
 
 local function setup_autocomplete_menu()
@@ -306,10 +259,6 @@ local function setup_keymap_hints()
     ---@class wk.Opts
     local config = {
         preset = "helix",
-        keys = {
-            scroll_down = "<c-s-d>",
-            scroll_up = "<c-s-u>",
-        },
     }
     wk.setup(config)
     wk.add({
@@ -478,6 +427,8 @@ end
 
 setup_autocmds()
 setup_common_keymaps()
+setup_autocomplete_pairs()
+setup_surround_pairs()
 if vim.g.vscode then
     return
 end
@@ -487,10 +438,8 @@ setup_treesitter()
 
 setup_picker()
 setup_tab_bars()
-setup_explorer(ExplorerType.Yazi)
+setup_explorer()
 setup_autocomplete_menu()
-setup_autocomplete_pairs()
-setup_surround_pairs()
 setup_dashboard()
 setup_git_hints()
 setup_terminal()

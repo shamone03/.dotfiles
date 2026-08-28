@@ -1,4 +1,5 @@
 use miscellaneous.nu *
+use private.nu
 const last_env_name = $"($nu.temp-dir)/shmn/.env"
 
 export def home []: nothing -> string {
@@ -42,7 +43,7 @@ export def --env switch [name?: string@completions, --aims-version: string, --up
         error make "Cannot specify aims version for conan 2 yet"
     }
     if $update or not ([$env.CONAN_HOME profiles default] | path join | path exists) {
-        conan config install http://cn-appaf-p01.ad.onepal.com:8081/artifactory/generic-local/config/Conan2Config.zip
+        conan config install $private.conan_config
     }
     glob $"($env.projects)/.dotfiles/conan-profiles/*" | each {
         let fileName = [ $env.CONAN_HOME profiles ( $in | path basename ) ] | path join | str replace '/' '\\' --all;

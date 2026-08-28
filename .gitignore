@@ -6,3 +6,4 @@ nushell/plugin.msgpackz
 /yazi/plugins/git.yazi
 /yazi/plugins/starship.yazi
 /yazi/flavors/base16.yazi
+/nushell/scripts/private.nu
