@@ -1,6 +1,6 @@
 use path.nu
 export def --env project_source [] {
-    cd (open (path find-in-parent .sources.txt ($env.projects)/.builds) --raw)
+    cd (open (path rev-parse .sources.txt ($env.projects)/.builds) --raw)
 }
 
 export def --env build [--release] {

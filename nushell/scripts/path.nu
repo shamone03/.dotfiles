@@ -1,4 +1,5 @@
-export def find-in-parent [filename: string, ceiling: string] {
+# Search for filename in parent directories until given ceiling
+export def rev-parse [filename: string, ceiling: string] {
     mut current = (pwd)
     loop {
         let target = $current | path join $filename
@@ -20,4 +21,9 @@ export def find-in-parent [filename: string, ceiling: string] {
             }
         }
     }
+}
+
+# Replace '\' with '/'
+export def forward-slash []: string -> string {
+    $in | str replace '\' '/' --all
 }

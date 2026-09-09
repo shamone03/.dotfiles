@@ -217,7 +217,7 @@ local function setup_picker()
         vim.keymap.set("n", "<leader>ss", telescope.lsp_document_symbols, { desc = "Search buffer symbols" })
         vim.keymap.set("n", "<leader>sS", telescope.lsp_workspace_symbols, { desc = "Search workspace symbols" })
         vim.keymap.set("n", "<leader>sd", telescope.diagnostics, { desc = "Search diagnostics" })
-        vim.keymap.set("n", "<leader>ut", telescope.colorscheme, { desc = "Pick theme" })
+        vim.keymap.set("n", "<leader>up", telescope.colorscheme, { desc = "Pick theme" })
     end
 
     keymaps()
@@ -298,6 +298,7 @@ local function setup_common_keymaps()
             vim.opt_local.list = vim.g.shmn_show_tabs
         end, { desc = "Toggle show tabs" })
         vim.keymap.set("n", "<leader>nr", vim.cmd.restart, { desc = "Restart neovim" })
+        vim.keymap.set("n", "<leader>br", vim.cmd.checktime, { desc = "Reload buffer" })
 
         vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
         vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })

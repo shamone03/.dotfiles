@@ -1,3 +1,4 @@
+use path.nu
 use miscellaneous.nu *
 use private.nu
 const last_env_name = $"($nu.temp-dir)/shmn/.env"
@@ -16,7 +17,7 @@ def get-last-env-name [name?: string]: nothing -> string {
         mkdir ($last_env_name | path dirname)
     }
     if not ($last_env_name | path exists) {
-        { SHMN_CONAN_VENV_NAME: develop, CONAN_HOME: (home | path join develop | str replace '\' '/' --all) } | into env | save $last_env_name --force
+        { SHMN_CONAN_VENV_NAME: develop, CONAN_HOME: (home | path join develop | path forward-slash) } | into env | save $last_env_name --force
     }
 
     match $name {
@@ -24,7 +25,7 @@ def get-last-env-name [name?: string]: nothing -> string {
             open $last_env_name | get SHMN_CONAN_VENV_NAME
         }
         _ => {
-            { SHMN_CONAN_VENV_NAME: $name, CONAN_HOME: (home | path join $name | str replace '\' '/' --all) } | into env | save $last_env_name --force
+            { SHMN_CONAN_VENV_NAME: $name, CONAN_HOME: (home | path join $name | path forward-slash) } | into env | save $last_env_name --force
             $name
         }
     }
@@ -43,7 +44,7 @@ export def --env switch [name?: string@completions, --aims-version: string, --up
         error make "Cannot specify aims version for conan 2 yet"
     }
     if $update or not ([$env.CONAN_HOME profiles default] | path join | path exists) {
-        conan config install $private.conan_config
+        conan config install $private.conan_config_url
     }
     glob $"($env.projects)/.dotfiles/conan-profiles/*" | each {
         let fileName = [ $env.CONAN_HOME profiles ( $in | path basename ) ] | path join | str replace '/' '\\' --all;

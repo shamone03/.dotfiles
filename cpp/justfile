@@ -46,7 +46,7 @@ cmake_verbosity := if verbose == "true" {
 conan_verbosity := if verbose == "true" {
         f"-c:a tools.build:verbosity=verbose -c:a tools.compilation:verbosity=verbose -v trace -c:a tools.cmake:configure_args+={{ quote(trim(cmake_verbosity)) }}"
     } else if quiet == "true" {
-        "-c:a tools.cmake:configure_args+={{ quote(trim(cmake_verbosity)) }} -v warning "
+        "-c:a tools.cmake:configure_args+={{ quote(trim(cmake_verbosity)) }} -v warning"
     } else {
         ""
     }
@@ -56,6 +56,8 @@ build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 all_build := if build_profile == "vstudio" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
+[private]
+extra_install_args := f"-c:a tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }} -c:a tools.env:dotenv=True"
 
 cmake_output_cmd(project_name) := f"((open (open ([{{ project_name }} CMakeUserPresets.json] | path join)).include.0).configurePresets | where name == conan-default).0.binaryDir"
 
@@ -147,7 +149,7 @@ clean dry="false" permanent="false":
             'if ($in | is-not-empty) {' +
                 'rm ...$in --recursive --verbose' + ( if permanent == "true" { " --permanent" } else { " --trash" } ) +
                 '| each {' +
-                   ' if ($in.deleted) { print $"' + ( if permanent == "true" { "permanently " } else { "" } ) + 'deleted ($in.path)" } else { print $"(ansi red)did not delete ($in.path) because ($in.error)(ansi reset)" }' +
+                   ' if ($in.deleted) { print $"' + ( if permanent == "true" { "permanently " } else { "" } ) + 'deleted ($in.path)" } else { print $"(ansi red)did not delete ($in.path) because ($in.error)(ansi reset)"; error make $in.error; }' +
                 '}' +
             '}'
         } }}; \
@@ -166,11 +168,11 @@ cleanbuild: (build "clean")
 [private]
 [doc('Conan install with the given flags')]
 installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} -b missing --output-folder {{ build_dir }} {{ conan_verbosity }} -c tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }} {{ FLAGS }}
+    conan install {{ conan_dir }} -pr:a {{ build_profile }} --build missing --output-folder {{ build_dir }} {{ conan_verbosity }} {{ extra_install_args }} {{ FLAGS }}
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
-    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} -b missing {{ conan_verbosity }}{{ FLAGS }}
+    conan create {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} --build missing {{ conan_verbosity }} {{ FLAGS }}
 
 [doc('Remove package from cache and conan create with the given flags')]
 recreatef *FLAGS: cleancache (createf FLAGS)

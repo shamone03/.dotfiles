@@ -11,12 +11,11 @@ if $nu.is-interactive {
     }
 }
 
-if (not ($nu.cache-dir | path join "carapace.nu" | path exists)) {
-    mkdir $"($nu.cache-dir)"
-    carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
-}
 mkdir $constants.temp_dir
-source $"($nu.cache-dir)/carapace.nu"
+if not ($constants.temp_dir | path join "carapace.nu" | path exists) {
+    carapace _carapace nushell | save --force $"($constants.temp_dir)/carapace.nu"
+}
+source $"($constants.temp_dir)/carapace.nu"
 $env.CARAPACE_LENIENT = 1
 $env.CARAPACE_EXCLUDES = "go"
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]

@@ -1,3 +1,4 @@
+use path.nu
 export def list-local-updates [] {
     use std
     ls */*justfile
@@ -27,7 +28,7 @@ export def list-local-updates [] {
 }
 
 export def get-test-package-list [] {
-    glob **/* --no-dir  | each { $in | path relative-to (pwd) } | each { $'"($in)"' | str replace '\' '/' --all } | str join ", " | $"[($in)]"
+    glob **/* --no-dir  | each { $in | path relative-to (pwd) } | each { $'"($in)"' | path forward-slash } | str join ", " | $"[($in)]"
 }
 
 export module version {

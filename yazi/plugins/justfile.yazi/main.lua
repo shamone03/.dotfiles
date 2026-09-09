@@ -7,7 +7,7 @@ function M:peek(job)
 
 	local output, err = Command("nu"):arg({
 		"-c",
-		string.format("just --justfile %s list", file_path),
+		string.format("just --justfile %s --evaluate", file_path),
 	}):output()
 
 	if err then
