@@ -57,7 +57,7 @@ all_build := if build_profile == "vstudio" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
 [private]
-extra_install_args := f"-c:a tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }} -c:a tools.env:dotenv=True"
+extra_install_args := f"-c:a tools.cmake.cmake_layout:build_folder={{ cmake_base_dir }}"
 
 cmake_output_cmd(project_name) := f"((open (open ([{{ project_name }} CMakeUserPresets.json] | path join)).include.0).configurePresets | where name == conan-default).0.binaryDir"
 

@@ -7,3 +7,5 @@ tools.cmake.cmaketoolchain:user_toolchain+={{profile_dir}}/ninjavars.cmake
 track-api/*:tools.cmake.cmaketoolchain:generator=
 # quotes
 service-monitor-lib/*:tools.cmake.cmaketoolchain:generator=
+# unicode definition
+proj/*:tools.cmake.cmaketoolchain:user_toolchain=[]
