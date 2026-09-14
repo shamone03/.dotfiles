@@ -4,7 +4,7 @@ local function get_sources()
 			"--config",
 			string.format("%s/.dotfiles/nushell/scripts/path.nu", os.getenv("projects") or "~/Projects"),
 			"-c",
-			"open (rev-parse .sources.txt ($env.project_builds)) --raw",
+			"open (rev-parse .sources.txt --ceiling ($env.project_builds)) --raw",
 		})
 		:stdout(Command.PIPED)
 		:stderr(Command.PIPED)

@@ -1,5 +1,5 @@
 # Search for filename in parent directories until given ceiling
-export def rev-parse [filename: string, ceiling: string] {
+export def rev-parse [filename: string, --ceiling(-c): string] {
     mut current = (pwd)
     loop {
         let target = $current | path join $filename
