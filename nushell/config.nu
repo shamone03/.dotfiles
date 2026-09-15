@@ -49,7 +49,7 @@ $env.config.shell_integration = {
     osc7: true
     osc8: true
     osc9_9: ($nu.os-info == "linux")
-    osc133: false
+    osc133: true
     osc633: true
     reset_application_mode: true
 }

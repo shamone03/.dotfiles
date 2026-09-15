@@ -1,6 +1,5 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
-
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
@@ -154,6 +153,8 @@ config.keys = {
         mods = "CTRL|SHIFT",
         action = act.DisableDefaultAssignment,
     },
+    { key = 'UpArrow',   mods = 'SHIFT', action = act.ScrollToPrompt(-1) },
+    { key = 'DownArrow', mods = 'SHIFT', action = act.ScrollToPrompt(1) },
 }
 
 for i = 1, 8 do
