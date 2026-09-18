@@ -1,4 +1,3 @@
-use private.nu
 export def google [...query: string] {
     start (
         $query
@@ -8,11 +7,3 @@ export def google [...query: string] {
     )
 }
 
-export def tfs [...query: string] {
-    start (
-        $query
-        | str join " "
-        | url encode
-        | $"($private.tfs_url)/_search?text=($in)&type=code"
-    )
-}
