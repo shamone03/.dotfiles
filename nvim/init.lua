@@ -33,6 +33,15 @@ vim.opt.termguicolors = true
 vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.guifont = "Hurmit Nerd Font Mono"
+-- https://www.kiils.dk/en/blog/2024-06-22-using-nushell-in-neovim/
+vim.opt.shell = "nu"
+vim.opt.shellcmdflag = "--login --stdin --no-newline -c"
+vim.opt.shellpipe = "| complete | update stderr { ansi strip } | tee { get stderr | save --force --raw %s } | into record"
+vim.opt.shellquote = ""
+vim.opt.shellredir = "out+err> %s"
+vim.opt.shelltemp = false
+vim.opt.shellxescape = ""
+vim.opt.shellxquote = ""
 
 vim.diagnostic.config({
     signs = {
@@ -131,7 +140,7 @@ local function setup_dashboard()
     if lolcrab then
         header_section = {
             section = "terminal",
-            cmd = "lolcrab --animate --duration 1 --scale 0.023 " .. vim.fn.shellescape(header_path),
+            cmd = "lolcrab --animate --duration 1 --scale 0.023 " .. vim.fn.shellescape(header_path):gsub("\\", "/"),
             align = "center",
             height = 6,
             indent = 12,
@@ -179,6 +188,15 @@ local function setup_dashboard()
             sections = {
                 header_section,
                 { section = "keys", gap = 1 },
+                { gap = 1 },
+                {
+                    section = "terminal",
+                    icon = " ",
+                    title = "Git Status",
+                    cmd = "git --no-pager diff --stat -B -M -C",
+                    enabled = Snacks.git.get_root() ~= nil,
+                    ttl = 5,
+                }
             },
         },
     })
@@ -409,13 +427,8 @@ local function setup_terminal()
 
     local function keymaps()
         local terminal = require("shmn-terminal")
-        local toggle = function()
-            vim.opt.shell = "nu"
-            terminal.shmn_terminal()
-            vim.opt.shell = nil
-        end
-        vim.keymap.set({ "n", "t" }, "<C-_>", toggle, { desc = "Toggle terminal" })
-        vim.keymap.set({ "n", "t" }, "<C-/>", toggle, { desc = "Toggle terminal" })
+        vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+        vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
     end
     keymaps()
 end
