@@ -22,7 +22,6 @@ vim.opt.softtabstop = 4  -- Number of spaces inserted instead of a TAB character
 vim.opt.shiftwidth = 4   -- Number of spaces inserted when indenting
 vim.opt.fixendofline = false
 vim.opt.number = true
-vim.opt.shell = "nu"
 vim.opt.mouse = "a"
 vim.opt.undofile = true
 vim.opt.signcolumn = "yes"
@@ -123,48 +122,64 @@ local function setup_autocomplete_menu()
 end
 
 local function setup_dashboard()
-    vim.pack.add({ "https://github.com/nvimdev/dashboard-nvim" })
-    local header = [[
-███████╗██╗  ██╗███╗   ███╗███╗   ██╗
-██╔════╝██║  ██║████╗ ████║████╗  ██║
-███████╗███████║██╔████╔██║██╔██╗ ██║
-╚════██║██╔══██║██║╚██╔╝██║██║╚██╗██║
-███████║██║  ██║██║ ╚═╝ ██║██║ ╚████║
-╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═══╝
-                                     ]]
-    -- header = vim.split(header, "\n"),
-    require("dashboard").setup({
-        theme = "hyper",
-        config = {
-            header = vim.split(header, "\n"),
-            shortcut = {
-                {
-                    desc = "󰚰 Update",
-                    action = vim.pack.update,
-                    group = "DiagnosticWarn",
-                    key = "u",
-                },
-                {
-                    desc = " Files",
-                    action = "Yazi",
-                    group = "DiagnosticInfo",
-                    key = "f",
-                },
-                {
-                    desc = "󰈆 Quit",
-                    action = vim.cmd.quit,
-                    group = "DiagnosticError",
-                    key = "q",
-                },
-                {
-                    desc = "󰁯 Restore",
-                    action = "ShmnRestoreSession",
-                    group = "DiagnosticTrace",
-                    key = "s",
+    vim.pack.add({ "https://github.com/folke/snacks.nvim" })
+
+    local header_path = vim.fn.stdpath("config") .. "/dashboard.txt"
+    local lolcrab = vim.fn.executable("lolcrab") == 1
+
+    local header_section
+    if lolcrab then
+        header_section = {
+            section = "terminal",
+            cmd = "lolcrab " .. vim.fn.shellescape(header_path),
+            align = "center",
+            height = 6,
+            indent = 12,
+            ttl = 0,
+        }
+    else
+        header_section = {
+            section = "header",
+            align = "center",
+        }
+    end
+
+    require("snacks").setup({
+        dashboard = {
+            enabled = true,
+            preset = {
+                header = (not lolcrab) and table.concat(vim.fn.readfile(header_path), "\n"),
+                keys = {
+                    {
+                        icon = "󰚰 ",
+                        desc = "Update",
+                        action = function() vim.pack.update() end,
+                        key = "u",
+                    },
+                    {
+                        icon = " ",
+                        desc = "Files",
+                        action = function() vim.cmd("Yazi") end,
+                        key = "f"
+                    },
+                    {
+                        icon = "󰁯 ",
+                        desc = "Restore",
+                        action = function() vim.cmd("ShmnRestoreSession") end,
+                        key = "s",
+                    },
+                    {
+                        icon = "󰈆 ",
+                        desc = "Quit",
+                        action = function() vim.cmd.quit() end,
+                        key = "q",
+                    },
                 },
             },
-            footer = {},
-            mru = { cwd_only = true },
+            sections = {
+                header_section,
+                { section = "keys", gap = 1 },
+            },
         },
     })
 end
@@ -394,8 +409,13 @@ local function setup_terminal()
 
     local function keymaps()
         local terminal = require("shmn-terminal")
-        vim.keymap.set({ "n", "t" }, "<C-_>", terminal.shmn_terminal, { desc = "Toggle terminal" })
-        vim.keymap.set({ "n", "t" }, "<C-/>", terminal.shmn_terminal, { desc = "Toggle terminal" })
+        local toggle = function()
+            vim.opt.shell = "nu"
+            terminal.shmn_terminal()
+            vim.opt.shell = nil
+        end
+        vim.keymap.set({ "n", "t" }, "<C-_>", toggle, { desc = "Toggle terminal" })
+        vim.keymap.set({ "n", "t" }, "<C-/>", toggle, { desc = "Toggle terminal" })
     end
     keymaps()
 end
