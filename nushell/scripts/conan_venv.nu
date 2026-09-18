@@ -12,7 +12,7 @@ def completions [] {
     ls $venv_home | get name | each { $in | path basename }
 }
 
-def get-last-env-name [name?: string]: nothing -> string {
+def get-or-set-last-env-name [name?: string]: nothing -> string {
     if not ($last_env_name | path dirname | path exists) {
         mkdir ($last_env_name | path dirname)
     }
@@ -36,7 +36,7 @@ export def --env switch [name?: string@completions, --aims-version: string, --up
         error make {msg: "idk how to deal with this"}
     }
 
-    let name = get-last-env-name $name
+    let name = get-or-set-last-env-name $name
 
     open $last_env_name | load-env
 
@@ -53,7 +53,11 @@ export def --env switch [name?: string@completions, --aims-version: string, --up
             mklink $fileName $filePath | print
         }
     }
-    "tools.microsoft.msbuild:vs_version=18" | save ([$env.CONAN_HOME "global.conf"] | path join) --force --progress
+    let global_conf_path = [$env.CONAN_HOME "global.conf"] | path join
+    let global_conf_lines = open $global_conf_path | lines
+    if ($global_conf_lines | where $it == "tools.microsoft.msbuild:vs_version=18" | is-empty) {
+        $global_conf_lines | append "tools.microsoft.msbuild:vs_version=18" | str join "\n" | save $global_conf_path --force
+    }
 }
 
 export def --env exit [] {
@@ -67,7 +71,10 @@ export def --env remove [name: string@completions] {
     let venv_dir = home | path join $name
 
     rm $venv_dir --recursive --verbose --permanent
-    rm $last_env_name
+    if (get-or-set-last-env-name) == $name {
+        rm $last_env_name
+    }
+    
     if ($env has SHMN_CONAN_VENV_NAME) and ($env | get SHMN_CONAN_VENV_NAME | $in == $name) {
         hide-env CONAN_USER_HOME CONAN_HOME SHMN_CONAN_VENV_NAME --ignore-errors
         use ../starship.nu

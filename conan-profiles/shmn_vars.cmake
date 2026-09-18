@@ -1,4 +1,3 @@
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 add_compile_definitions(UNICODE)
 add_compile_definitions(_UNICODE)
 add_compile_definitions(_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)

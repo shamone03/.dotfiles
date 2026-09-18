@@ -168,7 +168,7 @@ cleanbuild: (build "clean")
 [private]
 [doc('Conan install with the given flags')]
 installf *FLAGS:
-    conan install {{ conan_dir }} -pr:a {{ build_profile }} --build missing --output-folder {{ build_dir }} {{ conan_verbosity }} {{ extra_install_args }} {{ FLAGS }}
+    conan install {{ conan_dir }} --user cn --channel staging -pr:a {{ build_profile }} --build missing --output-folder {{ build_dir }} {{ conan_verbosity }} {{ extra_install_args }} {{ FLAGS }}
 
 [doc('Conan create package with the given flags')]
 createf *FLAGS:
