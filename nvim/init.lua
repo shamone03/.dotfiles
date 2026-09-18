@@ -131,7 +131,7 @@ local function setup_dashboard()
     if lolcrab then
         header_section = {
             section = "terminal",
-            cmd = "lolcrab " .. vim.fn.shellescape(header_path),
+            cmd = "lolcrab --animate --duration 1 --scale 0.023 " .. vim.fn.shellescape(header_path),
             align = "center",
             height = 6,
             indent = 12,
