@@ -22,7 +22,6 @@ vim.opt.softtabstop = 4  -- Number of spaces inserted instead of a TAB character
 vim.opt.shiftwidth = 4   -- Number of spaces inserted when indenting
 vim.opt.fixendofline = false
 vim.opt.number = true
-vim.opt.shell = "nu"
 vim.opt.mouse = "a"
 vim.opt.undofile = true
 vim.opt.signcolumn = "yes"
@@ -34,6 +33,15 @@ vim.opt.termguicolors = true
 vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.guifont = "Hurmit Nerd Font Mono"
+-- https://www.kiils.dk/en/blog/2024-06-22-using-nushell-in-neovim/
+vim.opt.shell = "nu"
+vim.opt.shellcmdflag = "--login --stdin --no-newline -c"
+vim.opt.shellpipe = "| complete | update stderr { ansi strip } | tee { get stderr | save --force --raw %s } | into record"
+vim.opt.shellquote = ""
+vim.opt.shellredir = "out+err> %s"
+vim.opt.shelltemp = false
+vim.opt.shellxescape = ""
+vim.opt.shellxquote = ""
 
 vim.diagnostic.config({
     signs = {
@@ -123,47 +131,73 @@ local function setup_autocomplete_menu()
 end
 
 local function setup_dashboard()
-    vim.pack.add({ "https://github.com/nvimdev/dashboard-nvim" })
-    local header = [[
-█████╗ ██╗███╗   ███╗███████╗      ██╗███████╗██████╗
-██╔══██╗██║████╗ ████║██╔════╝      ██║██╔════╝██╔══██╗
-███████║██║██╔████╔██║███████╗█████╗██║███████╗██████╔╝
-██╔══██║██║██║╚██╔╝██║╚════██║╚════╝██║╚════██║██╔══██╗
-██║  ██║██║██║ ╚═╝ ██║███████║      ██║███████║██║  ██║
-╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝      ╚═╝╚══════╝╚═╝  ╚═╝]]
-    -- header = vim.split(header, "\n"),
-    require("dashboard").setup({
-        theme = "hyper",
-        config = {
-            header = vim.split(header, "\n"),
-            shortcut = {
-                {
-                    desc = "󰚰 Update",
-                    action = vim.pack.update,
-                    group = "DiagnosticWarn",
-                    key = "u",
-                },
-                {
-                    desc = " Files",
-                    action = "Yazi",
-                    group = "DiagnosticInfo",
-                    key = "f",
-                },
-                {
-                    desc = "󰈆 Quit",
-                    action = vim.cmd.quit,
-                    group = "DiagnosticError",
-                    key = "q",
-                },
-                {
-                    desc = "󰁯 Restore",
-                    action = "ShmnRestoreSession",
-                    group = "DiagnosticTrace",
-                    key = "s",
+    vim.pack.add({ "https://github.com/folke/snacks.nvim" })
+
+    local header_path = vim.fn.stdpath("config") .. "/dashboard.txt"
+    local lolcrab = vim.fn.executable("lolcrab") == 1
+
+    local header_section
+    if lolcrab then
+        header_section = {
+            section = "terminal",
+            cmd = "lolcrab --animate --duration 1 --scale 0.023 " .. vim.fn.shellescape(header_path):gsub("\\", "/"),
+            align = "center",
+            height = 6,
+            indent = 12,
+            ttl = 0,
+        }
+    else
+        header_section = {
+            section = "header",
+            align = "center",
+        }
+    end
+
+    require("snacks").setup({
+        dashboard = {
+            enabled = true,
+            preset = {
+                header = (not lolcrab) and table.concat(vim.fn.readfile(header_path), "\n"),
+                keys = {
+                    {
+                        icon = "󰚰 ",
+                        desc = "Update",
+                        action = function() vim.pack.update() end,
+                        key = "u",
+                    },
+                    {
+                        icon = " ",
+                        desc = "Files",
+                        action = function() vim.cmd("Yazi") end,
+                        key = "f"
+                    },
+                    {
+                        icon = "󰁯 ",
+                        desc = "Restore",
+                        action = function() vim.cmd("ShmnRestoreSession") end,
+                        key = "s",
+                    },
+                    {
+                        icon = "󰈆 ",
+                        desc = "Quit",
+                        action = function() vim.cmd.quit() end,
+                        key = "q",
+                    },
                 },
             },
-            footer = {},
-            mru = { cwd_only = true },
+            sections = {
+                header_section,
+                { section = "keys", gap = 1 },
+                { gap = 1 },
+                {
+                    section = "terminal",
+                    icon = " ",
+                    title = "Git Status",
+                    cmd = "git --no-pager diff --stat -B -M -C",
+                    enabled = Snacks.git.get_root() ~= nil,
+                    ttl = 5,
+                }
+            },
         },
     })
 end

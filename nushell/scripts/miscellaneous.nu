@@ -1,15 +1,3 @@
-use private.nu 
-export def get-aims-latest [] {
-    let out_file = ($nu.temp-dir)/($private.daily_build_zip)
-    if ($out_file | path exists) {
-        rm ($out_file) --force --verbose
-    }
-    http get $private.daily_build_url --raw
-        | into binary
-        | save ($nu.temp-dir)/($private.daily_build_zip) --force --raw
-    ouch decompress ($nu.temp-dir)/($private.daily_build_zip) --dir ($env.HOMEDRIVE)/($private.latest_daily_build_folder)
-}
-
 export def open-repo [--pull-request(-p)] {
     mut link = git config --get remote.origin.url | str trim
     let branch = git branch --show-current | str trim

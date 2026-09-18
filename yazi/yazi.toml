@@ -8,7 +8,7 @@ ratio = [0, 4, 3]
 [opener]
 edit = [
     { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
-    { run = 'nvim %*', block = true, desc = "nvim", for = "windows" },
+    { run = 'nvim %s', block = true, desc = "nvim", for = "windows" },
 ]
 just = [
     { run = 'just default', desc = "default", block = true },

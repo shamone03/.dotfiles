@@ -1,4 +1,4 @@
-use constants.nu
+use ../constants.nu
 const lazygit_theme_config_path = ($constants.temp_dir)/lazygit-base16-theme.yaml
 const wezterm_theme_config_path = ($constants.temp_dir)/wezterm-base16-theme.yaml
 const nvim_theme_config_path = ($constants.temp_dir)/nvim-base16-theme.txt

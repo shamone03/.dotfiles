@@ -1,11 +1,15 @@
 use starship.nu
+use constants.nu
+
 const os_tools = if $nu.os-info.name == "linux" { "linux.nu" } else { "windows.nu" }
 const scripts = if $nu.os-info.name == "linux" { "scripts" } else { "scripts" }
+const work = if $constants.is_work { "work" } else { null }
 
 use $os_tools *
 use $scripts *
+use $work *
 
-if $nu.is-interactive {
+if $nu.is-interactive and $constants.is_work {
     try {
         conan_venv switch
     }
