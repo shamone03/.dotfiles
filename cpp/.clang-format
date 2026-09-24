@@ -34,7 +34,7 @@ AccessModifierOffset: -4
 
 # # Alignment Settings
 AlignAfterOpenBracket: AlwaysBreak # Options: Align, DontAlign, AlwaysBreak
-PackConstructorInitializers: NextLineOnly # Options: Never, Always, BinPack, NextLineOnly
+PackConstructorInitializers: Never # Options: Never, Always, BinPack, NextLineOnly
 AlignArrayOfStructures: None # Options: None, Left, Right
 # AlignConsecutiveAssignments: false
 # AlignConsecutiveDeclarations: false
@@ -51,11 +51,10 @@ AlignArrayOfStructures: None # Options: None, Left, Right
 BreakBeforeBraces: Allman # Options: Attach, Linux, Mozilla, Stroustrup, Allman, Whitesmiths, GNU, WebKit, Custom
 BreakInheritanceList: AfterColon # Options: BeforeColon, AfterColon, BeforeComma, AfterComma
 BreakConstructorInitializers: AfterColon # Options: BeforeColon, AfterColon, BeforeComma, AfterComma
-BreakAfterReturnType: Automatic # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions, Automatic
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortLambdasOnASingleLine: Inline # Options: None, Empty, Inline (short, simple ones), All
+AllowShortLambdasOnASingleLine: None # Options: None, Empty, Inline (short, simple ones), All
 BraceWrapping:
   AfterFunction: true
   AfterClass: true
@@ -72,10 +71,10 @@ BraceWrapping:
   SplitEmptyFunction: false
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
-Cpp11BracedListStyle: true
+Cpp11BracedListStyle : true
 BreakArrays: true
 # BreakFunctionDefinitionParameters: true
-# BreakAdjacentStringLiterals: false
+BreakAdjacentStringLiterals: false
 # BreakStringLiterals: true
 # MaxEmptyLinesToKeep: 2
 # BreakAfterAttributes: Leave # Options: Always, Leave, Never
@@ -85,7 +84,7 @@ BreakArrays: true
 # BreakBeforeInlineASMColon: OnlyMultiline # Options: Always, Never, OnlyMultiline
 # BreakBeforeTernaryOperators: true
 # BreakTemplateDeclarations: Yes # Options: Yes, No, MultiLine
-# AlwaysBreakAfterDefinitionReturnType: TopLevel # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions
+AlwaysBreakAfterDefinitionReturnType: None # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions
 # AlwaysBreakBeforeMultilineStrings: false
 # AllowAllConstructorInitializersOnNextLine: true
 # AllowBreakBeforeNoexceptSpecifier: Never # Options: Always, Never
@@ -98,7 +97,7 @@ BreakArrays: true
 #   AtEndOfFile: false
 #   AtStartOfBlock: true
 #   AtStartOfFile: true
-# AlwaysBreakAfterReturnType: Automatic # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions, Automatic
+AlwaysBreakAfterReturnType: None # Options: None, All, TopLevel, AllDefinitions, TopLevelDefinitions, Automatic
 # InsertNewlineAtEOF: false
 
 # # Spacing Settings
@@ -115,15 +114,15 @@ SpaceBeforeParens: Never # Options: Never, ControlStatements, Always
 # SpaceBeforeJsonColon: false
 # SpaceBeforeParensOptions:
 #   AfterControlStatements: false
-# AfterForeachMacros: true
-# AfterFunctionDeclarationName: false
-# AfterFunctionDefinitionName: false
-# AfterIfMacros: true
-# AfterOverloadedOperator: false
-# AfterPlacementOperator: true
-# AfterRequiresInClause: false
-# AfterRequiresInExpression: false
-# BeforeNonEmptyParentheses: false
+  # AfterForeachMacros: true
+  # AfterFunctionDeclarationName: false
+  # AfterFunctionDefinitionName: false
+  # AfterIfMacros: true
+  # AfterOverloadedOperator: false
+  # AfterPlacementOperator: true
+  # AfterRequiresInClause: false
+  # AfterRequiresInExpression: false
+  # BeforeNonEmptyParentheses: false
 # SpaceBeforeRangeBasedForLoopColon: true
 # SpaceBeforeSquareBrackets: false
 # SpaceInEmptyBlock: false
