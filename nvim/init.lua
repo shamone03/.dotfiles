@@ -2,7 +2,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.shmn_virtual_text = true
 vim.g.shmn_show_tabs = false
-vim.g.shmn_animations_enabled = false
+vim.g.shmn_animations_enabled = true
 
 vim.opt.backup = true
 local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
@@ -364,6 +364,7 @@ local function setup_smooth_scroll()
     vim.pack.add({ "https://github.com/karb94/neoscroll.nvim" })
     require("neoscroll").setup({
         duration_multiplier = 0.25,
+        hide_cursor = false,
     })
 end
 
