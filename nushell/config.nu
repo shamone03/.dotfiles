@@ -15,11 +15,10 @@ if $nu.is-interactive and $constants.is_work {
     }
 }
 
-mkdir $constants.temp_dir
-if not ($constants.temp_dir | path join "carapace.nu" | path exists) {
-    carapace _carapace nushell | save --force $"($constants.temp_dir)/carapace.nu"
+let carapace_completer = {|place|
+    carapace $place.command.0 nushell ...$place.command | from json
 }
-source $"($constants.temp_dir)/carapace.nu"
+$env.config.completions.external.completer = $carapace_completer
 $env.CARAPACE_LENIENT = 1
 $env.CARAPACE_EXCLUDES = "go"
 $env.PATH ++= [$"($env.projects)/.dotfiles/nushell/nupm/plugins/bin"]
