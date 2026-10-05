@@ -7,6 +7,6 @@ export def justfile [] {
 export def vscode [] {
     use ../constants.nu
     if $constants.is_work {
-        cp $"($env.projects)/.dotfiles/vscode/work.vscode/" . --recursive --verbose
+        cp $"($env.projects)/.dotfiles/vscode/work.vscode/" .vscode/ --recursive --verbose
     }
 }
