@@ -1,6 +1,6 @@
 # Search for filename in parent directories until given ceiling
-export def rev-parse [filename: string, --ceiling(-c): string] {
-    mut current = (pwd)
+export def rev-parse [filename: string, --ceiling(-c): string, --floor(-f): string] {
+    mut current = $floor | default (pwd)
     loop {
         let target = $current | path join $filename
         if ($target | path exists) {
@@ -15,7 +15,7 @@ export def rev-parse [filename: string, --ceiling(-c): string] {
         if $current == ($ceiling | path expand) or $current == ($env.HOMEDRIVE | path expand) {
             let target = $current | path join $filename
             if ($target | path exists) {
-                return $target
+                return $target | path expand
             } else {
                 return null
             }
