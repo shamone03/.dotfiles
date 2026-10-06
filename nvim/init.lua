@@ -464,6 +464,13 @@ local function setup_autocmds()
     })
     -- disable process exited 0 message in terminal buffers
     vim.api.nvim_clear_autocmds({ group = "nvim.terminal", event = "TermClose" })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "cpp", "h" },
+        callback = function()
+            vim.opt_local.expandtab = false
+        end,
+    })
 end
 
 local function setup_session_management()
