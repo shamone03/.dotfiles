@@ -198,7 +198,7 @@ def "history ui" [] {
         | reverse
         | uniq
         | wrap command
-        | tui label --title "history"
+        | tui label --titlebar "history"
         | tui search --focus --bind / --fuzzy --columns [command] --placeholder "fuzzy filter"
         | tui table --columns [command]
         | tui label --status "type to filter  enter: put on the command line  esc esc: cancel"
