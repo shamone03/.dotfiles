@@ -192,3 +192,26 @@ $env.config.keybindings ++= [
         event: null
     }
 ]
+def "history ui" [] {
+    let r = history
+        | get command
+        | reverse
+        | uniq
+        | wrap command
+        | tui label --title "history"
+        | tui search --focus --bind / --fuzzy --columns [command] --placeholder "fuzzy filter"
+        | tui table --columns [command]
+        | tui label --status "type to filter  enter: put on the command line  esc esc: cancel"
+        | tui run --dialog --size [100 24]
+    if $r.action == "submit" {
+        commandline edit --replace $r.selected.command
+    }
+}
+
+$env.config.keybindings ++= [{
+    name: history_ui
+    modifier: control
+    keycode: char_h
+    mode: [emacs vi_insert vi_normal]
+    event: { send: executehostcommand, cmd: "history ui" }
+}]
