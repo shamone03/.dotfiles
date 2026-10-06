@@ -13,11 +13,11 @@
       "src": "https://github.com/akinsho/bufferline.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "070a5d7b985546cc57e1fc61e5bc507fecac6045",
+      "rev": "851a051e2bd2caba97e23314c68d69f1b1cf5d19",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "mason-lspconfig.nvim": {
-      "rev": "137bd0feba2c1885545b6934d36f5e5aa6adb486",
+      "rev": "b3298993d55fa194279b5eb9dbfb3a43da65cadf",
       "src": "https://github.com/mason-org/mason-lspconfig.nvim"
     },
     "mason.nvim": {
@@ -33,7 +33,7 @@
       "src": "https://github.com/nvim-mini/mini.pairs"
     },
     "mini.surround": {
-      "rev": "33a2ebe5df8eb4751828fcba133e18ed0fbbdfab",
+      "rev": "72feeaa0f984646efde875cc775a97b6f8a8be9b",
       "src": "https://github.com/nvim-mini/mini.surround"
     },
     "neoscroll.nvim": {
@@ -41,11 +41,11 @@
       "src": "https://github.com/karb94/neoscroll.nvim"
     },
     "nvim-lspconfig": {
-      "rev": "046b1a797af1effe8e0474b9af9657a3761ec58a",
+      "rev": "910f0c4d46aa186641518395bc7e6fffb4d23baf",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
-      "rev": "f603a2f4da48728f80257fb5fbb90145fd1dc173",
+      "rev": "e289100ff98969e118c702199d88b764ce9e7fdf",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-web-devicons": {
@@ -57,7 +57,7 @@
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
     "shmn-sessions.nvim": {
-      "rev": "9fe7a39325b63665440d634ceda04918a0d14c05",
+      "rev": "df5f1db5eaf9da07bfe526505460341c71f87446",
       "src": "https://github.com/shamone03/shmn-sessions.nvim"
     },
     "shmn-terminal.nvim": {
@@ -65,7 +65,7 @@
       "src": "https://github.com/shamone03/shmn-terminal.nvim"
     },
     "smear-cursor.nvim": {
-      "rev": "af2e5325760abbdc121ac5a963c8d8ceaa28552a",
+      "rev": "f6cb57c342268177f719acc3968b9d8de3ecc969",
       "src": "https://github.com/sphamba/smear-cursor.nvim"
     },
     "snacks.nvim": {
@@ -81,7 +81,7 @@
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
     "tinted-nvim": {
-      "rev": "7df9050dc4fa07efcdaf4046b2d746a9f39b0a5b",
+      "rev": "36e3c153f3f1c97909a922a1af7c95876d1f42d8",
       "src": "https://github.com/tinted-theming/tinted-nvim"
     },
     "which-key.nvim": {
@@ -89,7 +89,7 @@
       "src": "https://github.com/folke/which-key.nvim"
     },
     "yazi.nvim": {
-      "rev": "f950dfbce4961b8a05305b8340ec557c80197be8",
+      "rev": "bc84dd40ef471a05501ceabd7ceadebb9fef94a3",
       "src": "https://github.com/mikavilpas/yazi.nvim"
     }
   }
