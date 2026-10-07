@@ -33,7 +33,7 @@ def --env y [...args] {
     yazi ...$args --cwd-file $tmp
     let cwd = (open $tmp)
     if $cwd != "" and $cwd != $env.PWD {
-        cd $cwd
+        cd ($cwd | str replace --regex "search://.*/" "")
     }
     rm $tmp -fp
 }
