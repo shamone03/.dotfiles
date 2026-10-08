@@ -67,7 +67,17 @@
     ];
    };
 
-  # programs.firefox.enable = true;
+  programs.firefox.enable = true;
+
+  programs.hyprland.enable = true;
+
+    programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+    stdenv.cc.cc
+    zlib
+    ];
+    };
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -79,8 +89,9 @@
     starship
     carapace
     lazygit
-
-    # to install nushell
+    fastfetch
+    (import <nixpkgs-unstable> { config = config.nixpkgs.config; }).wezterm
+    # to install latest nushell
     gcc
     (import <nixpkgs-unstable> { config = config.nixpkgs.config; }).cargo
   ];

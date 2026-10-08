@@ -34,7 +34,11 @@ vim.opt.list = vim.g.shmn_show_tabs
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.guifont = "Hurmit Nerd Font Mono"
 -- https://www.kiils.dk/en/blog/2024-06-22-using-nushell-in-neovim/
-vim.opt.shell = "nu"
+if is_windows then
+    vim.opt.shell = "nu"
+else
+    vim.opt.shell = "/home/shamone/.cargo/bin/nu"
+end
 vim.opt.shellcmdflag = "--login --stdin --no-newline -c"
 vim.opt.shellpipe =
     "| complete | update stderr { ansi strip } | tee { get stderr | save --force --raw %s } | into record"

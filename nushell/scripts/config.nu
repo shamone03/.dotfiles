@@ -17,3 +17,11 @@ export def wezterm [] {
 export def justfile [] {
     ^nvim $"($env.projects)/.dotfiles/cpp/justfile"
 }
+
+export def nix [] {
+    sudo nvim $"($env.projects)/.dotfiles/nixos/configuration.nix"
+}
+
+export def hypr [] {
+   ^nvim $"($env.projects)/.dotfiles/hypr/hyprland.lua"
+}

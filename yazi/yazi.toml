@@ -4,10 +4,11 @@ schema = "https://yazi-rs.github.io/schemas/yazi.json"
 
 [mgr]
 ratio = [0, 4, 3]
+show_hidden = true
 
 [opener]
 edit = [
-    { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+    { run = 'nvim %s', desc = "$EDITOR", block = true, for = "unix" },
     { run = 'nvim %s', block = true, desc = "nvim", for = "windows" },
 ]
 just = [
