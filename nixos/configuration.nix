@@ -90,6 +90,7 @@
     lazygit
     fastfetch
     discord-ptb
+    quickshell
     (import <nixpkgs-unstable> { config = config.nixpkgs.config; }).wezterm
     # to install latest nushell
     gcc
