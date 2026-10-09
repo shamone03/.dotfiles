@@ -89,16 +89,48 @@ hl.env("projects", "/home/shamone/Projects/")
 ---- LOOK AND FEEL ----
 -----------------------
 
+TEMP_DIR = os.getenv("HOME") .. "/.cache"
+
+local function file_exists(path)
+    local f = io.open(path, "r")
+    if f then
+        f:close()
+        return true
+    end
+    return false
+end
+
+local function shmn_get_theme()
+    local theme_path = TEMP_DIR .. "/shmn/hypr-base16-theme.csv"
+    local top_left = "#33ccffee"
+    local bottom_right = "#00ff99ee"
+    if file_exists(theme_path) then
+        local f = io.open(theme_path, "r")
+        if f then
+            local raw_left, raw_right = string.match(f:read("a"), "([^,]+),([^,]+)")
+
+            if raw_left and raw_right then
+                top_left = raw_left:lower()
+                bottom_right = raw_right:lower()
+            end
+
+            f:close()
+        end
+    end
+    return top_left, bottom_right
+end
+
+local top_left, bottom_right = shmn_get_theme()
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        gaps_in          = 1,
-        gaps_out         = 1,
+        gaps_in = 1,
+        gaps_out = 0,
 
-        border_size      = 1,
+        border_size = 1,
 
-        col              = {
-            active_border   = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 },
+        col = {
+            active_border = { colors = { string.format("%s", top_left), string.format("%s", bottom_right) }, angle = 45 },
             inactive_border = "rgba(595959aa)",
         },
 
@@ -106,30 +138,30 @@ hl.config({
         resize_on_border = false,
 
         -- Please see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Tearing/ before you turn this on
-        allow_tearing    = false,
+        allow_tearing = false,
 
-        layout           = "dwindle",
+        layout = "dwindle",
     },
 
     decoration = {
-        rounding         = 0,
-        rounding_power   = 1,
+        rounding = 0,
+        rounding_power = 1,
 
         -- Change transparency of focused and unfocused windows
-        active_opacity   = 1.0,
+        active_opacity = 1.0,
         inactive_opacity = 1.0,
 
-        shadow           = {
-            enabled      = true,
-            range        = 4,
+        shadow = {
+            enabled = true,
+            range = 4,
             render_power = 3,
-            color        = 0xee1a1a1a,
+            color = 0xee1a1a1a,
         },
 
-        blur             = {
-            enabled  = true,
-            size     = 3,
-            passes   = 1,
+        blur = {
+            enabled = true,
+            size = 3,
+            passes = 1,
             vibrancy = 0.1696,
         },
     },

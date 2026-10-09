@@ -3,6 +3,7 @@ const lazygit_theme_config_path = ($constants.temp_dir)/lazygit-base16-theme.yam
 const wezterm_theme_config_path = ($constants.temp_dir)/wezterm-base16-theme.yaml
 const nvim_theme_config_path = ($constants.temp_dir)/nvim-base16-theme.txt
 const tinted_theme_config_path = ($constants.temp_dir)/tinted-theme.yaml
+const hypr_theme_config_path = ($constants.temp_dir)/hypr-base16-theme.csv
 
 export def list [] {
     http get https://api.github.com/repos/tinted-theming/schemes/git/trees/spec-0.11?recursive=1
@@ -84,10 +85,22 @@ export def lazygit [theme: string@list] {
     print $"Updated lazygit theme to base16-($theme)"
 }
 
+export def hypr [theme: string@list] {
+    let theme_scheme = show $theme
+    let palette = $theme_scheme.palette
+
+    $"($palette.base08),($palette.base0A)" | save $hypr_theme_config_path --force
+    hyprctl reload | ignore
+    print $"Updated hypr theme to ($theme_scheme.system)-($theme)"
+}
+
 export def all [theme: string@list] {
     update-cache $theme
     wezterm $theme
     lazygit $theme
     nvim $theme
+    if $nu.os-info.name == "linux" {
+      hypr $theme
+    }
 }
 
