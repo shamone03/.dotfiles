@@ -1,0 +1,22 @@
+@import "firefox-base16-theme.css";
+
+* {
+    border-radius: 0px !important;
+}
+
+:root {
+    --toolbarbutton-border-radius: 0px !important;
+    --tab-border-radius: 0px !important;
+    --chrome-block-radius: 0px !important;
+
+}
+
+/* * { */
+/*     color: var(--base05) */
+/* } */
+/**/
+/* :root { */
+/*     --toolbox-background-color: var(--base00) !important; */
+/*     --toolbox-background-color-inactive: var(--base01) !important; */
+/*     --toolbar-field-background-color: var(--base03) !important; */
+/* } */

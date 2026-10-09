@@ -5,6 +5,7 @@ const nvim_theme_config_path = ($constants.temp_dir)/nvim-base16-theme.txt
 const tinted_theme_config_path = ($constants.temp_dir)/tinted-theme.yaml
 const hypr_theme_config_path = ($constants.temp_dir)/hypr-base16-theme.csv
 const quickshell_theme_config_path = ($constants.temp_dir)/quickshell-base16-theme.json
+const firefox_theme_config_path = ($constants.temp_dir)/firefox-base16-theme.css
 
 export def list [] {
     http get https://api.github.com/repos/tinted-theming/schemes/git/trees/spec-0.11?recursive=1
@@ -107,11 +108,23 @@ export def quickshell [theme: string@list] {
     print $"Updated quickshell theme to ($theme_scheme.system)-($theme)"
 }
 
+export def firefox [theme: string@list] {
+    let theme_scheme = info $theme
+    let palette = $theme_scheme.palette
+
+    $palette | items { |k v| $"--($k): ($v);" } | str join "\n" | $":root {
+($in)
+}" | save $firefox_theme_config_path --force
+
+    print $"Updated firefox theme to ($theme_scheme.system)-($theme)"
+}
+
 export def all [theme: string@list] {
     update-cache $theme
     wezterm $theme
     lazygit $theme
     nvim $theme
+    firefox $theme
     if $nu.os-info.name == "linux" {
       hypr $theme
       quickshell $theme
