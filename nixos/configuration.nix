@@ -3,13 +3,12 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
-
 {
   imports =
     [ # Include the results of the hardware scan.
       /etc/nixos/hardware-configuration.nix
     ];
-
+  nixpkgs.config.allowUnfree = true; 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -90,6 +89,7 @@
     carapace
     lazygit
     fastfetch
+    discord-ptb
     (import <nixpkgs-unstable> { config = config.nixpkgs.config; }).wezterm
     # to install latest nushell
     gcc
