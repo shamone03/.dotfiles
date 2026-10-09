@@ -36,6 +36,7 @@ hl.monitor({
 -- Set programs that you use
 local terminal = "wezterm"
 local fileManager = "yazi"
+local browser = "firefox"
 
 
 -------------------
@@ -62,6 +63,8 @@ local fileManager = "yazi"
 local current_path = os.getenv("PATH")
 local cargo_bin = os.getenv("HOME") .. "/.cargo/bin"
 hl.env("PATH", current_path .. ":" .. cargo_bin)
+hl.env("EDITOR", "nvim")
+hl.env("VISUAL", "nvim")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("projects", "/home/shamone/Projects/")
@@ -301,6 +304,7 @@ local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + M",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + CTRL + J", hl.dsp.layout("togglesplit"))      -- dwindle only
