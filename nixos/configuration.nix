@@ -91,6 +91,7 @@
     fastfetch
     discord-ptb
     quickshell
+    grim
     (import <nixpkgs-unstable> { config = config.nixpkgs.config; }).wezterm
     # to install latest nushell
     gcc
