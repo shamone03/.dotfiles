@@ -16,10 +16,10 @@ else
 end
 
 vim.opt.relativenumber = true
-vim.opt.tabstop = 4 -- A TAB character looks like 4 spaces
+vim.opt.tabstop = 4      -- A TAB character looks like 4 spaces
 vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
-vim.opt.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
-vim.opt.shiftwidth = 4 -- Number of spaces inserted when indenting
+vim.opt.softtabstop = 4  -- Number of spaces inserted instead of a TAB character
+vim.opt.shiftwidth = 4   -- Number of spaces inserted when indenting
 vim.opt.fixendofline = false
 vim.opt.number = true
 vim.opt.mouse = "a"
@@ -41,7 +41,7 @@ else
 end
 vim.opt.shellcmdflag = "--login --stdin --no-newline -c"
 vim.opt.shellpipe =
-    "| complete | update stderr { ansi strip } | tee { get stderr | save --force --raw %s } | into record"
+"| complete | update stderr { ansi strip } | tee { get stderr | save --force --raw %s } | into record"
 vim.opt.shellquote = ""
 vim.opt.shellredir = "out+err> %s"
 vim.opt.shelltemp = false
@@ -72,7 +72,7 @@ end
 
 local function setup_lsp()
     vim.pack.add({
-        "https://github.com/mason-org/mason.nvim", -- install lang servers
+        "https://github.com/mason-org/mason.nvim",           -- install lang servers
         "https://github.com/mason-org/mason-lspconfig.nvim", -- auto enable lang servers with configs
         "https://github.com/neovim/nvim-lspconfig",
     })
@@ -392,17 +392,37 @@ local function setup_git_hints()
     keymaps()
 end
 
+local THEME_FILE = TEMP_DIR .. "/shmn/nvim-base16-theme.txt"
+local THEME_WATCHER_HANDLE = nil
+
 local function apply_theme()
-    local theme_file = TEMP_DIR .. "/shmn/nvim-base16-theme.txt"
-    if vim.uv.fs_stat(theme_file) then
-        local content = vim.fn.readfile(theme_file)
+    if vim.uv.fs_stat(THEME_FILE) then
+        local content = vim.fn.readfile(THEME_FILE)
         local theme = table.concat(content, "\n"):gsub("%s+", "")
-        vim.cmd.colorscheme(theme)
-        return theme
+
+        if theme ~= "" then
+            pcall(vim.cmd.colorscheme, theme)
+        end
     else
         local default_theme = "base24-flexoki-dark"
-        vim.cmd.colorscheme(default_theme)
-        return default_theme
+        pcall(vim.cmd.colorscheme, default_theme)
+    end
+end
+
+local function watch_theme_file()
+    if not THEME_WATCHER_HANDLE then
+        THEME_WATCHER_HANDLE = vim.uv.new_fs_event()
+
+        if THEME_WATCHER_HANDLE then
+            vim.uv.fs_event_start(THEME_WATCHER_HANDLE, THEME_FILE, {}, function(err)
+                if err then
+                    return
+                end
+
+                -- Neovim API calls must be scheduled on the main thread
+                vim.schedule(apply_theme)
+            end)
+        end
     end
 end
 
@@ -414,6 +434,7 @@ local function setup_theme()
     })
     require("tinted-nvim").setup()
     apply_theme()
+    watch_theme_file()
 
     local function execute()
         local theme = apply_theme()
