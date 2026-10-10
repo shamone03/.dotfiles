@@ -2,6 +2,7 @@
 
 * {
     border-radius: 0px !important;
+    color: var(--base05);
 }
 
 :root {
@@ -9,14 +10,72 @@
     --tab-border-radius: 0px !important;
     --chrome-block-radius: 0px !important;
 
+    --toolbox-background-color: var(--base00) !important;
+    --toolbox-background-color-inactive: var(--base01) !important;
+    --toolbar-field-background-color: var(--base03) !important;
+    
+    --toolbar-bgcolor: var(--base01) !important;
+    --toolbar-color: var(--base05) !important;
+    --tab-selected-bgcolor: var(--base02) !important;
+    --tab-selected-color: var(--base05) !important;
+
+    /* Fix Toolbar Button & Icon Visibility */
+    --lwt-toolbarbutton-icon-fill: var(--base05) !important;
+    --toolbarbutton-icon-fill: var(--base05) !important;
+    --lwt-toolbarbutton-icon-fill-attention: var(--base08) !important;
+
+    /* URL Bar & Dropdown Base Variables */
+    --urlbar-results-bgcolor: var(--base00) !important;
+    --urlbar-box-background: var(--base00) !important;
+    --urlbar-popup-url-color: var(--base0D) !important;
+    --urlbar-popup-action-color: var(--base0E) !important;
 }
 
-/* * { */
-/*     color: var(--base05) */
-/* } */
-/**/
-/* :root { */
-/*     --toolbox-background-color: var(--base00) !important; */
-/*     --toolbox-background-color-inactive: var(--base01) !important; */
-/*     --toolbar-field-background-color: var(--base03) !important; */
-/* } */
+/* Force Toolbar Icon Fill Colors */
+.toolbarbutton-1,
+.toolbarbutton-icon,
+.navigation-toolbar toolbarbutton,
+#nav-bar .toolbarbutton-1 {
+    fill: var(--base05) !important;
+    color: var(--base05) !important;
+}
+
+/* Hover state for buttons */
+.toolbarbutton-1:hover,
+#nav-bar .toolbarbutton-1:hover {
+    background-color: var(--base02) !important;
+}
+
+/* 2. Main Dropdown Background & Border */
+#urlbar-results,
+.urlbarView-body-outer,
+.urlbarView-results {
+    background-color: var(--base00) !important;
+    color: var(--base05) !important;
+}
+
+#urlbar-background {
+    background-color: var(--base00) !important;
+    border-radius: 0px !important;
+}
+
+/* 3. Hover and Focus States for Result Rows */
+.urlbarView-row:hover,
+.urlbarView-row[selected] {
+    background-color: var(--base02) !important;
+}
+
+/* 4. Result Title & URL Link Colors */
+.urlbarView-row:not([type="tip"]) .urlbarView-title {
+    color: var(--base05) !important;
+}
+
+.urlbarView-secondary,
+.urlbarView-url {
+    color: var(--base0D) !important;
+}
+
+/* 5. Category Separator Text */
+.urlbarView-group-heading {
+    color: var(--base04) !important;
+}
