@@ -1,50 +1,58 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import Quickshell.Hyprland
+import QtQuick.Layouts
 
 PanelWindow {
-    SystemClock {
-        id: clock
-        precision: SystemClock.Seconds
+    Theme {
+        id: theme
     }
-
-    property FileView themeFile: FileView {
-        path: "/home/shamone/.cache/shmn/quickshell-base16-theme.json" 
-        watchChanges: true
-        blockLoading: true
-        onFileChanged: this.reload()
-
-        adapter: JsonAdapter {
-            id: base16
-            property string base00
-            property string base01
-            property string base02
-            property string base03
-            property string base04
-            property string base05
-            property string base06
-            property string base07
-            property string base08
-            property string base09
-            property string base0A
-            property string base0B
-            property string base0C
-            property string base0D
-            property string base0E
-            property string base0F
-        }
-    }
-
     anchors.top: true
     anchors.left: true
     anchors.right: true
+    margins.bottom: 5
+    
     implicitHeight: 20
-    color: base16.base00
+    color: theme.adapter.base00
 
+    RowLayout {
+        anchors.left: parent.left
+        spacing: 10
+        SystemClock {
+            id: clock
+            precision: SystemClock.Seconds
+        }
+
+        Repeater {
+            model: 9
+
+            Text {
+                property var isActive: Hyprland.focusedWorkspace?.id === (index + 1) // this is javascript??
+                text: index + 1
+                font.pixelSize: 15
+                font.bold: isActive
+                color: if (isActive) {
+                    theme.adapter.base0A
+                } else if (mouseArea.containsMouse) {
+                    theme.adapter.base01
+                } else {
+                    theme.adapter.base05
+                }
+                MouseArea {
+                    id: mouseArea
+                    hoverEnabled: true
+                    anchors.fill: parent
+                    onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = ${index + 1} })`)
+                }
+            }
+        }
+
+    }
     Text {
-        anchors.centerIn: parent
+        anchors.right: parent.right
         text: Qt.formatDateTime(clock.date, "hh:mm:ss")
-        color: base16.base05
+        color: theme.adapter.base05
         font.pixelSize: 15
     }
 }
