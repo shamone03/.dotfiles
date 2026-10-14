@@ -503,6 +503,11 @@ local function setup_session_management()
     require("shmn-sessions").setup()
 end
 
+local function setup_lsp_status()
+    vim.pack.add({ "https://github.com/j-hui/fidget.nvim" })
+    require("fidget").setup()
+end
+
 setup_autocmds()
 setup_common_keymaps()
 setup_autocomplete_pairs()
@@ -512,6 +517,7 @@ if vim.g.vscode then
 end
 
 setup_lsp()
+setup_lsp_status()
 setup_treesitter()
 
 setup_picker()
