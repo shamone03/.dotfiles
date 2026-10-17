@@ -1,6 +1,21 @@
+export def "start-wm" [] {
+    if $nu.os-info.name == "linux" {
+        if (ps | where name has start-hyprland | is-empty) {
+           start-hyprland
+        }
+    }
+}
+
 export-env {
     if $nu.os-info.name == "linux" {
         $env.projects = $env.HOME | path join Projects
+        $env.config.keybindings ++= [{
+            name: start_wm
+            modifier: alt
+            keycode: char_m
+            mode: [emacs vi_insert vi_normal]
+            event: { send: executehostcommand, cmd: "start-wm" }
+        }]
     }
 }
 
@@ -25,4 +40,3 @@ export def torrent [url: string, save_path?: string] {
     kdeconnect-cli --refresh
     kdeconnect-cli -l | lines | first | parse "- {device}:{_}" | kdeconnect-cli -n $in.0.device --ping-msg "Torrent download finished 💯"
 }
-
