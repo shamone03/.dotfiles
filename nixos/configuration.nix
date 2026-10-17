@@ -78,6 +78,24 @@
     ];
     };
 
+  environment.sessionVariables = {
+    PATH = [
+      "/home/shamone/.cargo/bin"
+    ];
+    EDITOR = "nvim";
+  };
+  # launch nushell after bash starts
+  programs.bash.interactiveShellInit = ''
+    # Some programs launch interactive shells and pretend
+    # to use them; such programs always expect a form of POSIX
+    # shell.
+    #
+    # If you don't use programs like that, you can just skip
+    # this conditional.
+    if ! [ "$TERM" = "dumb" ]; then
+      exec nu
+    fi
+  '';
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
