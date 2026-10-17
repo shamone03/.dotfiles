@@ -21,7 +21,7 @@ else
     TEMP_DIR = os.getenv("HOME") .. "/.cache"
 end
 
--- config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = true
 config.font = wezterm.font({ family = "Hurmit Nerd Font Mono" })
 config.initial_rows = 25
 config.initial_cols = 110

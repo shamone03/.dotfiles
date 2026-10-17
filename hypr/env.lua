@@ -5,9 +5,8 @@ hl.env("PATH", os.getenv("PATH") .. ":" .. os.getenv("HOME") .. "/.cargo/bin")
 hl.env("EDITOR", "nvim")
 hl.env("VISUAL", "nvim")
 hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
 if utils.file_exists("/home/shamone/.icons/ATER-yellow/index.theme") then
-    hl.env("HYPRCURSOR_THEME", "ATER-yellow")
+    hl.env("XCURSOR_THEME", "ATER-yellow")
 else
     hl.notification.create({
         text = "[SHMN] Could not set cursor",
