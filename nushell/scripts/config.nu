@@ -19,7 +19,7 @@ export def justfile [] {
 }
 
 export def nix [] {
-    sudo nvim $"($env.projects)/.dotfiles/nixos/configuration.nix"
+    sudo --preserve-env nvim $"($env.projects)/.dotfiles/nixos/configuration.nix"
 }
 
 export def hypr [] {
