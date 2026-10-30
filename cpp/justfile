@@ -63,6 +63,19 @@ cmake_output_cmd(project_name) := f"((open (open ([{{ project_name }} CMakeUserP
 
 default: install configure build
 
+[doc('Run package_deploy with given requirements')]
+[arg("output", long="output", short="o")]
+[arg("version", long="version", short="v")]
+deploy output=f"{{ build_dir }}/{{ build_type }}" version="[*]" PACKAGE:
+    conan install --deployer package_deploy \
+        -pr:a {{ build_profile }} \
+        --output-folder {{ build_dir }} \
+        --deployer-folder {{ output }} \
+        {{ conan_verbosity }} {{ extra_install_args }} \
+        --envs-generation false \
+        --requires {{ PACKAGE }}/{{ version }}@cn/staging \
+        --build missing
+
 [doc('Conan install with dependencies from cache')]
 install: installf
 
@@ -159,8 +172,9 @@ clean dry="false" permanent="false":
 recreate: recreatef
 
 [doc('Remove package from conan cache')]
-cleancache PACKAGE='':
-    try { conan remove {{ if PACKAGE == "" { "(" + package_info_cmd + " | get name)" } else { PACKAGE } }} -c }
+[arg("current", long="current", value="true")]
+cleancache current="false" PACKAGE='':
+    try { conan remove {{ if PACKAGE == "" { if current == "true" { f"({{ package_info_cmd }} | ($in.name)/($in.version))*" } else { f"({{ package_info_cmd }} | $in.name)" } } else { PACKAGE } }} -c }
 
 [doc('Remove build artifacts')]
 cleanbuild: (build "clean")
