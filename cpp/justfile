@@ -53,7 +53,7 @@ conan_verbosity := if verbose == "true" {
 [private]
 build_verbosity := if verbose == "true" { "--verbose " } else { "" }
 [private]
-all_build := if build_profile == "vstudio" { "ALL_BUILD" } else { "all" }
+all_build := if generator == "vstudio" { "ALL_BUILD" } else { "all" }
 [private]
 package_info_cmd := "conan inspect " + conan_dir + " --format json | from json"
 [private]
@@ -66,15 +66,18 @@ default: install configure build
 [doc('Run package_deploy with given requirements')]
 [arg("output", long="output", short="o")]
 [arg("version", long="version", short="v")]
-deploy output=f"{{ build_dir }}/{{ build_type }}" version="[*]" PACKAGE:
-    conan install --deployer package_deploy \
+[arg("update", long="update", short="u", value="true")]
+deploy output=f"{{ build_dir }}/{{ build_type }}" update="false" version="[*]" *PACKAGES:
+    conan install \
+        --deployer package_deploy \
         -pr:a {{ build_profile }} \
-        --output-folder {{ build_dir }} \
+        --output-folder {{ output }} \
         --deployer-folder {{ output }} \
         {{ conan_verbosity }} {{ extra_install_args }} \
         --envs-generation false \
-        --requires {{ PACKAGE }}/{{ version }}@cn/staging \
-        --build missing
+        ...("{{ PACKAGES }}" | split row -r '\s+' | where { is-not-empty } | each { $"--requires=($in)/{{ version }}@cn/staging" }) \
+        --build missing \
+        {{ if update == "true" { "--update" } else { "" } }}
 
 [doc('Conan install with dependencies from cache')]
 install: installf
