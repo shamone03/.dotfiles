@@ -8,3 +8,4 @@ nushell/plugin.msgpackz
 /yazi/flavors/base16.yazi
 /nushell/work*
 /vscode/work*
+/nushell/autoload

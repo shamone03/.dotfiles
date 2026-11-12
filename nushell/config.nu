@@ -3,11 +3,11 @@ use constants.nu
 
 const os_tools = if $nu.os-info.name == "linux" { "linux.nu" } else { "windows.nu" }
 const scripts = if $nu.os-info.name == "linux" { "scripts" } else { "scripts" }
-const work = if $constants.is_work { "work" } else { null }
+const work_nushell = if $constants.is_work { "work-nushell" } else { null }
 
 use $os_tools *
 use $scripts *
-use $work *
+use $work_nushell *
 
 if $nu.is-interactive and $constants.is_work {
     try {

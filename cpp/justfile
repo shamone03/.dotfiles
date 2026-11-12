@@ -122,7 +122,7 @@ rerebuild: clean update configure build
 
 [doc("Sym-link this project's artifacts into another project")]
 link TO:
-    $env.CMAKE_INSTALL_MODE = "ABS_SYMLINK"; cmake --install ({{ cmake_output_cmd(root) }}) --prefix ({{ cmake_output_cmd(projects_dir / TO) + " | path join " + build_type }}) --config {{ capitalize(build_type) }}
+    with-env { CMAKE_INSTALL_MODE: ABS_SYMLINK } { cmake --install ({{ cmake_output_cmd(root) }}) --prefix ({{ cmake_output_cmd(projects_dir / TO) + " | path join " + build_type }}) --config {{ capitalize(build_type) }} }
 
 [doc('Get build output')]
 [arg("binary", long="binary", value="true")]
